@@ -1,6 +1,7 @@
 // gérer tout ce qui est authentification mais que pour les requêtes http
 
-import { BASE_URL } from "../utils/url";
+// import { BASE_URL } from "../utils/url";
+const BASE_URL = import.meta.env.VITE_SERVER_URL;
 import { setAuthToken } from "../utils/auth";
 
 // Inscription

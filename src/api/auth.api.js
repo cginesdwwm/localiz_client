@@ -57,3 +57,25 @@ export async function login(values) {
     throw error;
   }
 }
+
+// Récupération de l'utilisateur courant
+export async function getCurrentUser() {
+  try {
+    const response = await fetch(`${BASE_URL}/user/me`, {
+      method: "GET",
+      credentials: "include", // Permet d'envoyer le cookie de session
+    });
+
+    if (response.ok) {
+      // Si la requête est un succès (statut 200)
+      return await response.json();
+    } else {
+      // Si la réponse n'est pas "ok" (ex: 401 Unauthorized)
+      return null;
+    }
+  } catch (error) {
+    // Si la requête a échoué (problème réseau, etc.)
+    console.error("Erreur getCurrentUser:", error);
+    return null;
+  }
+}

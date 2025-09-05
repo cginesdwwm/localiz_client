@@ -8,19 +8,17 @@
 */
 
 import { createBrowserRouter } from "react-router-dom";
+import { rootLoader } from "./loaders/rootLoader";
 import App from "./App";
 
-// Protected Route Component
-import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import UserConnected from "./components/ProtectedRoutes/UserConnected";
+import UserNotConnected from "./components/ProtectedRoutes/UserNotConnected";
 
 // Admin Route Component
 import AdminRoute from "./components/routing/AdminRoute";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminUsers from "./pages/Admin/AdminUsers";
-
-// Public Route Component (redirects to homepage if already logged in)
-import PublicRoute from "./components/Auth/PublicRoute";
 
 // Route parameter validation helper
 const validateRouteId = (id) => {
@@ -66,6 +64,7 @@ export const router = createBrowserRouter([
     path: "/",
     element: <App />,
     errorElement: <ErrorPage />,
+    loader: rootLoader,
     children: [
       { path: "/", element: <Splashscreen /> },
       { path: "/homepage", element: <Homepage /> },
@@ -74,33 +73,33 @@ export const router = createBrowserRouter([
       {
         path: "/register",
         element: (
-          <PublicRoute>
+          <UserNotConnected>
             <Register />
-          </PublicRoute>
+          </UserNotConnected>
         ),
       },
       {
         path: "/login",
         element: (
-          <PublicRoute>
+          <UserNotConnected>
             <Login />
-          </PublicRoute>
+          </UserNotConnected>
         ),
       },
       {
         path: "/forgot-password",
         element: (
-          <PublicRoute>
+          <UserNotConnected>
             <ForgotPassword />
-          </PublicRoute>
+          </UserNotConnected>
         ),
       },
       {
         path: "/change-password",
         element: (
-          <ProtectedRoute>
+          <UserConnected>
             <ChangePassword />
-          </ProtectedRoute>
+          </UserConnected>
         ),
       },
 
@@ -134,9 +133,9 @@ export const router = createBrowserRouter([
       {
         path: "/profile/me",
         element: (
-          <ProtectedRoute>
+          <UserConnected>
             <ProfileMe />
-          </ProtectedRoute>
+          </UserConnected>
         ),
       },
       {
@@ -160,17 +159,17 @@ export const router = createBrowserRouter([
       {
         path: "/settings",
         element: (
-          <ProtectedRoute>
+          <UserConnected>
             <Settings />
-          </ProtectedRoute>
+          </UserConnected>
         ),
       },
       {
         path: "/settings/manage-account",
         element: (
-          <ProtectedRoute>
+          <UserConnected>
             <ManageAccount />
-          </ProtectedRoute>
+          </UserConnected>
         ),
       },
       { path: "/settings/theme", element: <Theme /> },
@@ -183,9 +182,9 @@ export const router = createBrowserRouter([
       {
         path: "/delete-account",
         element: (
-          <ProtectedRoute>
+          <UserConnected>
             <DeleteAccount />
-          </ProtectedRoute>
+          </UserConnected>
         ),
       },
 

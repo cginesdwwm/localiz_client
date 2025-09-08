@@ -96,7 +96,7 @@
 
 // import { BASE_URL } from "../utils/url";
 
-// Robust BASE_URL handling: remove trailing slash if present, fall back to empty (relative) in dev
+// Handling robuste de BASE_URL : suppression du slash à la fin, retour à une URL relative en développement
 const RAW_BASE = import.meta.env.VITE_SERVER_URL || "";
 const BASE_URL = RAW_BASE.replace(/\/+$/, "");
 

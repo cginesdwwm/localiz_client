@@ -1,7 +1,9 @@
-import { useContext, useState } from "react";
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useState, useEffect } from "react";
 import { createContext } from "react";
 import { useLoaderData } from "react-router-dom";
-import { signout, signIn } from "../api/auth.api";
+import { signout, signIn, getCurrentUser } from "../api/auth.api";
 
 const AuthContext = createContext();
 
@@ -11,12 +13,29 @@ export function AuthProvider({ children }) {
   const initialUser =
     loaderData && loaderData.user ? loaderData.user : loaderData;
 
-  const [userConnected, setUserConnected] = useState(initialUser || null);
+  // hydrate from loader, fallback to localStorage snapshot to avoid flicker on reload
+  const stored = (() => {
+    try {
+      return JSON.parse(localStorage.getItem("user"));
+    } catch (err) {
+      console.warn("Failed to read stored user", err);
+      return null;
+    }
+  })();
+
+  const [userConnected, setUserConnected] = useState(
+    initialUser || stored || null
+  );
 
   const login = async (values) => {
     const res = await signIn(values);
     const user = res?.user ?? res;
     setUserConnected(user || null);
+    try {
+      localStorage.setItem("user", JSON.stringify(user || null));
+    } catch (err) {
+      console.warn("Failed to persist user", err);
+    }
     return user;
   };
 
@@ -27,7 +46,47 @@ export function AuthProvider({ children }) {
       // ignore
     }
     setUserConnected(null);
+    try {
+      localStorage.removeItem("user");
+    } catch (err) {
+      console.warn("Failed to remove stored user", err);
+    }
   };
+
+  // Try to refresh from API on mount if we don't have a user yet
+  useEffect(() => {
+    let mounted = true;
+    async function refresh() {
+      // Debug logs to help diagnose reload logout issues
+      console.debug("AuthContext.refresh start", {
+        loaderData: loaderData ?? null,
+        stored: stored ?? null,
+        userConnected: userConnected ?? null,
+      });
+
+      if (!userConnected) {
+        try {
+          const me = await getCurrentUser();
+          console.debug("AuthContext.getCurrentUser response", { me });
+          const serverUser = me?.user ?? me ?? null;
+          if (serverUser && mounted) {
+            setUserConnected(serverUser);
+            try {
+              localStorage.setItem("user", JSON.stringify(serverUser));
+            } catch (err) {
+              console.warn("Failed to persist server user", err);
+            }
+          }
+        } catch (err) {
+          console.warn("Failed to refresh user", err);
+        }
+      }
+    }
+    refresh();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <AuthContext.Provider

@@ -1,13 +1,13 @@
 /*
   main.jsx
-  Fichier d'entrée de l'application React.
-  - createRoot: point d'attache de l'application dans le DOM (élément #root).
-  - StrictMode: mode de développement React qui active des vérifications supplémentaires.
-  - RouterProvider: fournis les routes (react-router) à l'application.
-  - LikesProvider: un contexte (si présent) pour partager l'état des "likes" dans l'app.
+  Point d'entrée de l'application React.
+  - createRoot : attache l'application au DOM (élément #root).
+  - StrictMode : active des vérifications de développement supplémentaires.
+  - RouterProvider : fournit le routeur (react-router) à l'application.
+  - LikesProvider : contexte optionnel pour partager l'état des "likes" dans l'app.
 
-  Commentaires: ce fichier ne contient pas de logique métier, il assemble simplement
-  les fournisseurs (providers) et le routeur pour rendre l'application.
+  Remarque : ce fichier n'implémente pas de logique métier ; il compose les providers
+  et démarre le rendu de l'application.
 */
 
 import { StrictMode } from "react";
@@ -19,7 +19,7 @@ import { router } from "./router";
 const container = document.getElementById("root");
 
 if (container.hasChildNodes()) {
-  // If there's already server-rendered markup, hydrate instead of mounting
+  // Si il y a déjà du markup rendu par le serveur, on hydrate au lieu de monter
   hydrateRoot(
     container,
     <StrictMode>

@@ -1,27 +1,27 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { createContext } from "react";
-import { getBlogsFromApi } from "../api/blog.api";
+import { useAuth } from "./AuthContext";
+import { createBlog } from "../api/blog.api";
 
 const BlogContext = createContext();
 
 export function BlogProvider({ children }) {
   const [blogs, setBlogs] = useState([]);
+  const { userConnected } = useAuth();
 
-  useEffect(() => {
-    const getAllBlogs = async () => {
-      try {
-        const response = await getBlogsFromApi();
-        setBlogs(response);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getAllBlogs();
-  }, []);
+  const addBlog = async (values) => {
+    try {
+      const newBlog = await createBlog(values);
+      setBlogs((prev) => [newBlog, ...prev]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
-    <BlogContext.Provider value={{ blogs }}>{children}</BlogContext.Provider>
+    <BlogContext.Provider value={{ blogs, addBlog }}>
+      {children}
+    </BlogContext.Provider>
   );
 }
 

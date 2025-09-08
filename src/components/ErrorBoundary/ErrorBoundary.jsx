@@ -23,8 +23,8 @@ class ErrorBoundary extends React.Component {
       errorInfo,
     });
 
-    // You can log errors to an error reporting service here
-    // Example: errorReportingService.captureException(error);
+    // Vous pouvez ici envoyer les erreurs à un service de rapport d'erreurs
+    // Exemple : errorReportingService.captureException(error);
   }
 
   render() {

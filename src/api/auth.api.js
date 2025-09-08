@@ -160,30 +160,19 @@ export async function login(values) {
   }
 }
 
-// Récupération de l'utilisateur courant
+// Récupération de l'utilisateur
 export async function getCurrentUser() {
   try {
-    const response = await fetch(`${BASE_URL}user/me`, {
+    const response = await fetch(`${BASE_URL}user/current`, {
       method: "GET",
       credentials: "include",
     });
-
     if (response.ok) {
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        // Le contenu est bien du JSON, on peut le parser
-        return await response.json();
-      } else {
-        // Le contenu n'est pas du JSON, c'est probablement une erreur
-        console.error("La réponse de l'API n'est pas du JSON.");
-        return null;
-      }
+      return await response.json();
     } else {
-      // La réponse n'est pas OK, on ne renvoie rien
       return null;
     }
   } catch (error) {
-    console.error("Erreur getCurrentUser:", error);
-    return null;
+    console.log(error);
   }
 }

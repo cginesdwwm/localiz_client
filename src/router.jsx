@@ -14,19 +14,19 @@ import App from "./App";
 import UserConnected from "./components/ProtectedRoutes/UserConnected";
 import UserNotConnected from "./components/ProtectedRoutes/UserNotConnected";
 
-// Providers moved into the root route so they are inside the data router
+// Providers bougés dans la route racine pour qu'ils soient bien dans le routeur de données
 import { AuthProvider } from "./context/AuthContext";
 import { LikesProvider } from "./context/LikesContext";
 
-// Admin Route Component
+// Composants de routes protégées (auth/admin)²
 import AdminRoute from "./components/routing/AdminRoute";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminUsers from "./pages/Admin/AdminUsers";
 
-// Route parameter validation helper
+// Aide à valider les paramètres de route (ex: IDs)
 const validateRouteId = (id) => {
-  // Basic validation - adjust regex as needed for your ID format
+  // Validation basique - ajuster la regex selon le format attendu pour les IDs
   return /^[a-zA-Z0-9-_]{1,50}$/.test(id);
 };
 
@@ -204,7 +204,7 @@ export const router = createBrowserRouter([
         element: <AdminRoute />, // Protège toutes les routes enfants
         children: [
           {
-            path: "", // This is the nested layout route
+            path: "",
             element: <AdminLayout />,
             children: [
               { index: true, element: <AdminDashboard /> },

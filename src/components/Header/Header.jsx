@@ -9,7 +9,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function Header() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
 
   return (
     <header className="bg-white shadow-md p-4 flex flex-row justify-between items-center">
@@ -17,6 +17,15 @@ export default function Header() {
       <NavLink to="/homepage">
         <span className="text-xl font-bold text-blue-500">LOCALIZ</span>
       </NavLink>
+
+      {/* Message centré */}
+      {isAuthenticated && user?.firstName ? (
+        <div className="flex-1 text-center text-gray-700 font-medium">
+          Bonjour, {user.firstName}
+        </div>
+      ) : (
+        <div className="flex-1" />
+      )}
 
       {/* Navigation principale */}
       <nav className="flex space-x-6">

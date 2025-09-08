@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 export default function UserNotConnected({ children }) {
-  const { userConnected } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  return !userConnected ? children : <Navigate to="/" />;
+  return !isAuthenticated ? children : <Navigate to="/" />;
 }

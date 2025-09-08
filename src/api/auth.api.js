@@ -96,61 +96,72 @@
 
 // import { BASE_URL } from "../utils/url";
 
-// change l'url
-const BASE_URL = import.meta.env.VITE_SERVER_URL;
+// Robust BASE_URL handling: remove trailing slash if present, fall back to empty (relative) in dev
+const RAW_BASE = import.meta.env.VITE_SERVER_URL || "";
+const BASE_URL = RAW_BASE.replace(/\/+$/, "");
+
+const buildUrl = (path) =>
+  `${BASE_URL}${path.startsWith("/") ? path : "/" + path}`;
 
 export async function signUp(values) {
   try {
-    const response = await fetch(`${BASE_URL}user`, {
+    const response = await fetch(buildUrl("/user"), {
       method: "POST",
       body: JSON.stringify(values),
-      headers: {
-        "Content-type": "application/json",
-      },
+      headers: { "Content-type": "application/json" },
+      credentials: "include",
     });
-    const newUserMessage = await response.json();
-    return newUserMessage;
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || "Erreur signUp");
+    }
+    return await response.json();
   } catch (error) {
-    console.log(error);
+    console.error("signUp error:", error);
+    throw error;
   }
 }
 
 export async function signIn(values) {
   try {
-    const response = await fetch(`${BASE_URL}user/login`, {
+    const response = await fetch(buildUrl("/user/login"), {
       method: "POST",
       body: JSON.stringify(values),
-      headers: {
-        "Content-type": "application/json",
-      },
+      headers: { "Content-type": "application/json" },
       credentials: "include",
     });
-    const userConnected = await response.json();
-    return userConnected;
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || "Erreur signIn");
+    }
+    return await response.json();
   } catch (error) {
-    console.log(error);
+    console.error("signIn error:", error);
+    throw error;
   }
 }
 
 export async function getCurrentUser() {
   try {
-    const response = await fetch(`${BASE_URL}user/current`, {
+    const response = await fetch(buildUrl("/user/me"), {
       method: "GET",
       credentials: "include",
     });
-    if (response.ok) {
-      return await response.json();
-    } else {
-      return null;
-    }
+    if (!response.ok) return null;
+    return await response.json();
   } catch (error) {
-    console.log(error);
+    console.error("getCurrentUser error:", error);
+    return null;
   }
 }
 
 export async function signout() {
-  await fetch(`${BASE_URL}user/deleteToken`, {
-    method: "DELETE",
-    credentials: "include",
-  });
+  try {
+    await fetch(buildUrl("/user/logout"), {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (error) {
+    console.error("signout error:", error);
+  }
 }

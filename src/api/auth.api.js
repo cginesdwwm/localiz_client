@@ -1,18 +1,3 @@
-/**
- * auth.api.js
- *
- * Rôle : centraliser toutes les requêtes liées à l’authentification.
- * - Inscription
- * - Connexion (login)
- * - Déconnexion (logout)
- * - Récupération de l’utilisateur courant (me)
- *
- * IMPORTANT :
- * - L’authentification se fait désormais via un cookie HttpOnly
- *   => pas de stockage du token dans localStorage
- *   => les cookies sont envoyés automatiquement avec `credentials: "include"`
- */
-
 // const BASE_URL = import.meta.env.VITE_SERVER_URL;
 
 // /**
@@ -99,68 +84,54 @@
 //   }
 // }
 
-// gérer tout ce qui est authentification mais que pour les requêtes http
+/**
+ * auth.api.js
+ *
+ * Rôle : centraliser toutes les requêtes liées à l’authentification.
+ * - Inscription
+ * - Connexion (login)
+ * - Déconnexion (logout)
+ * - Récupération de l’utilisateur connecté
+ */
 
 // import { BASE_URL } from "../utils/url";
-const BASE_URL = import.meta.env.VITE_SERVER_URL;
-import { setAuthToken } from "../utils/auth";
 
-// Inscription
+// change l'url
+const BASE_URL = import.meta.env.VITE_SERVER_URL;
+
 export async function signUp(values) {
   try {
-    const response = await fetch(`${BASE_URL}user/register`, {
+    const response = await fetch(`${BASE_URL}user`, {
       method: "POST",
       body: JSON.stringify(values),
       headers: {
-        "Content-Type": "application/json",
+        "Content-type": "application/json",
       },
     });
-
-    if (!response.ok) {
-      // Si le backend renvoie une erreur (ex: 400, 500), on lève une exception
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Erreur à l'inscription");
-    }
-
     const newUserMessage = await response.json();
-    return newUserMessage; // Renvoie le message de succès du backend
+    return newUserMessage;
   } catch (error) {
-    console.error("Erreur signUp:", error);
-    throw error; // Propage l'erreur pour que le composant puisse la gérer
+    console.log(error);
   }
 }
 
-// Connexion
-export async function login(values) {
+export async function signIn(values) {
   try {
     const response = await fetch(`${BASE_URL}user/login`, {
       method: "POST",
       body: JSON.stringify(values),
       headers: {
-        "Content-Type": "application/json",
+        "Content-type": "application/json",
       },
+      credentials: "include",
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Erreur à la connexion");
-    }
-
-    const data = await response.json();
-
-    // Après une connexion réussie, on stocke le token et l'utilisateur
-    if (data.token && data.user) {
-      setAuthToken(data.token, data.user);
-    }
-
-    return data;
+    const userConnected = await response.json();
+    return userConnected;
   } catch (error) {
-    console.error("Erreur login:", error);
-    throw error;
+    console.log(error);
   }
 }
 
-// Récupération de l'utilisateur
 export async function getCurrentUser() {
   try {
     const response = await fetch(`${BASE_URL}user/current`, {
@@ -175,4 +146,11 @@ export async function getCurrentUser() {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function signout() {
+  await fetch(`${BASE_URL}user/deleteToken`, {
+    method: "DELETE",
+    credentials: "include",
+  });
 }

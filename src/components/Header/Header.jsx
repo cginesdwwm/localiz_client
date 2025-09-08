@@ -9,7 +9,7 @@ import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function Header() {
-  const { user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <header className="bg-white shadow-md p-4 flex flex-row justify-between items-center">
@@ -20,7 +20,7 @@ export default function Header() {
 
       {/* Navigation principale */}
       <nav className="flex space-x-6">
-        {user ? (
+        {isAuthenticated ? (
           <>
             <NavLink
               to="/homepage"
@@ -31,7 +31,10 @@ export default function Header() {
             <NavLink
               to="/"
               className="text-gray-600 hover:text-red-700 font-semibold"
-              onClick={logout}
+              onClick={(e) => {
+                e.preventDefault();
+                logout();
+              }}
             >
               Déconnexion
             </NavLink>

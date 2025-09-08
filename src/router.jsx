@@ -14,6 +14,10 @@ import App from "./App";
 import UserConnected from "./components/ProtectedRoutes/UserConnected";
 import UserNotConnected from "./components/ProtectedRoutes/UserNotConnected";
 
+// Providers moved into the root route so they are inside the data router
+import { AuthProvider } from "./context/AuthContext";
+import { LikesProvider } from "./context/LikesContext";
+
 // Admin Route Component
 import AdminRoute from "./components/routing/AdminRoute";
 import AdminLayout from "./pages/Admin/AdminLayout";
@@ -62,7 +66,13 @@ import Theme from "./pages/SettingsPages/Theme";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: (
+      <AuthProvider>
+        <LikesProvider>
+          <App />
+        </LikesProvider>
+      </AuthProvider>
+    ),
     errorElement: <ErrorPage />,
     loader: rootLoader,
     children: [

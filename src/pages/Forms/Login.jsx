@@ -50,8 +50,13 @@ export default function Login() {
   async function submit(values) {
     try {
       setServerError("");
-      await login(values); // Utilisation de la fonction de connexion du contexte
-      navigate("/homepage"); // Rediriger après une connexion réussie
+      const user = await login(values); // Utilisation de la fonction de connexion du contexte
+      // Si admin, rediriger vers le tableau de bord admin
+      if (user && user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/homepage");
+      }
     } catch (error) {
       // Le toast est géré par AuthContext; on affiche aussi un message inline.
       console.error("Échec de la connexion du formulaire:", error);

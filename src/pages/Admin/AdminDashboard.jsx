@@ -1,75 +1,216 @@
 import { useEffect, useState } from "react";
 import { notify } from "../../utils/notify";
-import { getAdminStats } from "../../api/admin.api";
+import {
+  getAdminHealth,
+  getAdminOverview,
+  getAdminRecent,
+} from "../../api/admin.api";
+import { Link } from "react-router-dom";
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState(null);
+  const [overview, setOverview] = useState(null);
+  const [recent, setRecent] = useState(null);
+  const [health, setHealth] = useState(null);
 
   useEffect(() => {
-    async function loadStats() {
+    async function load() {
       try {
-        const adminStats = await getAdminStats(); // Utilisation de la fonction API
-        setStats(adminStats);
+        const [ov, rc] = await Promise.all([
+          getAdminOverview(),
+          getAdminRecent(),
+        ]);
+        setOverview(ov);
+        setRecent(rc);
+        // load health too
+        try {
+          const h = await getAdminHealth();
+          setHealth(h);
+        } catch {
+          // non-fatal for dashboard
+          setHealth({ ok: false });
+        }
       } catch (error) {
         notify.error(error.message);
       }
     }
-    loadStats();
+    load();
+    // auto-refresh every 30s
+    const id = setInterval(load, 30000);
+    return () => clearInterval(id);
   }, []);
+
+  async function checkHealth() {
+    try {
+      const res = await getAdminHealth();
+      notify.success(`API: ${res.ok ? "ok" : "unhealthy"}`);
+    } catch (err) {
+      notify.error(err.message || "Health check failed");
+    }
+  }
 
   return (
     <div>
       <h1 className="text-xl font-semibold mb-4">Dashboard Admin</h1>
-      {stats ? (
-        <div>Utilisateurs inscrits : {stats.users}</div>
-      ) : (
-        <div>Chargement…</div>
-      )}
+      <div className="flex gap-4 mb-4">
+        <button
+          onClick={checkHealth}
+          className="px-3 py-2 rounded bg-green-500 text-white"
+        >
+          Vérifier API
+        </button>
+        <Link
+          to="/admin/users"
+          className="px-3 py-2 rounded bg-blue-500 text-white"
+        >
+          Voir utilisateurs
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="p-4 bg-white rounded shadow">
+          Utilisateurs: {overview ? overview.users : "—"}
+        </div>
+        <div className="p-4 bg-white rounded shadow">
+          Bons plans: {overview ? overview.deals : "—"}
+        </div>
+        <div className="p-4 bg-white rounded shadow">
+          Annonces: {overview ? overview.listings : "—"}
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <div
+          className={`p-4 bg-white rounded shadow inline-block border-l-4 ${
+            health
+              ? health.ok
+                ? "border-green-500"
+                : "border-red-500"
+              : "border-gray-300"
+          }`}
+        >
+          <strong>API:</strong>{" "}
+          <span
+            className={
+              health
+                ? health.ok
+                  ? "text-green-600"
+                  : "text-red-600"
+                : "text-gray-600"
+            }
+          >
+            {health ? (health.ok ? "OK" : "Unhealthy") : "—"}
+          </span>
+          <div className="text-xs">DB: {health?.db || "—"}</div>
+          <div className="text-xs">Version: {health?.version || "—"}</div>
+          <div className="text-xs">
+            Checked:{" "}
+            {health?.time ? new Date(health.time).toLocaleString() : "—"}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="p-4 bg-white rounded shadow">
+          <h3 className="font-medium mb-2">Nouveaux utilisateurs (7j)</h3>
+          <div style={{ width: "100%", height: 200 }}>
+            {overview ? (
+              <ResponsiveContainer>
+                <LineChart data={overview.usersSeries}>
+                  <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="count" stroke="#8884d8" />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div>Chargement…</div>
+            )}
+          </div>
+        </div>
+
+        <div className="p-4 bg-white rounded shadow">
+          <h3 className="font-medium mb-2">Nouvelles publications (7j)</h3>
+          <div style={{ width: "100%", height: 200 }}>
+            {overview ? (
+              <ResponsiveContainer>
+                <LineChart
+                  data={overview.dealsSeries.map((d, i) => ({
+                    day: d.day,
+                    deals: d.count,
+                    listings: overview.listingsSeries[i]?.count || 0,
+                  }))}
+                >
+                  <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="deals" stroke="#82ca9d" />
+                  <Line type="monotone" dataKey="listings" stroke="#8884d8" />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div>Chargement…</div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="p-4 bg-white rounded shadow">
+          <h4 className="font-semibold mb-2">Derniers utilisateurs</h4>
+          {recent ? (
+            <ul className="space-y-2">
+              {recent.recentUsers.map((u) => (
+                <li key={u._id} className="text-sm">
+                  {u.email} — {new Date(u.createdAt).toLocaleString()}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div>Chargement…</div>
+          )}
+        </div>
+
+        <div className="p-4 bg-white rounded shadow">
+          <h4 className="font-semibold mb-2">Derniers bons plans</h4>
+          {recent ? (
+            <ul className="space-y-2">
+              {recent.recentDeals.map((d) => (
+                <li key={d._id} className="text-sm">
+                  {d.title} — {new Date(d.createdAt).toLocaleString()}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div>Chargement…</div>
+          )}
+        </div>
+
+        <div className="p-4 bg-white rounded shadow">
+          <h4 className="font-semibold mb-2">Dernières annonces</h4>
+          {recent ? (
+            <ul className="space-y-2">
+              {recent.recentListings.map((l) => (
+                <li key={l._id} className="text-sm">
+                  {l.title} — {new Date(l.createdAt).toLocaleString()}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div>Chargement…</div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
-
-// import React from 'react';
-
-// // Ce composant représente le tableau de bord principal de l'administration.
-// // Il fournit un aperçu rapide des statistiques ou des informations clés du site.
-// const AdminDashboard = () => {
-//   return (
-//     <div>
-//       <h1 className="text-4xl font-extrabold mb-6 text-gray-800 dark:text-gray-200">
-//         Tableau de bord
-//       </h1>
-//       <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-//         Bienvenue sur le panneau d'administration. Voici un aperçu des activités récentes.
-//       </p>
-
-//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-//         {/* Exemple de carte de statistiques */}
-//         <div className="bg-blue-100 dark:bg-blue-900 rounded-xl shadow-md p-6">
-//           <h3 className="text-xl font-semibold text-blue-800 dark:text-blue-200 mb-2">
-//             Utilisateurs inscrits
-//           </h3>
-//           <p className="text-4xl font-bold text-blue-600 dark:text-blue-400">1,234</p>
-//         </div>
-
-//         {/* Exemple de carte de statistiques */}
-//         <div className="bg-green-100 dark:bg-green-900 rounded-xl shadow-md p-6">
-//           <h3 className="text-xl font-semibold text-green-800 dark:text-green-200 mb-2">
-//             Annonces publiées
-//           </h3>
-//           <p className="text-4xl font-bold text-green-600 dark:text-green-400">5,678</p>
-//         </div>
-
-//         {/* Exemple de carte de statistiques */}
-//         <div className="bg-yellow-100 dark:bg-yellow-900 rounded-xl shadow-md p-6">
-//           <h3 className="text-xl font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-//             Signalements en attente
-//           </h3>
-//           <p className="text-4xl font-bold text-yellow-600 dark:text-yellow-400">42</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default AdminDashboard;

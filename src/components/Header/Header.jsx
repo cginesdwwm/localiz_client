@@ -37,6 +37,14 @@ export default function Header() {
             >
               Accueil
             </NavLink>
+            {user?.role === "admin" && (
+              <NavLink
+                to="/admin"
+                className="text-red-600 hover:text-red-700 font-semibold"
+              >
+                Admin
+              </NavLink>
+            )}
             <NavLink
               to="/"
               className="text-gray-600 hover:text-red-700 font-semibold"

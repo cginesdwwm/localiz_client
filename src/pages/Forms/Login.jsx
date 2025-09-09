@@ -1,14 +1,30 @@
 // PAGE LOGIN
 
 import { useForm } from "react-hook-form";
+import { useEffect } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext"; // Import du hook
 
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth(); // On récupère la fonction de connexion du contexte
+  const [searchParams, setSearchParams] = useSearchParams();
+  const message = searchParams.get("message");
+
+  // S'occupe du message de succès lors de la redirection de vérification d'email
+  useEffect(() => {
+    if (message === "success") {
+      toast.success(
+        "Inscription confirmée ! Vous pouvez maintenant vous connecter.",
+        { duration: 8000 }
+      );
+      // nettoie le query param pour éviter de ré-afficher le toast si on reste sur la page
+      setSearchParams({}, { replace: true });
+    }
+  }, [message, setSearchParams]);
 
   const defaultValues = {
     data: "",

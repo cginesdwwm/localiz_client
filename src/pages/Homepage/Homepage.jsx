@@ -55,5 +55,5 @@
 // }
 
 export default function Homepage() {
-  return <div>Bienvenue sur Localiz ! </div>;
+  return <div>Bienvenue sur Localiz !</div>;
 }

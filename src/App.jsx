@@ -22,7 +22,7 @@ function App() {
         </main>
       </BlogProvider>
       {/* Toaster global pour afficher des notifications (doit être présent une seule fois) */}
-      <Toaster />
+      <Toaster position="top-center" toastOptions={{ duration: 6000 }} />
     </div>
   );
 }

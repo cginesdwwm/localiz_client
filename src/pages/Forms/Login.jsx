@@ -1,11 +1,11 @@
 // PAGE LOGIN
 
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
-import toast from "react-hot-toast";
+import { notify } from "../../utils/notify";
 import { useAuth } from "../../context/AuthContext"; // Import du hook
 
 export default function Login() {
@@ -17,7 +17,7 @@ export default function Login() {
   // S'occupe du message de succès lors de la redirection de vérification d'email
   useEffect(() => {
     if (message === "success") {
-      toast.success(
+      notify.success(
         "Inscription confirmée ! Vous pouvez maintenant vous connecter.",
         { duration: 8000 }
       );
@@ -45,14 +45,18 @@ export default function Login() {
     resolver: yupResolver(schema),
     mode: "onChange",
   });
+  const [serverError, setServerError] = useState("");
 
   async function submit(values) {
     try {
+      setServerError("");
       await login(values); // Utilisation de la fonction de connexion du contexte
       navigate("/homepage"); // Rediriger après une connexion réussie
     } catch (error) {
-      // Le toast est déjà géré par AuthContext, donc pas besoin de le répéter ici.
+      // Le toast est géré par AuthContext; on affiche aussi un message inline.
       console.error("Échec de la connexion du formulaire:", error);
+      const serverMsg = error?.message || "Échec de la connexion";
+      setServerError(serverMsg);
     }
   }
 
@@ -71,6 +75,7 @@ export default function Login() {
             type="text"
             id="data"
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onInput={() => setServerError("")}
           />
           {errors.data && <p className="text-red-500">{errors.data.message}</p>}
         </div>
@@ -83,6 +88,7 @@ export default function Login() {
             type="password"
             id="password"
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onInput={() => setServerError("")}
           />
           {errors.password && (
             <p className="text-red-500">{errors.password.message}</p>
@@ -95,6 +101,9 @@ export default function Login() {
           Se connecter
         </button>
       </form>
+      {serverError && (
+        <p className="text-red-600 mt-2 text-center">{serverError}</p>
+      )}
       <div className="text-center mt-4">
         <NavLink
           to="/register"

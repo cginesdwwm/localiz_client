@@ -1,9 +1,13 @@
+// The file exports a provider component and a helper hook (`useAuth`).
+// React Fast Refresh can warn in some dev setups when non-component values
+// are exported from a file; disable that single rule here with a comment.
 /* eslint-disable react-refresh/only-export-components */
-/* eslint-disable react-hooks/exhaustive-deps */
+// Keep hooks linting active and include explicit dependencies for effects.
 import { useContext, useState, useEffect } from "react";
 import { createContext } from "react";
 import { useLoaderData } from "react-router-dom";
 import { signout, signIn, getCurrentUser } from "../api/auth.api";
+import { notify } from "../utils/notify";
 
 const AuthContext = createContext();
 
@@ -13,7 +17,6 @@ export function AuthProvider({ children }) {
   const initialUser =
     loaderData && loaderData.user ? loaderData.user : loaderData;
 
-  // hydrate from loader, fallback to localStorage snapshot to avoid flicker on reload
   const stored = (() => {
     try {
       return JSON.parse(localStorage.getItem("user"));
@@ -28,15 +31,28 @@ export function AuthProvider({ children }) {
   );
 
   const login = async (values) => {
-    const res = await signIn(values);
-    const user = res?.user ?? res;
-    setUserConnected(user || null);
     try {
-      localStorage.setItem("user", JSON.stringify(user || null));
+      const res = await signIn(values);
+      const user = res?.user ?? res;
+      setUserConnected(user || null);
+      try {
+        localStorage.setItem("user", JSON.stringify(user || null));
+      } catch (err) {
+        console.warn("Failed to persist user", err);
+      }
+      return user;
     } catch (err) {
-      console.warn("Failed to persist user", err);
+      // Pour les erreurs spécifiques, on préfère des messages inline dans le formulaire de connexion.
+      const msg = err?.message || "Échec de la connexion";
+      const authMsgs = [
+        "Nom d'utilisateur ou email invalide",
+        "Mot de passe incorrect",
+      ];
+      if (!authMsgs.includes(msg)) {
+        notify.error(msg);
+      }
+      throw err;
     }
-    return user;
   };
 
   const logout = async () => {
@@ -54,6 +70,8 @@ export function AuthProvider({ children }) {
   };
 
   // Try to refresh from API on mount if we don't have a user yet
+  // Hydrate user from server if not present. We include dependencies so
+  // the effect re-runs if the relevant inputs change (safe and explicit).
   useEffect(() => {
     let mounted = true;
     async function refresh() {
@@ -86,7 +104,7 @@ export function AuthProvider({ children }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [userConnected, loaderData, stored]);
 
   return (
     <AuthContext.Provider

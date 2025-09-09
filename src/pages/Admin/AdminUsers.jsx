@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { notify } from "../../utils/notify";
 import { getUsersList, toggleUserRole, deleteUser } from "../../api/admin.api";
 
 export default function AdminUsers() {
@@ -13,7 +13,7 @@ export default function AdminUsers() {
       const usersData = await getUsersList(page); // Utilisation de la fonction API
       setData(usersData);
     } catch (error) {
-      toast.error(error.message);
+      notify.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -27,20 +27,20 @@ export default function AdminUsers() {
     try {
       const newRole = currentRole === "admin" ? "user" : "admin";
       await toggleUserRole(id, newRole); // Utilisation de la fonction API
-      toast.success(`Rôle de l'utilisateur ${id} mis à jour.`);
+      notify.success(`Rôle de l'utilisateur ${id} mis à jour.`);
       loadUsers(data.page); // Recharge la liste après la modification
     } catch (error) {
-      toast.error(error.message);
+      notify.error(error.message);
     }
   };
 
   const handleDelete = async (id) => {
     try {
       await deleteUser(id); // Utilisation de la fonction API
-      toast.success(`Utilisateur ${id} supprimé.`);
+      notify.success(`Utilisateur ${id} supprimé.`);
       loadUsers(data.page); // Recharge la liste
     } catch (error) {
-      toast.error(error.message);
+      notify.error(error.message);
     }
   };
 

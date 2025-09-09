@@ -1,7 +1,9 @@
 // PAGE MODIFIER LE MOT DE PASSE
 
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { notify } from "../../utils/notify";
 
 export default function ChangePassword() {
   // Initialisation du formulaire avec react-hook-form
@@ -9,12 +11,25 @@ export default function ChangePassword() {
   // `handleSubmit` gère la soumission du formulaire.
   // `formState.errors` contient les erreurs de validation.
   // `reset` réinitialise le formulaire après la soumission réussie.
+  // Schéma Yup pour la validation du formulaire
+  const schema = yup.object({
+    currentPassword: yup.string().required("Ce champ est requis"),
+    newPassword: yup
+      .string()
+      .required("Ce champ est requis")
+      .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+      .max(30, "Le mot de passe ne peut pas dépasser 30 caractères"),
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+  });
 
   /**
    * Fonction de soumission du formulaire.
@@ -38,14 +53,14 @@ export default function ChangePassword() {
 
       // Gestion de la réponse du serveur
       if (response.ok) {
-        toast.success(result.message); // Affiche une notification de succès
+        notify.success(result.message); // Affiche une notification de succès
         reset(); // Réinitialise le formulaire
       } else {
-        toast.error(result.message); // Affiche une notification d'erreur
+        notify.error(result.message); // Affiche une notification d'erreur
       }
     } catch (error) {
       console.error(error);
-      toast.error("Erreur de connexion au serveur.");
+      notify.error("Erreur de connexion au serveur.");
     }
   };
 

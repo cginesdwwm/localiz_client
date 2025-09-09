@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
-import toast from "react-hot-toast";
+import { notify } from "../../utils/notify";
 
 import { signUp } from "../../api/auth.api";
 
@@ -24,11 +24,11 @@ export default function Register() {
     // On vérifie si le message n'est pas nul ET que le toast n'a pas encore été affiché
     if (message && !toastShownRef.current) {
       if (message === "error") {
-        toast.error("Délai dépassé. Veuillez vous réinscrire.", {
+        notify.error("Délai dépassé. Veuillez vous réinscrire.", {
           duration: 10000, // Le toast reste visible pendant 10 secondes
         });
       } else if (message === "success") {
-        toast.success(
+        notify.success(
           "Inscription réussie ! Vous allez recevoir un email pour confirmer la création de votre compte.",
           {
             duration: 10000, // Le toast reste visible pendant 10 secondes
@@ -233,7 +233,7 @@ export default function Register() {
         });
       } else {
         // Pour toutes les autres erreurs, on affiche un toast générique
-        toast.error(
+        notify.error(
           errorMessage || "Une erreur est survenue lors de l'inscription."
         );
       }

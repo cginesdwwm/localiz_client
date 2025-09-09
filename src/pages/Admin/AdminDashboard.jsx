@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { notify } from "../../utils/notify";
 import { getAdminStats } from "../../api/admin.api";
 
 export default function AdminDashboard() {
@@ -11,7 +11,7 @@ export default function AdminDashboard() {
         const adminStats = await getAdminStats(); // Utilisation de la fonction API
         setStats(adminStats);
       } catch (error) {
-        toast.error(error.message);
+        notify.error(error.message);
       }
     }
     loadStats();

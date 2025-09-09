@@ -31,9 +31,10 @@ const validateRouteId = (id) => {
 };
 
 import Deals from "./pages/Deals/Deals";
-import DealExample from "./pages/Deals/DealExample";
+import DealDetails from "./pages/Deals/DealDetails";
 
 import Register from "./pages/Forms/Register";
+import RegisterSuccess from "./pages/Forms/RegisterSuccess";
 import Login from "./pages/Forms/Login";
 import ChangePassword from "./pages/Forms/ChangePassword";
 import ForgotPassword from "./pages/Forms/ForgotPassword";
@@ -41,13 +42,17 @@ import ForgotPassword from "./pages/Forms/ForgotPassword";
 import Homepage from "./pages/Homepage/Homepage";
 import Splashscreen from "./pages/Homepage/Splashscreen";
 
-import ListingExample from "./pages/Listings/ListingExample";
+import ListingDetails from "./pages/Listings/ListingDetails";
 import SwapAndDonate from "./pages/Listings/SwapAndDonate";
 
 import About from "./pages/Other/About";
 import DeleteAccount from "./pages/Other/DeleteAccount";
 import ErrorPage from "./pages/Other/ErrorPage";
 import LegalInfo from "./pages/Other/LegalInfo";
+import ConfirmEmail from "./pages/Other/ConfirmEmail";
+import ConfirmEmailSuccess from "./pages/Other/ConfirmEmailSuccess";
+import ConfirmEmailExpired from "./pages/Other/ConfirmEmailExpired";
+import ConfirmEmailError from "./pages/Other/ConfirmEmailError";
 
 import ProfileMe from "./pages/Profile/ProfileMe";
 import ProfileOther from "./pages/Profile/ProfileOther";
@@ -88,6 +93,7 @@ export const router = createBrowserRouter([
           </UserNotConnected>
         ),
       },
+      { path: "/register/success", element: <RegisterSuccess /> },
       {
         path: "/login",
         element: (
@@ -117,7 +123,7 @@ export const router = createBrowserRouter([
       { path: "/deals", element: <Deals /> },
       {
         path: "/deals/:id",
-        element: <DealExample />,
+        element: <DealDetails />,
         loader: ({ params }) => {
           if (!validateRouteId(params.id)) {
             throw new Response("Annonce introuvable", { status: 400 });
@@ -130,7 +136,7 @@ export const router = createBrowserRouter([
       { path: "/listings", element: <SwapAndDonate /> },
       {
         path: "/listings/:id",
-        element: <ListingExample />,
+        element: <ListingDetails />,
         loader: ({ params }) => {
           if (!validateRouteId(params.id)) {
             throw new Response("Annonce introuvable", { status: 400 });
@@ -188,6 +194,10 @@ export const router = createBrowserRouter([
 
       // --- Other ---
       { path: "/about", element: <About /> },
+      { path: "/confirm-email", element: <ConfirmEmail /> },
+      { path: "/confirm-email/success", element: <ConfirmEmailSuccess /> },
+      { path: "/confirm-email/expired", element: <ConfirmEmailExpired /> },
+      { path: "/confirm-email/error", element: <ConfirmEmailError /> },
       { path: "/legal", element: <LegalInfo /> },
       {
         path: "/delete-account",

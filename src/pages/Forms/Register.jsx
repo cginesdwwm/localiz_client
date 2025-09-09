@@ -135,7 +135,17 @@ export default function Register() {
       .date()
       .typeError("Veuillez entrer une date valide.")
       .required("La date de naissance est obligatoire.")
-      .max(new Date(), "La date de naissance doit être dans le passé."),
+      .max(new Date(), "La date de naissance doit être dans le passé.")
+      .test(
+        "min-age",
+        "Vous devez avoir au moins 16 ans pour vous inscrire.",
+        (value) => {
+          if (!value) return false;
+          const cutoff = new Date();
+          cutoff.setFullYear(cutoff.getFullYear() - 16);
+          return value <= cutoff;
+        }
+      ),
     gender: yup
       .string()
       .required("Le genre est obligatoire.")
@@ -168,7 +178,7 @@ export default function Register() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
     setError,
   } = useForm({
@@ -180,10 +190,23 @@ export default function Register() {
   // Fonction de soumission du formulaire
   async function onSubmit(values) {
     try {
-      const responseFromBackend = await signUp(values);
-      // Ce code s'exécute uniquement si `signUp` a réussi
-      toast.success(responseFromBackend.message);
-      navigate("/login");
+      const data = await signUp(values);
+      // Récupère expiresAt envoyé par le serveur (timestamp ms)
+      const expiresAt = data?.expiresAt;
+      // Persister l'expiration en sessionStorage afin de survivre à un reload
+      try {
+        if (expiresAt) {
+          sessionStorage.setItem("register_expiresAt", String(expiresAt));
+        } else {
+          sessionStorage.removeItem("register_expiresAt");
+        }
+      } catch {
+        // Ignorer si l'accès à sessionStorage échoue
+      }
+
+      // Après inscription réussie, rediriger vers la page d'information
+      // en passant expiresAt dans location.state pour un compte à rebours exact.
+      navigate("/register/success", { replace: true, state: { expiresAt } });
       reset(defaultValues);
     } catch (error) {
       // Ce bloc est exécuté si une erreur est lancée par `signUp`
@@ -431,9 +454,13 @@ export default function Register() {
 
         <button
           type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          disabled={!isValid}
+          aria-disabled={!isValid}
+          className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
+            !isValid ? "opacity-50 cursor-not-allowed hover:bg-blue-500" : ""
+          }`}
         >
-          Submit
+          S'inscrire
         </button>
       </form>
     </div>

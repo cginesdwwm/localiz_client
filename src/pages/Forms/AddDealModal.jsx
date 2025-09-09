@@ -132,7 +132,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Nouvel article
+                  Publier un article
                 </h2>
                 <p className="text-sm text-gray-500">
                   Partagez votre contenu avec la communauté
@@ -211,7 +211,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
                     onClick={() =>
-                      document.getElementById("file-input}").click()
+                      document.getElementById("file-input").click()
                     }
                   >
                     <div className="flex flex-col items-center gap-3">

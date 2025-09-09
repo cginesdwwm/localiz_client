@@ -15,6 +15,7 @@ import { createRoot, hydrateRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
+import LoadingSpinner from "./components/UI/LoadingSpinner";
 
 const container = document.getElementById("root");
 
@@ -23,7 +24,7 @@ if (container.hasChildNodes()) {
   hydrateRoot(
     container,
     <StrictMode>
-      <RouterProvider router={router} />
+      <RouterProvider router={router} fallbackElement={<LoadingSpinner />} />
     </StrictMode>
   );
 } else {

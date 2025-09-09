@@ -105,7 +105,8 @@ const buildUrl = (path) =>
 
 export async function signUp(values) {
   try {
-    const response = await fetch(buildUrl("/user"), {
+    // backend exposes POST /user/register
+    const response = await fetch(buildUrl("/user/register"), {
       method: "POST",
       body: JSON.stringify(values),
       headers: { "Content-type": "application/json" },
@@ -161,6 +162,11 @@ export async function signout() {
       method: "POST",
       credentials: "include",
     });
+    try {
+      sessionStorage.removeItem("register_expiresAt");
+    } catch {
+      void 0;
+    }
   } catch (error) {
     console.error("signout error:", error);
   }

@@ -51,7 +51,7 @@ export default function RegisterSuccess() {
 
   return (
     <div className="w-full max-w-md p-6 bg-white shadow-xl rounded mx-auto mt-12">
-      <h1 className="text-2xl font-semibold mb-4">Inscription réussie !</h1>
+      <h1 className="front-heading mb-4">Inscription réussie !</h1>
       <p className="mb-3">
         Vous êtes inscrit·e. Un e-mail vous a été envoyé pour confirmer la
         création de votre compte.
@@ -81,7 +81,7 @@ export default function RegisterSuccess() {
         </NavLink>
 
         <NavLink
-          to="/"
+          to="/homepage"
           className="border border-gray-300 px-4 py-2 rounded hover:bg-gray-100"
         >
           Retour à l'accueil

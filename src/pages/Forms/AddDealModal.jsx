@@ -4,8 +4,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { uploadImage } from "../../lib/uploadService";
 import { useBlog } from "../../context/BlogContext";
+import Button from "../../components/Common/Button";
 
-const schema = yup.object().shape({
+const schema = yup.object({
   title: yup.string().required("Le titre est obligatoire"),
   content: yup.string().required("Le contenu est obligatoire"),
   image: yup
@@ -128,23 +129,23 @@ export default function AddBlogModal({ isOpen, onClose }) {
           style={{ backgroundColor: "#ffffff", opacity: 1, zIndex: 1 }}
         >
           <div className="flex items-center justify-between p-6 pb-4">
-            <div className="w-8 h-8" aria-hidden="true"></div>
-            <div className="flex-1 flex items-center justify-center">
-              <div className="text-center">
+            <div className="flex items-center gap-3">
+              <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Publier un article
+                  Nouvel article
                 </h2>
                 <p className="text-sm text-gray-500">
                   Partagez votre contenu avec la communauté
                 </p>
               </div>
             </div>
-            <button
+            <Button
+              variant="ghost"
+              className="w-8 h-8 rounded-full"
               onClick={onClose}
-              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-800 transition-colors"
             >
               ✕
-            </button>
+            </Button>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="px-6 pb-6">
@@ -165,7 +166,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
                   style={{ backgroundColor: "#ffffff", opacity: 1 }}
                 />
                 {errors.title && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="error-text text-sm mt-1">
                     {errors.title.message}
                   </p>
                 )}
@@ -187,7 +188,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
                   style={{ backgroundColor: "#ffffff", opacity: 1 }}
                 />
                 {errors.content && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="error-text text-sm mt-1">
                     {errors.content.message}
                   </p>
                 )}
@@ -246,7 +247,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
                           <img
                             src={preview}
                             alt="Preview"
-                            className="w-12 h-12 rounded-lg object-cover"
+                            className="w-12 h-12 object-cover rounded-lg"
                           />
                           <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 text-xl">
                             ✓
@@ -255,22 +256,23 @@ export default function AddBlogModal({ isOpen, onClose }) {
                             <p className="font-medium text-gray-900">
                               {preview ? "Image sélectionnée" : ""}
                             </p>
-                            <p className="text-sm text-gray-500"></p>
+                            <p className="text-sm text-gray-500">{}</p>
                           </div>
                         </div>
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
+                          className="w-8 h-8 rounded-full text-red-600"
                           onClick={removeImage}
-                          className="w-8 h-8 rounded-full bg-red-100 hover:bg-red-200 flex items-center justify-center text-red-600 hover:text-red-700 transition-colors"
+                          type="button"
                         >
                           ✕
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   </div>
                 )}
                 {errors.image && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="error-text text-sm mt-1">
                     {errors.image.message}
                   </p>
                 )}
@@ -278,28 +280,24 @@ export default function AddBlogModal({ isOpen, onClose }) {
             </div>
 
             <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
-              <button
-                type="button"
+              <Button
+                variant="ghost"
+                className="px-6 py-3 rounded-xl"
                 onClick={cancelForm}
-                className="px-6 py-3 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-all hover:scale-105"
-                style={{ opacity: 1 }}
+                type="button"
               >
                 Annuler
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
                 disabled={loading}
-                className="px-8 py-3 rounded-xl text-white font-semibold hover:scale-105 hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center gap-2"
-                style={{
-                  background: "linear-gradient(135deg, #3b82f6, #4f46e5)",
-                  opacity: loading ? 0.7 : 1,
-                }}
+                className="px-8 py-3 rounded-xl flex items-center gap-2"
               >
                 {loading && (
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                 )}
                 Publier l'article
-              </button>
+              </Button>
             </div>
           </form>
         </div>

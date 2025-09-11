@@ -1,6 +1,6 @@
 // PAGE INSCRIPTION
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,6 +8,7 @@ import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { notify } from "../../utils/notify";
 
 import { signUp } from "../../api/auth.api";
+import Button from "../../components/Common/Button";
 
 import { frenchForbiddenWords } from "../../utils/forbiddenWords";
 
@@ -16,32 +17,55 @@ export default function Register() {
   const [params, setParams] = useSearchParams();
   const message = params.get("message");
 
-  // Création d'une référence pour s'assurer que le toast n'est affiché qu'une seule fois
-  const toastShownRef = useRef(false);
+  // Garde globale (sessionStorage) pour éviter les toasts dupliqués
+  // qui peuvent survenir en développement avec React StrictMode
+  const TOAST_KEY = "register_message_handled";
 
   // Gère les messages de succès ou d'erreur basés sur le paramètre d'URL
   useEffect(() => {
-    // On vérifie si le message n'est pas nul ET que le toast n'a pas encore été affiché
-    if (message && !toastShownRef.current) {
-      if (message === "error") {
-        notify.error("Délai dépassé. Veuillez vous réinscrire.", {
-          duration: 10000, // Le toast reste visible pendant 10 secondes
-        });
-      } else if (message === "success") {
-        notify.success(
-          "Inscription réussie ! Vous allez recevoir un email pour confirmer la création de votre compte.",
-          {
-            duration: 10000, // Le toast reste visible pendant 10 secondes
-          }
-        );
+    if (!message) return;
+
+    // Si un autre instance a déjà géré le message, on nettoie l'URL et on quitte
+    try {
+      const handled = sessionStorage.getItem(TOAST_KEY);
+      if (handled) {
+        setParams({}, { replace: true });
+        return;
       }
-
-      // Une fois le toast affiché, on met à jour la référence
-      toastShownRef.current = true;
-
-      // Nettoyer le paramètre d'URL pour éviter que le message se réaffiche au re-render
-      setParams({}, { replace: true });
+    } catch {
+      // ignore sessionStorage errors
     }
+
+    if (message === "error") {
+      notify.error("Délai dépassé. Veuillez vous réinscrire.", {
+        duration: 10000, // Le toast reste visible pendant 10 secondes
+      });
+    } else if (message === "success") {
+      notify.success(
+        "Inscription réussie ! Vous allez recevoir un email pour confirmer la création de votre compte.",
+        {
+          duration: 10000, // Le toast reste visible pendant 10 secondes
+        }
+      );
+    }
+
+    // Marquer comme géré pour éviter un second toast par une autre instance
+    try {
+      sessionStorage.setItem(TOAST_KEY, "1");
+      // Nettoyage du marqueur après quelques secondes pour ne pas bloquer de futurs messages
+      setTimeout(() => {
+        try {
+          sessionStorage.removeItem(TOAST_KEY);
+        } catch {
+          void 0;
+        }
+      }, 5000);
+    } catch {
+      // ignore
+    }
+
+    // Nettoyer le paramètre d'URL pour éviter que le message se réaffiche au re-render
+    setParams({}, { replace: true });
   }, [message, setParams]);
 
   // Valeurs par défaut du formulaire pour initialisation
@@ -255,10 +279,15 @@ export default function Register() {
             {...register("firstName")}
             type="text"
             id="firstName"
+            aria-required="true"
+            aria-invalid={errors.firstName ? "true" : "false"}
+            aria-describedby={errors.firstName ? "firstName-error" : undefined}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.firstName && (
-            <p className="text-red-500">{errors.firstName.message}</p>
+            <p id="firstName-error" className="error-text">
+              {errors.firstName.message}
+            </p>
           )}
         </div>
 
@@ -271,10 +300,15 @@ export default function Register() {
             {...register("lastName")}
             type="text"
             id="lastName"
+            aria-required="true"
+            aria-invalid={errors.lastName ? "true" : "false"}
+            aria-describedby={errors.lastName ? "lastName-error" : undefined}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.lastName && (
-            <p className="text-red-500">{errors.lastName.message}</p>
+            <p id="lastName-error" className="error-text">
+              {errors.lastName.message}
+            </p>
           )}
         </div>
 
@@ -287,10 +321,15 @@ export default function Register() {
             {...register("username")}
             type="text"
             id="username"
+            aria-required="true"
+            aria-invalid={errors.username ? "true" : "false"}
+            aria-describedby={errors.username ? "username-error" : undefined}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.username && (
-            <p className="text-red-500">{errors.username.message}</p>
+            <p id="username-error" className="error-text">
+              {errors.username.message}
+            </p>
           )}
           <p className="mt-1 text-sm text-gray-500">
             Attention : votre pseudo ne pourra pas être modifié par la suite.
@@ -308,10 +347,15 @@ export default function Register() {
             {...register("email")}
             type="email"
             id="email"
+            aria-required="true"
+            aria-invalid={errors.email ? "true" : "false"}
+            aria-describedby={errors.email ? "email-error" : undefined}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.email && (
-            <p className="text-red-500">{errors.email.message}</p>
+            <p id="email-error" className="error-text">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
@@ -324,10 +368,15 @@ export default function Register() {
             {...register("phone")}
             type="text"
             id="phone"
+            aria-required="true"
+            aria-invalid={errors.phone ? "true" : "false"}
+            aria-describedby={errors.phone ? "phone-error" : undefined}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.phone && (
-            <p className="text-red-500">{errors.phone.message}</p>
+            <p id="phone-error" className="error-text">
+              {errors.phone.message}
+            </p>
           )}
         </div>
 
@@ -340,10 +389,17 @@ export default function Register() {
             {...register("postalCode")}
             type="text"
             id="postalCode"
+            aria-required="true"
+            aria-invalid={errors.postalCode ? "true" : "false"}
+            aria-describedby={
+              errors.postalCode ? "postalCode-error" : undefined
+            }
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.postalCode && (
-            <p className="text-red-500">{errors.postalCode.message}</p>
+            <p id="postalCode-error" className="error-text">
+              {errors.postalCode.message}
+            </p>
           )}
         </div>
 
@@ -356,10 +412,15 @@ export default function Register() {
             {...register("birthday")}
             type="date"
             id="birthday"
+            aria-required="true"
+            aria-invalid={errors.birthday ? "true" : "false"}
+            aria-describedby={errors.birthday ? "birthday-error" : undefined}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.birthday && (
-            <p className="text-red-500">{errors.birthday.message}</p>
+            <p id="birthday-error" className="error-text">
+              {errors.birthday.message}
+            </p>
           )}
         </div>
 
@@ -371,6 +432,9 @@ export default function Register() {
           <select
             {...register("gender")}
             id="gender"
+            aria-required="true"
+            aria-invalid={errors.gender ? "true" : "false"}
+            aria-describedby={errors.gender ? "gender-error" : undefined}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Sélectionnez...</option>
@@ -379,7 +443,9 @@ export default function Register() {
             <option value="other">Autre / Je préfère ne pas répondre</option>
           </select>
           {errors.gender && (
-            <p className="text-red-500">{errors.gender.message}</p>
+            <p id="gender-error" className="error-text">
+              {errors.gender.message}
+            </p>
           )}
         </div>
 
@@ -392,10 +458,15 @@ export default function Register() {
             {...register("password")}
             type="password"
             id="password"
+            aria-required="true"
+            aria-invalid={errors.password ? "true" : "false"}
+            aria-describedby={errors.password ? "password-error" : undefined}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.password && (
-            <p className="text-red-500">{errors.password.message}</p>
+            <p id="password-error" className="error-text">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -408,10 +479,17 @@ export default function Register() {
             {...register("confirmPassword")}
             type="password"
             id="confirmPassword"
+            aria-required="true"
+            aria-invalid={errors.confirmPassword ? "true" : "false"}
+            aria-describedby={
+              errors.confirmPassword ? "confirmPassword-error" : undefined
+            }
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {errors.confirmPassword && (
-            <p className="text-red-500">{errors.confirmPassword.message}</p>
+            <p id="confirmPassword-error" className="error-text">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
 
@@ -422,6 +500,11 @@ export default function Register() {
               id="agreeToTerms"
               type="checkbox"
               {...register("agreeToTerms")}
+              aria-required="true"
+              aria-invalid={errors.agreeToTerms ? "true" : "false"}
+              aria-describedby={
+                errors.agreeToTerms ? "agreeToTerms-error" : undefined
+              }
               className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
           </div>
@@ -441,7 +524,7 @@ export default function Register() {
               .
             </label>
             {errors.agreeToTerms && (
-              <p className="text-red-500 text-sm mt-1">
+              <p id="agreeToTerms-error" className="error-text text-sm mt-1">
                 {errors.agreeToTerms.message}
               </p>
             )}
@@ -452,16 +535,15 @@ export default function Register() {
           Déjà inscrit ?
         </NavLink>
 
-        <button
+        <Button
           type="submit"
           disabled={!isValid}
           aria-disabled={!isValid}
-          className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${
-            !isValid ? "opacity-50 cursor-not-allowed hover:bg-blue-500" : ""
-          }`}
+          aria-label="S'inscrire"
+          className={!isValid ? "opacity-50 cursor-not-allowed" : ""}
         >
           S'inscrire
-        </button>
+        </Button>
       </form>
     </div>
   );

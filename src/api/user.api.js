@@ -59,3 +59,25 @@ export async function changeMyPassword(passwords) {
 
   return response.json();
 }
+
+/**
+ * Sauvegarde la préférence de thème de l'utilisateur (nécessite un cookie d'authentification)
+ * { theme: 'dark' | 'light' }
+ */
+export async function saveMyTheme(theme) {
+  const response = await fetch(`${BASE_URL}/users/me/theme`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ theme }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || "Erreur lors de la sauvegarde du thème."
+    );
+  }
+
+  return response.json();
+}

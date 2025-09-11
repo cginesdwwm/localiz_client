@@ -10,7 +10,7 @@ const LoadingSpinner = ({ size = "medium", message = "Loading..." }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-8">
+    <div className="flex-col-center p-8">
       <div
         className={`animate-spin rounded-full border-b-2 border-blue-500 ${sizeClasses[size]}`}
         role="status"

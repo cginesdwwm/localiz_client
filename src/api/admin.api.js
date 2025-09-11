@@ -2,8 +2,21 @@
 
 import { BASE_URL } from "../utils/url";
 
-export async function getUsersList(page = 1) {
-  const response = await fetch(`${BASE_URL}/admin/users?page=${page}`, {
+export async function getUsersList({
+  page = 1,
+  q = "",
+  sort = "",
+  dir = "",
+  limit = 20,
+} = {}) {
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("limit", String(limit));
+  if (q) params.set("q", q);
+  if (sort) params.set("sort", sort);
+  if (dir) params.set("dir", dir);
+
+  const response = await fetch(`${BASE_URL}/admin/users?${params.toString()}`, {
     credentials: "include",
   });
 
@@ -91,4 +104,81 @@ export async function getAdminRecent() {
     throw new Error(err.message || "Failed to load recent activity");
   }
   return response.json();
+}
+
+export async function getDealsList({
+  page = 1,
+  q = "",
+  sort = "",
+  dir = "",
+  limit = 50,
+} = {}) {
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("limit", String(limit));
+  if (q) params.set("q", q);
+  if (sort) params.set("sort", sort);
+  if (dir) params.set("dir", dir);
+
+  const response = await fetch(`${BASE_URL}/admin/deals?${params.toString()}`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || "Erreur lors de la récupération des deals.");
+  }
+  return response.json();
+}
+
+export async function deleteDeal(dealId) {
+  const response = await fetch(`${BASE_URL}/admin/deals/${dealId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || "Erreur lors de la suppression du deal.");
+  }
+}
+
+export async function getListingsList({
+  page = 1,
+  q = "",
+  sort = "",
+  dir = "",
+  limit = 50,
+} = {}) {
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("limit", String(limit));
+  if (q) params.set("q", q);
+  if (sort) params.set("sort", sort);
+  if (dir) params.set("dir", dir);
+
+  const response = await fetch(
+    `${BASE_URL}/admin/listings?${params.toString()}`,
+    {
+      credentials: "include",
+    }
+  );
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(
+      err.message || "Erreur lors de la récupération des listings."
+    );
+  }
+  return response.json();
+}
+
+export async function deleteListing(listingId) {
+  const response = await fetch(`${BASE_URL}/admin/listings/${listingId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(
+      err.message || "Erreur lors de la suppression de l'annonce."
+    );
+  }
 }

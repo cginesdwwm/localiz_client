@@ -3,8 +3,8 @@
 // import { useState } from "react";
 // import { useBlog } from "../../context/BlogContext";
 // import { useAuth } from "../../context/AuthContext";
-// // import AddBlogModal from "../Blog/AddBlogModal";
-// // import BlogCard from "../Blog/BlogCard";
+// import AddBlogModal from "../Blog/AddBlogModal";
+// import BlogCard from "../Blog/BlogCard";
 
 // export default function Blog() {
 //   const { blogs } = useBlog();
@@ -23,12 +23,8 @@
 //         </div>
 
 //         {userConnected ? (
-//           <button
-//             onClick={() => setIsOpen(true)}
-//             className="px-5 py-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium shadow hover:shadow-lg hover:scale-105 transition"
-//           >
-//             Publier un article
-//           </button>
+//           // Use shared Button component:
+//           // <Button variant="cta" onClick={() => setIsOpen(true)}>Nouvel article</Button>
 //         ) : (
 //           <span className="text-sm text-gray-600 italic">
 //             Connectez-vous pour publier, noter ou commenter.
@@ -55,5 +51,12 @@
 // }
 
 export default function Homepage() {
-  return <div>Bienvenue sur Localiz !</div>;
+  return (
+    <div className="p-6 text-center">
+      <h1 className="title text-2xl">Bienvenue sur Localiz !</h1>
+      <p className="text mt-3">
+        Trouvez et partagez des bons plans près de chez vous.
+      </p>
+    </div>
+  );
 }

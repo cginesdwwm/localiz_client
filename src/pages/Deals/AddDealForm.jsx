@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { uploadDealImage } from "../../lib/uploadDealImage";
 import { createDeal } from "../../api/deals.api";
 import { useNavigate } from "react-router-dom";
+import Button from "../../components/Common/Button";
 
 const schema = yup.object({
   image: yup.mixed().required("Image requise"),
@@ -98,13 +99,13 @@ export default function AddDealForm() {
       <div>
         <label>Image</label>
         <input type="file" {...register("image")} />
-        {errors.image && <p className="text-red-500">{errors.image.message}</p>}
+        {errors.image && <p className="error-text">{errors.image.message}</p>}
       </div>
 
       <div>
         <label>Titre</label>
         <input {...register("title")} />
-        {errors.title && <p className="text-red-500">{errors.title.message}</p>}
+        {errors.title && <p className="error-text">{errors.title.message}</p>}
       </div>
 
       <div>
@@ -120,7 +121,7 @@ export default function AddDealForm() {
         <label>Date de début</label>
         <input type="date" {...register("startDate")} />
         {errors.startDate && (
-          <p className="text-red-500">{errors.startDate.message}</p>
+          <p className="error-text">{errors.startDate.message}</p>
         )}
       </div>
 
@@ -142,7 +143,7 @@ export default function AddDealForm() {
           <option value="reduction">Réduction sous condition(s)</option>
         </select>
         {errors.accessConditionsType && (
-          <p className="text-red-500">{errors.accessConditionsType.message}</p>
+          <p className="error-text">{errors.accessConditionsType.message}</p>
         )}
 
         {accessType === "paid" && (
@@ -155,7 +156,7 @@ export default function AddDealForm() {
               className="block w-full border rounded p-2"
             />
             {errors.price && (
-              <p className="text-red-500">{errors.price.message}</p>
+              <p className="error-text">{errors.price.message}</p>
             )}
           </div>
         )}
@@ -177,7 +178,7 @@ export default function AddDealForm() {
         <label>Site web</label>
         <input {...register("website")} />
         {errors.website && (
-          <p className="text-red-500">{errors.website.message}</p>
+          <p className="error-text">{errors.website.message}</p>
         )}
       </div>
 
@@ -193,29 +194,29 @@ export default function AddDealForm() {
           className="w-full border rounded p-2"
         ></textarea>
         {errors.description && (
-          <p className="text-red-500">{errors.description.message}</p>
+          <p className="error-text">{errors.description.message}</p>
         )}
         <p
           className={`text-sm mt-1 ${
-            descriptionValue.length < 20 ? "text-red-500" : "text-gray-500"
+            descriptionValue.length < 20 ? "error-text" : "text-gray-500"
           }`}
         >
           {descriptionValue.length} / 20 caractères minimum
         </p>
       </div>
 
-      <button
+      <Button
         type="submit"
         disabled={loading || descriptionValue.length < 20}
         aria-disabled={loading || descriptionValue.length < 20}
-        className={`bg-blue-600 text-white px-4 py-2 rounded ${
+        className={
           loading || descriptionValue.length < 20
             ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-blue-700"
-        }`}
+            : ""
+        }
       >
         {loading ? "Envoi..." : "Publier l'offre"}
-      </button>
+      </Button>
 
       {descriptionValue.length < 20 && (
         <p className="text-red-600 font-medium mt-2">

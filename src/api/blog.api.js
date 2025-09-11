@@ -23,8 +23,38 @@ export async function createBlog(data) {
     credentials: "include",
   });
   if (!response.ok) throw new Error("Erreur lors de la création du blog");
-  //   if (!response.ok) {
-  //     console.log(error);
-  //   }
   return response.json();
+}
+
+// noter un blog
+
+export async function rateBlog(blogId, rating) {
+  try {
+    const response = await fetch(`${BASE_URL}rating/${blogId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ value: rating }),
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Erreur lors de la notation du blog");
+    return response.json();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export async function deleteRateBlog(blogId) {
+  try {
+    const response = await fetch(`${BASE_URL}rating/${blogId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!response.ok)
+      throw new Error("Erreur lors de la suppression de la note");
+    return response.json();
+  } catch (error) {
+    console.error(error);
+  }
 }

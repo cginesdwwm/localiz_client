@@ -17,3 +17,14 @@ export const sizes = {
   md: "px-4 py-2 text-base",
   lg: "px-5 py-3 text-lg",
 };
+
+// Storage keys
+export const STORAGE_KEY = "localiz_theme";
+// Auth / storage keys
+export const AUTH_TOKEN = "token";
+export const AUTH_USER = "user";
+
+// Session / UI keys
+export const REGISTER_EXPIRES = "register_expiresAt";
+export const REGISTER_TOAST_KEY = "register_message_handled";
+export const LOGIN_MESSAGE_KEY = "login_message_handled";

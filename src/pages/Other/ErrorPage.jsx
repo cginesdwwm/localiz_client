@@ -8,7 +8,7 @@ export default function ErrorPage() {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">
-      <p className="text-red-500 font-semibold text-[40px] mb-2">
+      <p className="error-text font-semibold text-[40px] mb-2">
         {error.status}
       </p>
       <p className="text-xl font-medium mb-4">{error.statusText}</p>

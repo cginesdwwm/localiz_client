@@ -1,216 +1,375 @@
-import { useEffect, useState } from "react";
-import { notify } from "../../utils/notify";
+import React, { useEffect, useMemo, useState } from "react";
+import { NavLink } from "react-router-dom";
 import {
-  getAdminHealth,
-  getAdminOverview,
-  getAdminRecent,
-} from "../../api/admin.api";
-import { Link } from "react-router-dom";
-import {
+  ResponsiveContainer,
   LineChart,
   Line,
-  CartesianGrid,
   XAxis,
   YAxis,
+  CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
+  Legend,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
+import LoadingSpinner from "../../components/UI/LoadingSpinner";
+import Button from "../../components/Common/Button";
+import { getAdminStats, getAdminHealth } from "../../api/admin.api";
+
+const COLORS = ["#60A5FA", "#34D399", "#FB7185", "#FBBF24", "#A78BFA"];
 
 export default function AdminDashboard() {
-  const [overview, setOverview] = useState(null);
-  const [recent, setRecent] = useState(null);
+  const [stats, setStats] = useState(null);
   const [health, setHealth] = useState(null);
+  const [healthUpdatedAt, setHealthUpdatedAt] = useState(null);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [loadingHealth, setLoadingHealth] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function load() {
+    let mounted = true;
+    (async () => {
+      setLoadingStats(true);
+      setError(null);
       try {
-        const [ov, rc] = await Promise.all([
-          getAdminOverview(),
-          getAdminRecent(),
-        ]);
-        setOverview(ov);
-        setRecent(rc);
-        // load health too
-        try {
-          const h = await getAdminHealth();
-          setHealth(h);
-        } catch {
-          // non-fatal for dashboard
-          setHealth({ ok: false });
-        }
-      } catch (error) {
-        notify.error(error.message);
+        const s = await getAdminStats();
+        if (!mounted) return;
+        setStats(s);
+      } catch (err) {
+        if (!mounted) return;
+        setError(err.message || String(err));
+      } finally {
+        if (mounted) setLoadingStats(false);
       }
-    }
-    load();
-    // auto-refresh every 30s
-    const id = setInterval(load, 30000);
-    return () => clearInterval(id);
+    })();
+
+    (async () => {
+      setLoadingHealth(true);
+      try {
+        const h = await getAdminHealth();
+        if (!mounted) return;
+        setHealth(h);
+        setHealthUpdatedAt(new Date().toISOString());
+      } catch (err) {
+        if (!mounted) return;
+        setHealth({ status: "DOWN", error: err.message || String(err) });
+        setHealthUpdatedAt(new Date().toISOString());
+      } finally {
+        if (mounted) setLoadingHealth(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  async function checkHealth() {
-    try {
-      const res = await getAdminHealth();
-      notify.success(`API: ${res.ok ? "ok" : "unhealthy"}`);
-    } catch (err) {
-      notify.error(err.message || "Health check failed");
+  const totals = useMemo(() => {
+    if (!stats) return { users: "—", deals: "—", listings: "—" };
+    // support multiple possible shapes
+    return {
+      users:
+        stats.totals?.users ??
+        stats.usersCount ??
+        stats.users ??
+        stats.totalUsers ??
+        "—",
+      deals:
+        stats.totals?.deals ??
+        stats.dealsCount ??
+        stats.deals ??
+        stats.totalDeals ??
+        "—",
+      listings:
+        stats.totals?.listings ??
+        stats.listingsCount ??
+        stats.listings ??
+        stats.totalListings ??
+        "—",
+    };
+  }, [stats]);
+
+  // timeline data for line chart (users over time)
+  const timeline = useMemo(() => {
+    // Build a timeline that can include users, deals and listings series
+    // Support shapes: stats.usersByMonth, stats.dealsByMonth, stats.listingsByMonth
+    const usersArr = stats?.usersByMonth || stats?.timeline?.users || null;
+    const dealsArr = stats?.dealsByMonth || stats?.timeline?.deals || null;
+    const listingsArr =
+      stats?.listingsByMonth || stats?.timeline?.listings || null;
+
+    // If none, try a generic timeline array in stats.timeline (array of { month, users, deals, listings })
+    if (
+      !usersArr &&
+      !dealsArr &&
+      !listingsArr &&
+      Array.isArray(stats?.timeline)
+    ) {
+      return stats.timeline.map((it) => ({
+        name: it.month || it.label || it.name,
+        users: it.users ?? it.u ?? it.count ?? 0,
+        deals: it.deals ?? it.d ?? 0,
+        listings: it.listings ?? it.l ?? 0,
+      }));
     }
-  }
+
+    // Merge per-month arrays by month label
+    const map = new Map();
+    function add(arr, keyName) {
+      if (!Array.isArray(arr)) return;
+      arr.forEach((it) => {
+        const name = it.month || it.label || it.name;
+        const entry = map.get(name) || { name };
+        entry[keyName] =
+          (entry[keyName] || 0) + (it.count ?? it.value ?? it[keyName] ?? 0);
+        map.set(name, entry);
+      });
+    }
+    add(usersArr, "users");
+    add(dealsArr, "deals");
+    add(listingsArr, "listings");
+
+    const out = Array.from(map.values()).sort((a, b) =>
+      a.name > b.name ? 1 : -1
+    );
+    return out.length ? out : null;
+  }, [stats]);
+
+  // breakdown: deals by category or simple totals
+  const breakdown = useMemo(() => {
+    const byCat = stats?.dealsByCategory || stats?.byCategory || null;
+    if (Array.isArray(byCat) && byCat.length) {
+      return byCat.map((it) => ({
+        name: it.category || it.name,
+        value: it.count ?? it.value ?? 0,
+      }));
+    }
+    // fallback to totals
+    if (stats) {
+      return [
+        {
+          name: "Bons plans",
+          value: Number(
+            stats.totals?.deals ?? stats.dealsCount ?? stats.deals ?? 0
+          ),
+        },
+        {
+          name: "Annonces",
+          value: Number(
+            stats.totals?.listings ?? stats.listingsCount ?? stats.listings ?? 0
+          ),
+        },
+      ];
+    }
+    return null;
+  }, [stats]);
+
+  const refreshHealth = async () => {
+    setLoadingHealth(true);
+    try {
+      const h = await getAdminHealth();
+      setHealth(h);
+      setHealthUpdatedAt(new Date().toISOString());
+    } catch (err) {
+      setHealth({ status: "DOWN", error: err.message || String(err) });
+      setHealthUpdatedAt(new Date().toISOString());
+    } finally {
+      setLoadingHealth(false);
+    }
+  };
 
   return (
-    <div>
-      <h1 className="text-xl font-semibold mb-4">Dashboard Admin</h1>
-      <div className="flex gap-4 mb-4">
-        <button
-          onClick={checkHealth}
-          className="px-3 py-2 rounded bg-green-500 text-white"
-        >
-          Vérifier API
-        </button>
-        <Link
-          to="/admin/users"
-          className="px-3 py-2 rounded bg-blue-500 text-white"
-        >
-          Voir utilisateurs
-        </Link>
-      </div>
+    <div className="max-w-6xl mx-auto p-6">
+      <header className="mb-6">
+        <h1 className="title text-4xl">Administration</h1>
+        <p className="text-sm text-white/80 mt-1">
+          Tableau de bord administrateur
+        </p>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="p-4 bg-white rounded shadow">
-          Utilisateurs: {overview ? overview.users : "—"}
-        </div>
-        <div className="p-4 bg-white rounded shadow">
-          Bons plans: {overview ? overview.deals : "—"}
-        </div>
-        <div className="p-4 bg-white rounded shadow">
-          Annonces: {overview ? overview.listings : "—"}
-        </div>
-      </div>
+      {loadingStats ? (
+        <LoadingSpinner message="Chargement des statistiques..." />
+      ) : error ? (
+        <div className="rounded-lg bg-white/5 p-4 text-red-400">{error}</div>
+      ) : (
+        <>
+          <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-white/5">
+              <p className="text-sm text-white/70">Utilisateurs</p>
+              <p className="text-2xl font-semibold text-white">
+                {totals.users}
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-white/5">
+              <p className="text-sm text-white/70">Bons plans</p>
+              <p className="text-2xl font-semibold text-white">
+                {totals.deals}
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-white/5">
+              <p className="text-sm text-white/70">Annonces</p>
+              <p className="text-2xl font-semibold text-white">
+                {totals.listings}
+              </p>
+            </div>
+          </section>
 
-      <div className="mb-6">
-        <div
-          className={`p-4 bg-white rounded shadow inline-block border-l-4 ${
-            health
-              ? health.ok
-                ? "border-green-500"
-                : "border-red-500"
-              : "border-gray-300"
-          }`}
-        >
-          <strong>API:</strong>{" "}
-          <span
-            className={
-              health
-                ? health.ok
-                  ? "text-green-600"
-                  : "text-red-600"
-                : "text-gray-600"
-            }
-          >
-            {health ? (health.ok ? "OK" : "Unhealthy") : "—"}
-          </span>
-          <div className="text-xs">DB: {health?.db || "—"}</div>
-          <div className="text-xs">Version: {health?.version || "—"}</div>
-          <div className="text-xs">
-            Checked:{" "}
-            {health?.time ? new Date(health.time).toLocaleString() : "—"}
-          </div>
-        </div>
-      </div>
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <div className="p-4 rounded-xl bg-white/5">
+              <h3 className="heading text-lg mb-3">
+                Évolution des utilisateurs
+              </h3>
+              {timeline && timeline.length ? (
+                <div style={{ width: "100%", height: 220 }}>
+                  <ResponsiveContainer>
+                    <LineChart data={timeline}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff12" />
+                      <XAxis dataKey="name" stroke="#ffffff90" />
+                      <YAxis stroke="#ffffff90" />
+                      <Tooltip />
+                      <Legend verticalAlign="top" />
+                      <Line
+                        type="monotone"
+                        dataKey="users"
+                        stroke="#60A5FA"
+                        strokeWidth={2}
+                        dot={false}
+                      />
+                      {timeline.some((d) => typeof d.deals !== "undefined") && (
+                        <Line
+                          type="monotone"
+                          dataKey="deals"
+                          stroke="#34D399"
+                          strokeWidth={2}
+                          dot={false}
+                        />
+                      )}
+                      {timeline.some(
+                        (d) => typeof d.listings !== "undefined"
+                      ) && (
+                        <Line
+                          type="monotone"
+                          dataKey="listings"
+                          stroke="#FBBF24"
+                          strokeWidth={2}
+                          dot={false}
+                        />
+                      )}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="text-sm text-white/70">
+                  Pas de données temporelles disponibles.
+                </div>
+              )}
+            </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="p-4 bg-white rounded shadow">
-          <h3 className="font-medium mb-2">Nouveaux utilisateurs (7j)</h3>
-          <div style={{ width: "100%", height: 200 }}>
-            {overview ? (
-              <ResponsiveContainer>
-                <LineChart data={overview.usersSeries}>
-                  <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="count" stroke="#8884d8" />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <div>Chargement…</div>
-            )}
-          </div>
-        </div>
+            <div className="p-4 rounded-xl bg-white/5">
+              <h3 className="heading text-lg mb-3">Répartition</h3>
+              {breakdown && breakdown.length ? (
+                <div style={{ width: "100%", height: 220 }}>
+                  <ResponsiveContainer>
+                    <PieChart>
+                      <Pie
+                        data={breakdown}
+                        dataKey="value"
+                        nameKey="name"
+                        innerRadius={40}
+                        outerRadius={80}
+                        label
+                      >
+                        {breakdown.map((entry, idx) => (
+                          <Cell
+                            key={`cell-${idx}`}
+                            fill={COLORS[idx % COLORS.length]}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="text-sm text-white/70">
+                  Pas de données de répartition.
+                </div>
+              )}
+            </div>
+          </section>
 
-        <div className="p-4 bg-white rounded shadow">
-          <h3 className="font-medium mb-2">Nouvelles publications (7j)</h3>
-          <div style={{ width: "100%", height: 200 }}>
-            {overview ? (
-              <ResponsiveContainer>
-                <LineChart
-                  data={overview.dealsSeries.map((d, i) => ({
-                    day: d.day,
-                    deals: d.count,
-                    listings: overview.listingsSeries[i]?.count || 0,
-                  }))}
-                >
-                  <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="deals" stroke="#82ca9d" />
-                  <Line type="monotone" dataKey="listings" stroke="#8884d8" />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <div>Chargement…</div>
-            )}
-          </div>
-        </div>
-      </div>
+          <section className="p-4 rounded-xl bg-white/5 mb-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-white">
+                Santé de l'API
+              </h3>
+              <Button
+                variant="ghost"
+                onClick={refreshHealth}
+                disabled={loadingHealth}
+              >
+                Vérifier
+              </Button>
+            </div>
+            <div className="mt-3">
+              {loadingHealth ? (
+                <div className="py-4">
+                  <LoadingSpinner message="Vérification API..." />
+                </div>
+              ) : health ? (
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-4 items-center">
+                    <div
+                      className={`px-3 py-1 rounded ${
+                        health.status === "UP" ? "bg-green-600" : "bg-red-600"
+                      }`}
+                    >
+                      {health.status}
+                    </div>
+                    <div className="text-sm text-white/80">
+                      {health.message || health.info || health.uptime || null}
+                    </div>
+                    {health.error ? (
+                      <div className="text-sm text-red-400">{health.error}</div>
+                    ) : null}
+                  </div>
+                  {healthUpdatedAt && (
+                    <div className="text-xs text-gray-400">
+                      Mis à jour:{" "}
+                      {new Intl.DateTimeFormat("fr-FR", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date(healthUpdatedAt))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-sm text-white/70">
+                  Aucune information de santé disponible.
+                </div>
+              )}
+            </div>
+          </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 bg-white rounded shadow">
-          <h4 className="font-semibold mb-2">Derniers utilisateurs</h4>
-          {recent ? (
-            <ul className="space-y-2">
-              {recent.recentUsers.map((u) => (
-                <li key={u._id} className="text-sm">
-                  {u.email} — {new Date(u.createdAt).toLocaleString()}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>Chargement…</div>
-          )}
-        </div>
-
-        <div className="p-4 bg-white rounded shadow">
-          <h4 className="font-semibold mb-2">Derniers bons plans</h4>
-          {recent ? (
-            <ul className="space-y-2">
-              {recent.recentDeals.map((d) => (
-                <li key={d._id} className="text-sm">
-                  {d.title} — {new Date(d.createdAt).toLocaleString()}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>Chargement…</div>
-          )}
-        </div>
-
-        <div className="p-4 bg-white rounded shadow">
-          <h4 className="font-semibold mb-2">Dernières annonces</h4>
-          {recent ? (
-            <ul className="space-y-2">
-              {recent.recentListings.map((l) => (
-                <li key={l._id} className="text-sm">
-                  {l.title} — {new Date(l.createdAt).toLocaleString()}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>Chargement…</div>
-          )}
-        </div>
-      </div>
+          <nav className="flex gap-3 items-center">
+            <NavLink to="/admin/users">
+              <Button variant="ghost">Gérer les utilisateurs</Button>
+            </NavLink>
+            <NavLink to="/admin/deals">
+              <Button variant="ghost">Gérer les bons plans</Button>
+            </NavLink>
+            <NavLink to="/admin/listings">
+              <Button variant="ghost">Gérer les annonces</Button>
+            </NavLink>
+          </nav>
+        </>
+      )}
     </div>
   );
 }

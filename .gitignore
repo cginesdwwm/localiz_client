@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .env
+
+# Ignore test folders created alongside source files
+src/**/__tests__/
+src/**/__tests__
+src/context/__tests__/

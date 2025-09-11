@@ -5,6 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { uploadListingImage } from "../../lib/uploadListingImage";
 import { createListing } from "../../api/listings.api";
 import { useNavigate } from "react-router-dom";
+import Button from "../../components/Common/Button";
 
 const schema = yup.object({
   image: yup.mixed().required("Image requise"),
@@ -72,14 +73,14 @@ export default function AddListingForm() {
       <div>
         <label>Image</label>
         <input type="file" {...register("image")} />
-        {errors.image && <p className="text-red-500">{errors.image.message}</p>}
+        {errors.image && <p className="error-text">{errors.image.message}</p>}
       </div>
 
       <div>
         <label>Ville</label>
         <input {...register("locationName")} />
         {errors.locationName && (
-          <p className="text-red-500">{errors.locationName.message}</p>
+          <p className="error-text">{errors.locationName.message}</p>
         )}
       </div>
 
@@ -93,36 +94,36 @@ export default function AddListingForm() {
           <option value="donation">Don</option>
           <option value="swap">Troc</option>
         </select>
-        {errors.type && <p className="text-red-500">{errors.type.message}</p>}
+        {errors.type && <p className="error-text">{errors.type.message}</p>}
       </div>
 
       <div>
         <label>Description</label>
         <textarea {...register("description")}></textarea>
         {errors.description && (
-          <p className="text-red-500">{errors.description.message}</p>
+          <p className="error-text">{errors.description.message}</p>
         )}
         <p
           className={`text-sm mt-1 ${
-            descriptionValue.length < 20 ? "text-red-500" : "text-gray-500"
+            descriptionValue.length < 20 ? "error-text" : "text-gray-500"
           }`}
         >
           {descriptionValue.length} / 20 caractères minimum
         </p>
       </div>
 
-      <button
+      <Button
         type="submit"
         disabled={loading || descriptionValue.length < 20}
         aria-disabled={loading || descriptionValue.length < 20}
-        className={`bg-blue-600 text-white px-4 py-2 rounded ${
+        className={
           loading || descriptionValue.length < 20
             ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-blue-700"
-        }`}
+            : ""
+        }
       >
         {loading ? "Envoi..." : "Publier l'annonce"}
-      </button>
+      </Button>
 
       {descriptionValue.length < 20 && (
         <p className="text-red-600 font-medium mt-2">

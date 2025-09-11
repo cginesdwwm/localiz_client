@@ -1,16 +1,246 @@
-@import "tailwindcss";
+/* Main stylesheet - theme variables + base rules */
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Mulish:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --color-transparent: transparent;
-  --color-current: currentColor;
-  --color-white: #fffff;
-  --color-purple: #3f3cbb;
-  --color-midnight: #121063;
-  --color-metal: #565584;
-  --color-tahitiLight: #67e8f9;
-  --color-tahitiDefault: #06b6d4;
-  --color-tahitiDark: #0e7490;
-  --color-silver: #ecebff;
-  --color-bubble-gum: #ff77e9;
-  --color-bermuda: #78dcca;
+/*
+  Theme variables
+  - Default theme is defined in :root (dark teal background)
+  - .theme-light applied on <html> or <body> will switch to the light theme
+*/
+:root {
+  --bg: #124660; /* background */
+  --text: #ffffff; /* main text */
+  --splash-text: #f4ebd6; /* only used in Splashscreen .front-heading */
+  --input-bg: #d9d9d9; /* input boxes */
+  --input-text: #4a4a4a; /* text inside inputs */
+
+  /* Button variables (default theme) */
+  --btn-cta-bg: #1b9476;
+  --btn-danger-bg: #d42424;
+  --btn-filter-bg: #1b9476;
+  --btn-text-contrast: #ffffff;
+}
+
+/* Light theme override (apply by adding .theme-light to <html> or <body>) */
+.theme-light {
+  --bg: #f4ebd6;
+  --text: #000000;
+  --splash-text: #124660;
+  --input-bg: #bdbdbd;
+  --input-text: #3a3a3a;
+
+  /* Light theme overrides for buttons */
+  --btn-cta-bg: #8bd59e;
+  --btn-danger-bg: #ff4c4c;
+  --btn-filter-bg: #8bd59e;
+  --btn-text-contrast: #000000;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 200ms ease, color 200ms ease,
+    border-color 200ms ease;
+}
+
+/* Global layout */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  /* Default body font for regular text */
+  font-family: "Mulish", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography rules */
+/* Titles across the app use Fredoka and are bold */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.title,
+.heading {
+  font-family: "Fredoka";
+  font-weight: 700; /* bold */
+  color: inherit;
+}
+
+/* UI text and labels (form labels, small UI copy) use Quicksand */
+.ui-text,
+label,
+.form-label,
+.input-label {
+  font-family: "Quicksand";
+  font-weight: 400;
+}
+
+/* Regular paragraph/body text remains Mulish */
+p,
+.text,
+.body-text {
+  font-family: "Mulish", sans-serif;
+  font-weight: 400;
+}
+
+/* Ensure text inherits the global color unless explicitly styled */
+a,
+p,
+span,
+li,
+small,
+strong,
+b {
+  color: inherit;
+}
+
+/* Splashscreen special heading */
+.front-heading {
+  color: var(--splash-text);
+  transition: opacity 600ms ease, transform 600ms ease, color 200ms ease;
+  /* slightly larger than the default h1 to make the splash headline stand out */
+  font-size: 2.25rem;
+  line-height: 1.05;
+}
+
+@media (max-width: 640px) {
+  .front-heading {
+    font-size: 1.75rem;
+  }
+}
+
+/* Inputs styling across the app */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  background-color: var(--input-bg);
+  color: #000000;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 0.5rem 0.75rem;
+  border-radius: 14px;
+  outline: none;
+}
+
+/* Placeholder color: slightly muted relative to input text */
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* Buttons should inherit text color (keeps contrast consistent) */
+button {
+  color: inherit;
+}
+
+/* Accessibility helpers */
+:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.12);
+  outline-offset: 2px;
+}
+
+/* Error / validation text color (use amber for visibility) */
+.error-text,
+.form-error,
+.field-error {
+  color: #ffc107;
+}
+
+/* Base button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border: none;
+  cursor: pointer;
+  color: var(--btn-text-contrast);
+  font-family: "Quicksand", sans-serif; /* UI font for button labels */
+  font-weight: 600;
+  border-radius: 14px; /* default radius for most buttons */
+}
+
+/* CTA button */
+.btn-cta {
+  background-color: var(--btn-cta-bg);
+}
+
+/* Danger button */
+.btn-danger {
+  background-color: var(--btn-danger-bg);
+}
+
+/* Filter button - slightly larger radius */
+.btn-filter {
+  background-color: var(--btn-filter-bg);
+  border-radius: 16px; /* slightly larger radius */
+}
+
+/* Disabled state */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Hover states: slight darken using mixing with rgba overlay */
+.btn-cta:hover:not(:disabled),
+.btn-filter:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+/* Ghost button (transparent / minimal) */
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  padding: 0.5rem 0.75rem;
+}
+
+/* Splashscreen transitions (match JS FADE = 600ms) */
+.splashscreen {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+
+.splashscreen.leaving {
+  opacity: 0;
+  transform: translateY(-16px) scale(0.99);
+  pointer-events: none;
+}
+
+.splashscreen.leaving .front-heading {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* Remove any gap between the splash image and the heading */
+.splashscreen img {
+  display: block;
+  margin: 0; /* remove default image margins */
+}
+
+.splashscreen .front-heading {
+  margin-top: 0; /* ensure heading doesn't add space */
+}
+
+/* Remove padding/gap from the immediate splash container so logo and heading are flush */
+.splashscreen > .flex-col-center {
+  padding: 0;
+  gap: 0;
 }

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { createContext } from "react";
 // import { useAuth } from "./AuthContext";
 import { createBlog, getBlogsFromApi } from "../api/blog.api";
@@ -9,8 +9,6 @@ const BlogContext = createContext();
 export function BlogProvider({ children }) {
   const [blogs, setBlogs] = useState([]);
   // const { userConnected } = useAuth();
-
-  console.log({ blogs });
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -41,6 +39,4 @@ export function BlogProvider({ children }) {
   );
 }
 
-export function useBlog() {
-  return useContext(BlogContext);
-}
+export default BlogContext;

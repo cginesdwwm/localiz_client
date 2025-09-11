@@ -6,18 +6,36 @@
   - Toaster affiche les notifications (ex: succès, erreurs) si la librairie est utilisée.
 */
 
-import { Outlet } from "react-router-dom"; // Emplacement des routes enfants
+import { Outlet, useLocation } from "react-router-dom"; // Emplacement des routes enfants
 import "./App.css"; // Styles locaux de l'application
 import Header from "./components/Header/Header"; // Le header (nav)
 import { Toaster } from "react-hot-toast"; // Notifications toast
 import { BlogProvider } from "./context/BlogContext";
 
 function App() {
+  const location = useLocation();
+  const pathname = location?.pathname || "/";
+
+  // Routes/prefixes dans lesquelles on ne veut pas afficher le header
+  const hideHeaderFor = [
+    "/",
+    "/login",
+    "/register",
+    "/register/success",
+    "/forgot-password",
+    "/change-password",
+    "/confirm-email",
+  ];
+
+  const shouldHideHeader =
+    hideHeaderFor.includes(pathname) ||
+    hideHeaderFor.some((p) => pathname.startsWith(p + "/"));
+
   return (
     <div className="h-screen flex flex-col">
       <BlogProvider>
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
+        {!shouldHideHeader && <Header />}
+        <main className="flex-1 flex-center">
           <Outlet />
         </main>
       </BlogProvider>

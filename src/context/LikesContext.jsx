@@ -1,8 +1,8 @@
 import { createContext, useState } from "react";
 
-export const LikesContext = createContext({});
+const LikesContext = createContext({});
 
-export function LikesProvider({ children }) {
+export default function LikesProvider({ children }) {
   const [likedIds, setLikedIds] = useState([]);
 
   const toggleLike = (id) => {
@@ -19,3 +19,5 @@ export function LikesProvider({ children }) {
     </LikesContext.Provider>
   );
 }
+
+export { LikesContext };

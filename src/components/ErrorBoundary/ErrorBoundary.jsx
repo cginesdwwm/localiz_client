@@ -5,6 +5,7 @@
 */
 
 import React from "react";
+import Button from "../Common/Button";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="center-screen bg-gray-50 dark:bg-gray-900">
           <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <div className="flex items-center mb-4">
               <div className="flex-shrink-0">
@@ -59,18 +60,20 @@ class ErrorBoundary extends React.Component {
             </p>
 
             <div className="flex space-x-3">
-              <button
+              <Button
+                variant="cta"
+                className="flex-1"
                 onClick={() => window.location.reload()}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Refresh Page
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex-1"
                 onClick={() => (window.location.href = "/")}
-                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Go Home
-              </button>
+              </Button>
             </div>
           </div>
         </div>

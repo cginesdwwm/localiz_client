@@ -14,24 +14,23 @@ import App from "./App";
 import UserConnected from "./components/ProtectedRoutes/UserConnected";
 import UserNotConnected from "./components/ProtectedRoutes/UserNotConnected";
 
-// Providers bougés dans la route racine pour qu'ils soient bien dans le routeur de données
+// Providers at the root so they wrap the router
 import { AuthProvider } from "./context/AuthContext";
-import { LikesProvider } from "./context/LikesContext";
+import LikesProvider from "./context/LikesContext";
 
-// Composants de routes protégées (auth/admin)²
+// Admin components
 import AdminRoute from "./components/routing/AdminRoute";
-import AdminLayout from "./pages/Admin/AdminLayout";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminUsers from "./pages/Admin/AdminUsers";
+import AdminDeals from "./pages/Admin/AdminDeals";
+import AdminListings from "./pages/Admin/AdminListings";
+import AdminLayout from "./pages/Admin/AdminLayout";
 
-// Aide à valider les paramètres de route (ex: IDs)
-const validateRouteId = (id) => {
-  // Validation basique - ajuster la regex selon le format attendu pour les IDs
-  return /^[a-zA-Z0-9-_]{1,50}$/.test(id);
-};
+// Helper
+const validateRouteId = (id) => /^[a-zA-Z0-9-_]{1,50}$/.test(id);
 
 import Deals from "./pages/Deals/Deals";
-import DealDetails from "./pages/Deals/DealDetails";
+// import DealDetails from "./pages/Deals/DealDetails";
 
 import Register from "./pages/Forms/Register";
 import RegisterSuccess from "./pages/Forms/RegisterSuccess";
@@ -42,7 +41,7 @@ import ForgotPassword from "./pages/Forms/ForgotPassword";
 import Homepage from "./pages/Homepage/Homepage";
 import Splashscreen from "./pages/Homepage/Splashscreen";
 
-import ListingDetails from "./pages/Listings/ListingDetails";
+// import ListingDetails from "./pages/Listings/ListingDetails";
 import SwapAndDonate from "./pages/Listings/SwapAndDonate";
 
 import About from "./pages/Other/About";
@@ -123,7 +122,7 @@ export const router = createBrowserRouter([
       { path: "/deals", element: <Deals /> },
       {
         path: "/deals/:id",
-        element: <DealDetails />,
+        // element: <DealDetails />,
         loader: ({ params }) => {
           if (!validateRouteId(params.id)) {
             throw new Response("Annonce introuvable", { status: 400 });
@@ -136,7 +135,6 @@ export const router = createBrowserRouter([
       { path: "/listings", element: <SwapAndDonate /> },
       {
         path: "/listings/:id",
-        element: <ListingDetails />,
         loader: ({ params }) => {
           if (!validateRouteId(params.id)) {
             throw new Response("Annonce introuvable", { status: 400 });
@@ -211,16 +209,16 @@ export const router = createBrowserRouter([
       // --- Admin Routes ---
       {
         path: "admin",
-        element: <AdminRoute />, // Protège toutes les routes enfants
+        element: (
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        ),
         children: [
-          {
-            path: "",
-            element: <AdminLayout />,
-            children: [
-              { index: true, element: <AdminDashboard /> },
-              { path: "users", element: <AdminUsers /> },
-            ],
-          },
+          { index: true, element: <AdminDashboard /> },
+          { path: "users", element: <AdminUsers /> },
+          { path: "deals", element: <AdminDeals /> },
+          { path: "listings", element: <AdminListings /> },
         ],
       },
     ],

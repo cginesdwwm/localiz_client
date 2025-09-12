@@ -9,7 +9,7 @@ const schema = yup.object({
   email: yup.string().email("Email invalide").required("L'email est requis"),
   message: yup
     .string()
-    .min(10, "Le message est trop court")
+    .min(20, "Le message est trop court")
     .required("Le message est requis"),
 });
 

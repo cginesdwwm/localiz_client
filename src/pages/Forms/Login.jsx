@@ -92,52 +92,56 @@ export default function Login() {
             }}
           />
 
-          <h1 className="mt-0 mb-8 text-center">Connexion</h1>
+          <h1 className="mt-0 mb-6 text-center">Connexion</h1>
         </div>
 
         <form
-          className="flex flex-col items-center gap-16 w-full"
+          className="flex flex-col items-center gap-16 w-full h-[400px]"
           onSubmit={handleSubmit(submit)}
         >
-          <label htmlFor="data" className="sr-only">
-            Email ou pseudo
-          </label>
-          <input
-            {...register("data")}
-            type="text"
-            id="data"
-            placeholder="Email ou pseudo"
-            aria-required="true"
-            aria-invalid={errors.data ? "true" : "false"}
-            aria-describedby={errors.data ? "data-error" : undefined}
-            onInput={() => setServerError("")}
-            className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
-          />
-          {errors.data && (
-            <p id="data-error" className="error-text text-sm mt-1">
-              {errors.data.message}
-            </p>
-          )}
+          <div className="mb-4">
+            <label htmlFor="data" className="sr-only">
+              Email ou pseudo
+            </label>
+            <input
+              {...register("data")}
+              type="text"
+              id="data"
+              placeholder="Email ou pseudo"
+              aria-required="true"
+              aria-invalid={errors.data ? "true" : "false"}
+              aria-describedby={errors.data ? "data-error" : undefined}
+              onInput={() => setServerError("")}
+              className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+            />
+            {errors.data && (
+              <p id="data-error" className="error-text text-sm mt-1">
+                {errors.data.message}
+              </p>
+            )}
+          </div>
 
-          <label htmlFor="password" className="sr-only">
-            Mot de passe
-          </label>
-          <input
-            {...register("password")}
-            type="password"
-            id="password"
-            placeholder="Mot de passe"
-            aria-required="true"
-            aria-invalid={errors.password ? "true" : "false"}
-            aria-describedby={errors.password ? "password-error" : undefined}
-            onInput={() => setServerError("")}
-            className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
-          />
-          {errors.password && (
-            <p id="password-error" className="error-text text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
+          <div>
+            <label htmlFor="password" className="sr-only">
+              Mot de passe
+            </label>
+            <input
+              {...register("password")}
+              type="password"
+              id="password"
+              placeholder="Mot de passe"
+              aria-required="true"
+              aria-invalid={errors.password ? "true" : "false"}
+              aria-describedby={errors.password ? "password-error" : undefined}
+              onInput={() => setServerError("")}
+              className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+            />
+            {errors.password && (
+              <p id="password-error" className="error-text text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
 
           <Button
             type="submit"

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/Common/Button";
+import Input from "../../components/Common/Input";
 
 const schema = yup.object({
   name: yup.string().required("Le nom est requis"),
@@ -16,8 +17,8 @@ const schema = yup.object({
 export default function Contact() {
   const [serverMsg, setServerMsg] = useState("");
   const {
-    register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: yupResolver(schema), mode: "onBlur" });
 
@@ -44,45 +45,52 @@ export default function Contact() {
         </h1>
 
         <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-          <label className="sr-only" htmlFor="name">
-            Nom
-          </label>
-          <input
-            id="name"
-            {...register("name")}
-            placeholder="Votre nom"
-            className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                id="name"
+                placeholder="Votre nom"
+                className="h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+                error={errors.name?.message}
+              />
+            )}
           />
-          {errors.name && (
-            <p className="error-text text-sm">{errors.name.message}</p>
-          )}
 
-          <label className="sr-only" htmlFor="email">
-            Email
-          </label>
-          <input
-            id="email"
-            {...register("email")}
-            placeholder="Votre email"
-            className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                id="email"
+                placeholder="Votre email"
+                className="h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+                error={errors.email?.message}
+              />
+            )}
           />
-          {errors.email && (
-            <p className="error-text text-sm">{errors.email.message}</p>
-          )}
 
-          <label className="sr-only" htmlFor="message">
-            Message
-          </label>
-          <textarea
-            id="message"
-            {...register("message")}
-            placeholder="Votre message"
-            rows={6}
-            className="w-full bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-4 py-3 focus:outline-none text-[#000000] text-base resize-vertical"
+          <Controller
+            name="message"
+            control={control}
+            render={({ field }) => (
+              <div>
+                <textarea
+                  id="message"
+                  {...field}
+                  placeholder="Votre message"
+                  rows={6}
+                  className="w-full bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-4 py-3 focus:outline-none text-[#000000] text-base resize-vertical"
+                />
+                {errors.message && (
+                  <p className="error-text text-sm">{errors.message.message}</p>
+                )}
+              </div>
+            )}
           />
-          {errors.message && (
-            <p className="error-text text-sm">{errors.message.message}</p>
-          )}
 
           <Button
             type="submit"

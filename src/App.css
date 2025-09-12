@@ -1,51 +1,6 @@
-/* App specific styles (kept minimal - main theming lives in index.css) */
-
-.h-screen {
-  height: 100vh;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.flex-1 {
-  flex: 1 1 0%;
-}
-
-.items-center {
-  align-items: center;
-}
-.justify-center {
-  justify-content: center;
-}
-
-/* Keep local overrides here if components need them */
-
-/* Fused utilities (non-breaking additions):
-   - Use these where multiple Tailwind-like classes are repeated.
-   - Kept minimal and optional; existing classes remain for compatibility.
-*/
-
-.center-screen {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.flex-col-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }

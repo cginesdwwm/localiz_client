@@ -7,6 +7,63 @@
   accepter value, onChange, placeholder, etc.
 */
 
-export default function Input({ type }) {
-  return <input className="border-red-100 border" type={type} />;
-}
+import { forwardRef } from "react";
+
+const Input = forwardRef(
+  (
+    {
+      type = "text",
+      id,
+      name,
+      value,
+      onChange,
+      placeholder,
+      className = "",
+      label,
+      error,
+      required = false,
+      autoComplete,
+      ...rest
+    },
+    ref
+  ) => {
+    const base =
+      "w-full rounded border px-3 py-2 text-sm text-[#303030] bg-[#D9D9D9] h-12";
+    const errorClass = error ? "border-yellow-400" : "border-gray-200";
+
+    return (
+      <div className="mb-4">
+        {label && (
+          <label
+            htmlFor={id || name}
+            className="block text-sm font-medium mb-1"
+          >
+            {label}
+            {required ? " *" : ""}
+          </label>
+        )}
+        <input
+          id={id}
+          name={name}
+          ref={ref}
+          type={type}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          className={`${base} ${errorClass} ${className}`.trim()}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id || name}-error` : undefined}
+          {...rest}
+        />
+        {error && (
+          <p id={`${id || name}-error`} className="text-xs mt-1 error-text">
+            {error}
+          </p>
+        )}
+      </div>
+    );
+  }
+);
+
+export default Input;

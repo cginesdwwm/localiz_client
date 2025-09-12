@@ -20,11 +20,13 @@ export default function Button({
   };
 
   const base = variantMap[variant] || variantMap.cta;
+  // Default sizing for buttons across the app. Callers can still append classes.
+  const sizing = "w-3/4 mx-auto";
 
   return (
     <button
       type={type}
-      className={`${base} ${className}`.trim()}
+      className={`${base} ${sizing} ${className}`.trim()}
       disabled={disabled}
       {...props}
     >
@@ -32,10 +34,8 @@ export default function Button({
     </button>
   );
 }
-// />;
 
-// How to use
-
+// How to use :
 // Import and use instead of raw <button>:
 // <Button variant="cta">Get started</Button>
 // <Button variant="danger" onClick={deleteSomething}>Delete</Button>

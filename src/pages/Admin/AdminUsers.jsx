@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import Button from "../../components/Common/Button";
+import Input from "../../components/Common/Input";
 import { getUsersList, deleteUser, toggleUserRole } from "../../api/admin.api";
 import { notify } from "../../utils/notify";
 
@@ -94,7 +95,7 @@ export default function AdminUsers() {
         <div className="rounded-lg bg-white/5 p-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div className="flex items-center gap-3">
-              <input
+              <Input
                 type="search"
                 value={q}
                 onChange={(e) => {

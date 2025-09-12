@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { uploadListingImage } from "../../lib/uploadListingImage";
 import { createListing } from "../../api/listings.api";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Common/Button";
+import Input from "../../components/Common/Input";
 
 const schema = yup.object({
   image: yup.mixed().required("Image requise"),
@@ -29,6 +30,7 @@ export default function AddListingForm() {
     handleSubmit,
     watch,
     setError,
+    control,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
   const descriptionValue = watch("description") || "";
@@ -78,7 +80,17 @@ export default function AddListingForm() {
 
       <div>
         <label>Ville</label>
-        <input {...register("locationName")} />
+        <Controller
+          name="locationName"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              className="w-full"
+              error={errors.locationName?.message}
+            />
+          )}
+        />
         {errors.locationName && (
           <p className="error-text">{errors.locationName.message}</p>
         )}
@@ -99,10 +111,18 @@ export default function AddListingForm() {
 
       <div>
         <label>Description</label>
-        <textarea {...register("description")}></textarea>
-        {errors.description && (
-          <p className="error-text">{errors.description.message}</p>
-        )}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <div>
+              <textarea {...field} className="w-full" />
+              {errors.description && (
+                <p className="error-text">{errors.description.message}</p>
+              )}
+            </div>
+          )}
+        />
         <p
           className={`text-sm mt-1 ${
             descriptionValue.length < 20 ? "error-text" : "text-gray-500"
@@ -126,7 +146,7 @@ export default function AddListingForm() {
       </Button>
 
       {descriptionValue.length < 20 && (
-        <p className="text-red-600 font-medium mt-2">
+        <p className="error-text font-medium mt-2">
           La description doit contenir au moins 20 caractères.
         </p>
       )}

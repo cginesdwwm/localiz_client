@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import Button from "../../components/Common/Button";
+import Input from "../../components/Common/Input";
 import { getDealsList, deleteDeal } from "../../api/admin.api";
 import { notify } from "../../utils/notify";
 
@@ -75,7 +76,7 @@ export default function AdminDeals() {
         <div className="rounded-lg bg-white/5 p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <input
+              <Input
                 type="search"
                 value={q}
                 onChange={(e) => {

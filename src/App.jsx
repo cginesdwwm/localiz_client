@@ -32,14 +32,13 @@ function App() {
     hideHeaderFor.some((p) => pathname.startsWith(p + "/"));
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen ">
       <BlogProvider>
         {!shouldHideHeader && <Header />}
-        <main className="flex-1 flex-center">
+        <main>
           <Outlet />
         </main>
       </BlogProvider>
-      {/* Toaster global pour afficher des notifications (doit être présent une seule fois) */}
       <Toaster position="top-center" toastOptions={{ duration: 6000 }} />
     </div>
   );

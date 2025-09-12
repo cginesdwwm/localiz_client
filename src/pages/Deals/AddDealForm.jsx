@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { uploadDealImage } from "../../lib/uploadDealImage";
 import { createDeal } from "../../api/deals.api";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Common/Button";
+import Input from "../../components/Common/Input";
 
 const schema = yup.object({
   image: yup.mixed().required("Image requise"),
@@ -40,6 +41,7 @@ export default function AddDealForm() {
     handleSubmit,
     watch,
     setError,
+    control,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
   const accessType = watch("accessConditionsType");
@@ -104,22 +106,63 @@ export default function AddDealForm() {
 
       <div>
         <label>Titre</label>
-        <input {...register("title")} />
+        <Controller
+          name="title"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              className="w-full"
+              error={errors.title?.message}
+            />
+          )}
+        />
         {errors.title && <p className="error-text">{errors.title.message}</p>}
       </div>
 
       <div>
         <label>Lieu</label>
-        <input {...register("locationName")} />
+        <Controller
+          name="locationName"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              className="w-full"
+              error={errors.locationName?.message}
+            />
+          )}
+        />
       </div>
       <div>
         <label>Adresse</label>
-        <input {...register("address")} />
+        <Controller
+          name="address"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              className="w-full"
+              error={errors.address?.message}
+            />
+          )}
+        />
       </div>
 
       <div>
         <label>Date de début</label>
-        <input type="date" {...register("startDate")} />
+        <Controller
+          name="startDate"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="date"
+              className="w-full"
+              error={errors.startDate?.message}
+            />
+          )}
+        />
         {errors.startDate && (
           <p className="error-text">{errors.startDate.message}</p>
         )}
@@ -127,7 +170,18 @@ export default function AddDealForm() {
 
       <div>
         <label>Date de fin (optionnelle)</label>
-        <input type="date" {...register("endDate")} />
+        <Controller
+          name="endDate"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="date"
+              className="w-full"
+              error={errors.endDate?.message}
+            />
+          )}
+        />
       </div>
 
       <div>
@@ -149,11 +203,18 @@ export default function AddDealForm() {
         {accessType === "paid" && (
           <div className="mt-2">
             <label>Prix (€)</label>
-            <input
-              type="number"
-              step="0.01"
-              {...register("price")}
-              className="block w-full border rounded p-2"
+            <Controller
+              name="price"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="number"
+                  step="0.01"
+                  className="block w-full"
+                  error={errors.price?.message}
+                />
+              )}
             />
             {errors.price && (
               <p className="error-text">{errors.price.message}</p>
@@ -176,7 +237,17 @@ export default function AddDealForm() {
 
       <div>
         <label>Site web</label>
-        <input {...register("website")} />
+        <Controller
+          name="website"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              className="w-full"
+              error={errors.website?.message}
+            />
+          )}
+        />
         {errors.website && (
           <p className="error-text">{errors.website.message}</p>
         )}
@@ -184,18 +255,26 @@ export default function AddDealForm() {
 
       <div>
         <label>Description</label>
-        <textarea
-          {...register("description")}
-          placeholder={
-            accessType === "reservation" || accessType === "reduction"
-              ? "Veillez à bien préciser les détails de réservation/réduction (horaires, contact, conditions...)"
-              : ""
-          }
-          className="w-full border rounded p-2"
-        ></textarea>
-        {errors.description && (
-          <p className="error-text">{errors.description.message}</p>
-        )}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <div>
+              <textarea
+                {...field}
+                placeholder={
+                  accessType === "reservation" || accessType === "reduction"
+                    ? "Veillez à bien préciser les détails de réservation/réduction (horaires, contact, conditions...)"
+                    : ""
+                }
+                className="w-full border rounded p-2"
+              ></textarea>
+              {errors.description && (
+                <p className="error-text">{errors.description.message}</p>
+              )}
+            </div>
+          )}
+        />
         <p
           className={`text-sm mt-1 ${
             descriptionValue.length < 20 ? "error-text" : "text-gray-500"
@@ -219,7 +298,7 @@ export default function AddDealForm() {
       </Button>
 
       {descriptionValue.length < 20 && (
-        <p className="text-red-600 font-medium mt-2">
+        <p className="error-text font-medium mt-2">
           La description doit contenir au moins 20 caractères.
         </p>
       )}

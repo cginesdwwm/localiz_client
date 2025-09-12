@@ -1,8 +1,6 @@
 /* Main stylesheet - theme variables + base rules */
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Mulish:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600&display=swap");
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /*
   Theme variables
@@ -153,6 +151,16 @@ button {
   outline-offset: 2px;
 }
 
+/* Register page: green focus ring for form controls only inside the register form */
+.register-form input:focus,
+.register-form select:focus,
+.register-form textarea:focus {
+  outline: 3px solid var(--btn-cta-bg);
+  outline-offset: 2px;
+  border-color: var(--btn-cta-bg);
+  box-shadow: 0 0 0 4px rgba(27, 148, 118, 0.08);
+}
+
 /* Error / validation text color */
 .error-text,
 .form-error,
@@ -162,7 +170,7 @@ button {
 
 /* Base button styles */
 .btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;

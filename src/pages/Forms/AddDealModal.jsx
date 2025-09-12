@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { uploadImage } from "../../lib/uploadService";
 import { useBlog } from "../../context/BlogContext";
 import Button from "../../components/Common/Button";
+import Input from "../../components/Common/Input";
 
 const schema = yup.object({
   title: yup.string().required("Le titre est obligatoire"),
@@ -34,10 +35,10 @@ export default function AddBlogModal({ isOpen, onClose }) {
   const { addBlog } = useBlog();
 
   const {
-    register,
     handleSubmit,
     setValue,
     reset,
+    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -154,44 +155,53 @@ export default function AddBlogModal({ isOpen, onClose }) {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Titre de l'article
                 </label>
-                <input
-                  type="text"
-                  placeholder="Donnez un titre accrocheur à votre article..."
-                  {...register("title")}
-                  className={`w-full border-2 rounded-xl p-4 focus:outline-none focus:ring-4 transition-all ${
-                    errors.title
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-100"
-                      : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"
-                  }`}
-                  style={{ backgroundColor: "#ffffff", opacity: 1 }}
+                <Controller
+                  name="title"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      placeholder="Donnez un titre accrocheur à votre article..."
+                      className={`w-full border-2 rounded-xl p-4 focus:outline-none focus:ring-4 transition-all ${
+                        errors.title
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-100"
+                          : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"
+                      }`}
+                      style={{ backgroundColor: "#ffffff", opacity: 1 }}
+                      error={errors.title?.message}
+                    />
+                  )}
                 />
-                {errors.title && (
-                  <p className="error-text text-sm mt-1">
-                    {errors.title.message}
-                  </p>
-                )}
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Contenu
                 </label>
-                <textarea
-                  placeholder="Rédigez votre article ici..."
-                  rows="6"
-                  {...register("content")}
-                  className={`w-full border-2 rounded-xl p-4 focus:outline-none focus:ring-4 transition-all resize-none ${
-                    errors.content
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-100"
-                      : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"
-                  }`}
-                  style={{ backgroundColor: "#ffffff", opacity: 1 }}
+                <Controller
+                  name="content"
+                  control={control}
+                  render={({ field }) => (
+                    <div>
+                      <textarea
+                        placeholder="Rédigez votre article ici..."
+                        rows="6"
+                        {...field}
+                        className={`w-full border-2 rounded-xl p-4 focus:outline-none focus:ring-4 transition-all resize-none ${
+                          errors.content
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-100"
+                            : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"
+                        }`}
+                        style={{ backgroundColor: "#ffffff", opacity: 1 }}
+                      />
+                      {errors.content && (
+                        <p className="error-text text-sm mt-1">
+                          {errors.content.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 />
-                {errors.content && (
-                  <p className="error-text text-sm mt-1">
-                    {errors.content.message}
-                  </p>
-                )}
               </div>
 
               <div>

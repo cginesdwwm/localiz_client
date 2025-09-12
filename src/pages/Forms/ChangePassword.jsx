@@ -1,10 +1,11 @@
 // PAGE MODIFIER LE MOT DE PASSE
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { notify } from "../../utils/notify";
 import Button from "../../components/Common/Button";
+import Input from "../../components/Common/Input";
 
 const schema = yup.object({
   currentPassword: yup.string().required("Ce champ est requis"),
@@ -17,8 +18,8 @@ const schema = yup.object({
 
 export default function ChangePassword() {
   const {
-    register,
     handleSubmit,
+    control,
     formState: { errors },
     reset,
   } = useForm({ resolver: yupResolver(schema), mode: "onChange" });
@@ -55,37 +56,39 @@ export default function ChangePassword() {
           <label className="block mb-1 font-medium text-gray-700">
             Mot de passe actuel
           </label>
-          <input
-            type="password"
-            {...register("currentPassword")}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <Controller
+            name="currentPassword"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="password"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                error={errors.currentPassword?.message}
+              />
+            )}
           />
-          {errors.currentPassword && (
-            <p className="error-text text-sm mt-1">
-              {errors.currentPassword.message}
-            </p>
-          )}
         </div>
 
         <div>
           <label className="block mb-1 font-medium text-gray-700">
             Nouveau mot de passe
           </label>
-          <input
-            type="password"
-            {...register("newPassword")}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <Controller
+            name="newPassword"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="password"
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                error={errors.newPassword?.message}
+              />
+            )}
           />
-          {errors.newPassword && (
-            <p className="error-text text-sm mt-1">
-              {errors.newPassword.message}
-            </p>
-          )}
         </div>
 
-        <Button type="submit" className="w-full">
-          Modifier le mot de passe
-        </Button>
+        <Button type="submit">Modifier le mot de passe</Button>
       </form>
     </div>
   );

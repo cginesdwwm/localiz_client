@@ -1,6 +1,6 @@
 // PAGE LOGIN
 
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,6 +8,7 @@ import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
 import { SUPABASE_LOGO, localLogo } from "../../constants/logo";
 import { notify } from "../../utils/notify";
 import Button from "../../components/Common/Button";
+import Input from "../../components/Common/Input";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Login() {
@@ -32,6 +33,7 @@ export default function Login() {
       "Inscription confirmée ! Vous pouvez maintenant vous connecter.",
       { duration: 8000 }
     );
+
     try {
       sessionStorage.setItem(KEY, "1");
       setTimeout(() => {
@@ -53,15 +55,17 @@ export default function Login() {
     data: yup.string().required("Ce champ est obligatoire"),
     password: yup.string().required("Le mot de passe est obligatoire"),
   });
+
   const {
-    register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm({
     defaultValues,
     resolver: yupResolver(schema),
     mode: "onChange",
   });
+
   const [serverError, setServerError] = useState("");
 
   async function submit(values) {
@@ -78,91 +82,86 @@ export default function Login() {
   }
 
   return (
-    <div className="bg-transparent">
-      <div className="mx-auto w-full max-w-[620px] px-6 py-10 flex flex-col items-center">
-        <div className="flex flex-col items-center gap-0">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg)] px-4">
+      <div className="w-full max-w-md">
+        {/* Logo + Heading */}
+        <div className="flex flex-col items-center mb-8">
           <img
             src={SUPABASE_LOGO}
             alt="Localiz logo"
             width={180}
             height={180}
-            className="mb-0 block"
+            className="mb-4"
             onError={(e) => {
               e.currentTarget.src = localLogo;
             }}
           />
-
-          <h1 className="mt-0 mb-6 text-center">Connexion</h1>
+          <h1 className="text-4xl font-bold text-center text-[var(--text)]">
+            Connexion
+          </h1>
         </div>
 
-        <form
-          className="flex flex-col items-center gap-16 w-full"
-          onSubmit={handleSubmit(submit)}
-        >
-          <label htmlFor="data" className="sr-only">
-            Email ou pseudo
-          </label>
-          <input
-            {...register("data")}
-            type="text"
-            id="data"
-            placeholder="Email ou pseudo"
-            aria-required="true"
-            aria-invalid={errors.data ? "true" : "false"}
-            aria-describedby={errors.data ? "data-error" : undefined}
-            onInput={() => setServerError("")}
-            className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+        {/* Form */}
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(submit)}>
+          {/* Email / username */}
+          <Controller
+            name="data"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                id="data"
+                placeholder="Email ou pseudo"
+                onInput={() => setServerError("")}
+                error={errors.data?.message}
+                className="h-12"
+              />
+            )}
           />
-          {errors.data && (
-            <p id="data-error" className="error-text text-sm mt-1">
-              {errors.data.message}
-            </p>
-          )}
 
-          <label htmlFor="password" className="sr-only">
-            Mot de passe
-          </label>
-          <input
-            {...register("password")}
-            type="password"
-            id="password"
-            placeholder="Mot de passe"
-            aria-required="true"
-            aria-invalid={errors.password ? "true" : "false"}
-            aria-describedby={errors.password ? "password-error" : undefined}
-            onInput={() => setServerError("")}
-            className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+          {/* Password */}
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                id="password"
+                type="password"
+                placeholder="Mot de passe"
+                onInput={() => setServerError("")}
+                error={errors.password?.message}
+                className="h-12"
+              />
+            )}
           />
-          {errors.password && (
-            <p id="password-error" className="error-text text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
 
+          {/* Submit button */}
           <Button
             type="submit"
             variant="cta"
-            className="w-full h-12 font-semibold text-base"
+            className="h-12 font-semibold text-base"
           >
             Se connecter
           </Button>
         </form>
 
+        {/* Server error */}
         {serverError && (
-          <p className="text-red-600 mt-6 text-center">{serverError}</p>
+          <p className="error-text mt-4 text-center">{serverError}</p>
         )}
 
-        <div className="w-full max-w-full flex flex-col items-center gap-4 mt-10">
+        {/* Links */}
+        <div className="flex flex-col items-center gap-3 mt-8">
           <NavLink
             to="/forgot-password"
-            className="font-ui font-semibold text-white text-center underline text-base tracking-[0] leading-[normal]"
+            className="text-[var(--text)] font-semibold underline"
           >
             Mot de passe oublié ?
           </NavLink>
-
           <NavLink
             to="/register"
-            className="text-sm text-blue-600 font-semibold text-base no-underline"
+            className="text-blue-600 font-bold mt-4 text-lg"
           >
             Créer un compte
           </NavLink>

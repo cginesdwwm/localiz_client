@@ -10,11 +10,11 @@
   - .theme-light applied on <html> or <body> will switch to the light theme
 */
 :root {
-  --bg: #124660; /* background */
-  --text: #ffffff; /* main text */
-  --splash-text: #f4ebd6; /* only used in Splashscreen .front-heading */
-  --input-bg: #d9d9d9; /* input boxes */
-  --input-text: #4a4a4a; /* text inside inputs */
+  --bg: #124660;
+  --text: #ffffff;
+  --splash-text: #f4ebd6; /* only used in Splashscreen => .front-heading */
+  --input-bg: #d9d9d9;
+  --input-text: #4a4a4a;
 
   /* Button variables (default theme) */
   --btn-cta-bg: #1b9476;
@@ -138,6 +138,8 @@ select {
 input::placeholder,
 textarea::placeholder {
   color: rgba(0, 0, 0, 0.45);
+  /* Use Mulish for placeholders to match project input text */
+  font-family: "Mulish", sans-serif;
 }
 
 /* Buttons should inherit text color (keeps contrast consistent) */
@@ -151,7 +153,7 @@ button {
   outline-offset: 2px;
 }
 
-/* Error / validation text color (use amber for visibility) */
+/* Error / validation text color */
 .error-text,
 .form-error,
 .field-error {
@@ -183,10 +185,10 @@ button {
   background-color: var(--btn-danger-bg);
 }
 
-/* Filter button - slightly larger radius */
+/* Filter button */
 .btn-filter {
   background-color: var(--btn-filter-bg);
-  border-radius: 16px; /* slightly larger radius */
+  border-radius: 16px;
 }
 
 /* Disabled state */
@@ -195,7 +197,7 @@ button {
   cursor: not-allowed;
 }
 
-/* Hover states: slight darken using mixing with rgba overlay */
+/* Hover states */
 .btn-cta:hover:not(:disabled),
 .btn-filter:hover:not(:disabled) {
   filter: brightness(0.95);
@@ -232,11 +234,11 @@ button {
 /* Remove any gap between the splash image and the heading */
 .splashscreen img {
   display: block;
-  margin: 0; /* remove default image margins */
+  margin: 0;
 }
 
 .splashscreen .front-heading {
-  margin-top: 0; /* ensure heading doesn't add space */
+  margin-top: 0;
 }
 
 /* Remove padding/gap from the immediate splash container so logo and heading are flush */

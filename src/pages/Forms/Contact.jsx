@@ -37,63 +37,65 @@ export default function Contact() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[760px] px-6 py-12">
-      <h1 className="text-2xl font-semibold mb-6">
-        Quelque chose à nous dire ?
-      </h1>
+    <div className="center-screen bg-transparent">
+      <div className="flex-col-center w-full max-w-[760px] px-6 py-12">
+        <h1 className="text-2xl font-semibold mb-6">
+          Quelque chose à nous dire ?
+        </h1>
 
-      <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-        <label className="sr-only" htmlFor="name">
-          Nom
-        </label>
-        <input
-          id="name"
-          {...register("name")}
-          placeholder="Votre nom"
-          className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
-        />
-        {errors.name && (
-          <p className="error-text text-sm">{errors.name.message}</p>
-        )}
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
+          <label className="sr-only" htmlFor="name">
+            Nom
+          </label>
+          <input
+            id="name"
+            {...register("name")}
+            placeholder="Votre nom"
+            className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+          />
+          {errors.name && (
+            <p className="error-text text-sm">{errors.name.message}</p>
+          )}
 
-        <label className="sr-only" htmlFor="email">
-          Email
-        </label>
-        <input
-          id="email"
-          {...register("email")}
-          placeholder="Votre email"
-          className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
-        />
-        {errors.email && (
-          <p className="error-text text-sm">{errors.email.message}</p>
-        )}
+          <label className="sr-only" htmlFor="email">
+            Email
+          </label>
+          <input
+            id="email"
+            {...register("email")}
+            placeholder="Votre email"
+            className="w-full h-12 bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-6 focus:outline-none text-[#000000] text-base"
+          />
+          {errors.email && (
+            <p className="error-text text-sm">{errors.email.message}</p>
+          )}
 
-        <label className="sr-only" htmlFor="message">
-          Message
-        </label>
-        <textarea
-          id="message"
-          {...register("message")}
-          placeholder="Votre message"
-          rows={6}
-          className="w-full bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-4 py-3 focus:outline-none text-[#000000] text-base resize-vertical"
-        />
-        {errors.message && (
-          <p className="error-text text-sm">{errors.message.message}</p>
-        )}
+          <label className="sr-only" htmlFor="message">
+            Message
+          </label>
+          <textarea
+            id="message"
+            {...register("message")}
+            placeholder="Votre message"
+            rows={6}
+            className="w-full bg-[#D9D9D9] placeholder-[#4A4A4A] rounded-[14px] px-4 py-3 focus:outline-none text-[#000000] text-base resize-vertical"
+          />
+          {errors.message && (
+            <p className="error-text text-sm">{errors.message.message}</p>
+          )}
 
-        <Button
-          type="submit"
-          variant="cta"
-          className="w-full h-12"
-          disabled={isSubmitting}
-        >
-          Envoyer
-        </Button>
-      </form>
+          <Button
+            type="submit"
+            variant="cta"
+            className="w-full h-12"
+            disabled={isSubmitting}
+          >
+            Envoyer
+          </Button>
+        </form>
 
-      {serverMsg && <p className="mt-4 text-center">{serverMsg}</p>}
+        {serverMsg && <p className="mt-4 text-center">{serverMsg}</p>}
+      </div>
     </div>
   );
 }

@@ -26,9 +26,6 @@ import AdminDeals from "./pages/Admin/AdminDeals";
 import AdminListings from "./pages/Admin/AdminListings";
 import AdminLayout from "./pages/Admin/AdminLayout";
 
-// Helper
-const validateRouteId = (id) => /^[a-zA-Z0-9-_]{1,50}$/.test(id);
-
 import Deals from "./pages/Deals/Deals";
 // import DealDetails from "./pages/Deals/DealDetails";
 
@@ -67,6 +64,8 @@ import Language from "./pages/SettingsPages/Language";
 import ManageAccount from "./pages/SettingsPages/ManageAccount";
 import Settings from "./pages/SettingsPages/Settings";
 import Theme from "./pages/SettingsPages/Theme";
+
+const validateRouteId = (id) => /^[a-zA-Z0-9-_]{1,50}$/.test(id);
 
 export const router = createBrowserRouter([
   {
@@ -118,6 +117,7 @@ export const router = createBrowserRouter([
           </UserConnected>
         ),
       },
+      { path: "/contact", element: <Contact /> },
 
       // --- Deals ---
       { path: "/deals", element: <Deals /> },
@@ -192,7 +192,6 @@ export const router = createBrowserRouter([
       { path: "/settings/language", element: <Language /> },
 
       // --- Other ---
-      { path: "/contact", element: <Contact /> },
       { path: "/about", element: <About /> },
       { path: "/confirm-email", element: <ConfirmEmail /> },
       { path: "/confirm-email/success", element: <ConfirmEmailSuccess /> },

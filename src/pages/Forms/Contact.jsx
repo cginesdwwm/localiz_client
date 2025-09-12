@@ -24,7 +24,6 @@ export default function Contact() {
   async function onSubmit(values) {
     setServerMsg("");
     try {
-      // Try to POST to /api/contact — server implementation optional
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -39,7 +38,9 @@ export default function Contact() {
 
   return (
     <div className="mx-auto w-full max-w-[760px] px-6 py-12">
-      <h1 className="text-2xl font-semibold mb-6">Contactez le support</h1>
+      <h1 className="text-2xl font-semibold mb-6">
+        Quelque chose à nous dire ?
+      </h1>
 
       <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
         <label className="sr-only" htmlFor="name">

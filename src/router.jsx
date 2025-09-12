@@ -19,7 +19,7 @@ import { AuthProvider } from "./context/AuthContext";
 import LikesProvider from "./context/LikesContext";
 
 // Admin components
-import AdminRoute from "./components/routing/AdminRoute";
+import AdminRoute from "./components/routes/AdminRoute";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminUsers from "./pages/Admin/AdminUsers";
 import AdminDeals from "./pages/Admin/AdminDeals";
@@ -52,6 +52,7 @@ import ConfirmEmail from "./pages/Other/ConfirmEmail";
 import ConfirmEmailSuccess from "./pages/Other/ConfirmEmailSuccess";
 import ConfirmEmailExpired from "./pages/Other/ConfirmEmailExpired";
 import ConfirmEmailError from "./pages/Other/ConfirmEmailError";
+import Contact from "./pages/Forms/Contact";
 
 import ProfileMe from "./pages/Profile/ProfileMe";
 import ProfileOther from "./pages/Profile/ProfileOther";
@@ -191,6 +192,7 @@ export const router = createBrowserRouter([
       { path: "/settings/language", element: <Language /> },
 
       // --- Other ---
+      { path: "/contact", element: <Contact /> },
       { path: "/about", element: <About /> },
       { path: "/confirm-email", element: <ConfirmEmail /> },
       { path: "/confirm-email/success", element: <ConfirmEmailSuccess /> },

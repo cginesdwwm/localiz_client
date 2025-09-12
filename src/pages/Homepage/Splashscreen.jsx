@@ -16,7 +16,7 @@ export default function Splashscreen() {
       return;
     }
 
-    const TOTAL = 6000; // ms
+    const TOTAL = 5000; // ms
     const FADE = 600; // ms (match CSS)
 
     const leaveTimer = setTimeout(() => setLeaving(true), TOTAL - FADE);

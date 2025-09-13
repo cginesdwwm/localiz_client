@@ -8,6 +8,7 @@ import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
 import { useNavigate } from "react-router-dom";
+import BackLink from "../../components/Common/BackLink";
 
 const schema = yup.object({
   currentPassword: yup.string().required("Le mot de passe actuel est requis"),
@@ -72,10 +73,11 @@ export default function ChangePassword() {
   return (
     <div className="h-screen center-screen bg-[var(--bg)] px-4">
       <div className="w-full max-w-md">
-        <div className="flex flex-col items-center mb-6">
-          <h1 className="text-3xl font-bold text-center text-[var(--text)]">
-            Modifier le mot de passe
-          </h1>
+        <div className="mb-4">
+          <BackLink
+            to="/settings/manage-account"
+            label="Modifier le mot de passe"
+          />
         </div>
 
         <div className="mb-4">

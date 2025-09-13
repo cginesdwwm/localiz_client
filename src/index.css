@@ -191,6 +191,13 @@ h6,
   font-family: "Quicksand", sans-serif;
 }
 
+/* Small Fredoka bold helper used by compact labels */
+.backlink {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+}
+
 /* UI text and labels */
 .ui-text,
 label,
@@ -239,6 +246,8 @@ b {
    FORMS / INPUTS
    ----------------------------- */
 input[type="text"],
+input[type="tel"],
+input[type="date"],
 input[type="email"],
 input[type="password"],
 input[type="search"],
@@ -250,6 +259,8 @@ select {
   padding: 0.5rem 0.75rem;
   border-radius: 14px;
   outline: none;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 /* Placeholder styling */

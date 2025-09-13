@@ -1,6 +1,6 @@
 // PAGE INSCRIPTION
 
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -79,6 +79,7 @@ export default function Register() {
     email: "",
     phone: "",
     postalCode: "",
+    city: "",
     birthday: "",
     gender: "",
     password: "",
@@ -159,7 +160,10 @@ export default function Register() {
     postalCode: yup
       .string()
       .required("Le code postal est obligatoire.")
-      .matches(/^\d{5}$/, "Format de code postal non valide."),
+      .matches(
+        /^(?:(?:0[1-9]|[1-8]\d|9[0-5]|20)\d{3}|(?:971|972|973|974|975|976|977|978|984|986|987|988)\d{2})$/,
+        "Format de code postal non valide (France métropolitaine, Corse ou DOM-TOM)."
+      ),
     birthday: yup
       .date()
       .typeError("Veuillez entrer une date valide.")
@@ -211,11 +215,75 @@ export default function Register() {
     formState: { errors, isValid },
     reset,
     setError,
+    setValue,
   } = useForm({
     defaultValues,
     resolver: yupResolver(schema),
     mode: "onChange",
   });
+
+  // State for postal code -> towns suggestions
+  const [towns, setTowns] = useState([]);
+  const [postalQuery, setPostalQuery] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [postalRaw, setPostalRaw] = useState("");
+  const [selectedTown, setSelectedTown] = useState("");
+
+  const suggestionsRef = useRef(null);
+
+  // Fetch towns when postalQuery is 5 digits (debounced)
+  useEffect(() => {
+    if (!postalQuery || postalQuery.length !== 5) {
+      setTowns([]);
+      return;
+    }
+
+    let cancelled = false;
+    const controller = new AbortController();
+
+    async function fetchTowns() {
+      try {
+        const res = await fetch(
+          `https://geo.api.gouv.fr/communes?codePostal=${postalQuery}&fields=nom,code&format=json`,
+          { signal: controller.signal }
+        );
+        if (!res.ok) {
+          setTowns([]);
+          return;
+        }
+        const data = await res.json();
+        if (cancelled) return;
+        setTowns(Array.isArray(data) ? data : []);
+        setShowSuggestions(true);
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        setTowns([]);
+      } finally {
+        // no-op
+      }
+    }
+
+    const id = setTimeout(fetchTowns, 300);
+    return () => {
+      cancelled = true;
+      controller.abort();
+      clearTimeout(id);
+    };
+  }, [postalQuery]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    function onDocClick(e) {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(e.target)
+      ) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, []);
 
   // Fonction de soumission du formulaire
   async function onSubmit(values) {
@@ -272,8 +340,13 @@ export default function Register() {
 
   return (
     <div className="p-1">
+      <div className="mb-4 text-center">
+        <h1 className="text-4xl font-bold text-center text-[var(--text)] mb-8">
+          Inscription
+        </h1>
+      </div>
       <form
-        className="flex flex-col gap-4 mb-6 mx-auto max-w-[400px]"
+        className="flex flex-col gap-5 mb-6 mx-auto max-w-[400px]"
         onSubmit={handleSubmit(onSubmit)}
       >
         <FocusRing>
@@ -335,7 +408,7 @@ export default function Register() {
                 />
               )}
             />
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 mb-6">
               Attention : vous ne pourrez pas modifier votre pseudo par la
               suite. Pour toute demande de changement, il vous faudra contacter
               le support.
@@ -366,17 +439,37 @@ export default function Register() {
             <Controller
               name="phone"
               control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  id="phone"
-                  placeholder="Téléphone"
-                  aria-label="Téléphone"
-                  onInput={() => {}}
-                  error={errors.phone?.message}
-                  maxLength={10}
-                />
-              )}
+              render={({ field }) => {
+                const raw = field.value || "";
+                const cleaned = String(raw).replace(/\D/g, "").slice(0, 10);
+
+                return (
+                  <Input
+                    {...field}
+                    id="phone"
+                    // show raw digits (no spaces) so the input looks identical
+                    value={cleaned}
+                    // keep form state as raw digits
+                    onChange={(e) => {
+                      const nextDigits = String(e.target.value)
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
+                      field.onChange(nextDigits);
+                    }}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    pattern="[0-9]*"
+                    placeholder="Téléphone"
+                    aria-label="Téléphone"
+                    error={errors.phone?.message}
+                    maxLength={10}
+                    className="h-12"
+                  />
+                );
+              }}
             />
           </div>
 
@@ -385,18 +478,71 @@ export default function Register() {
             <Controller
               name="postalCode"
               control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  id="postalCode"
-                  placeholder="Code postal"
-                  aria-label="Code postal"
-                  onInput={() => {}}
-                  error={errors.postalCode?.message}
-                  maxLength={5}
-                />
-              )}
+              render={({ field }) => {
+                const raw = field.value || "";
+                const cleaned = String(raw).replace(/\D/g, "").slice(0, 5);
+
+                return (
+                  <Input
+                    id="postalCode"
+                    // show postal + selected town inside the same input when chosen
+                    value={
+                      selectedTown
+                        ? `${postalRaw} ${selectedTown}`
+                        : postalRaw !== ""
+                        ? postalRaw
+                        : cleaned
+                    }
+                    // keep form state as raw digits (cleaned) but preserve the user's visible input
+                    onChange={(e) => {
+                      const rawInput = String(e.target.value);
+                      // typing clears any previously selected town
+                      if (selectedTown) {
+                        setSelectedTown("");
+                        setValue("city", "");
+                      }
+                      setPostalRaw(rawInput);
+                      const next = rawInput.replace(/\D/g, "").slice(0, 5);
+                      field.onChange(next);
+                      setPostalQuery(next);
+                    }}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    placeholder="Code postal"
+                    aria-label="Code postal"
+                    error={errors.postalCode?.message}
+                    maxLength={5}
+                    className="h-12"
+                  />
+                );
+              }}
             />
+          </div>
+
+          {/* Suggestions dropdown (attached to postal code) */}
+          <div className="relative" ref={suggestionsRef}>
+            {showSuggestions && towns && towns.length > 0 && (
+              <ul className="absolute z-20 left-0 right-0 mt-2 bg-white text-black rounded border max-h-56 overflow-auto">
+                {towns.map((t) => (
+                  <li
+                    key={t.code}
+                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                    onClick={() => {
+                      // set both postalCode and city in the form
+                      setValue("postalCode", postalQuery);
+                      setValue("city", t.nom);
+                      setSelectedTown(t.nom);
+                      setShowSuggestions(false);
+                    }}
+                  >
+                    {t.nom}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Date de naissance */}
@@ -540,7 +686,7 @@ export default function Register() {
         <div className="mt-4 text-center">
           <NavLink
             to="/login"
-            className="font-bold text-lg inline-block leading-tight"
+            className="font-bold text-lg inline-block leading-tight font-quicksand"
           >
             Déjà inscrit·e ?
           </NavLink>

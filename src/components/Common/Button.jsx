@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * Reusable Button component that maps `variant` to theme-aware CSS classes.
  * Variants: 'cta' | 'danger' | 'filter' | 'ghost'

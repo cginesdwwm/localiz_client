@@ -24,6 +24,8 @@ function App() {
     "/register/success",
     "/forgot-password",
     "/change-password",
+    "/settings/manage-account",
+    "/password/success",
     "/confirm-email",
   ];
 

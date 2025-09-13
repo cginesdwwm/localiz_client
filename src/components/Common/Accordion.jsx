@@ -33,16 +33,13 @@ function AccordionItem({ id, open, handleOpen, title, content }) {
     <Accordion
       open={open === id}
       icon={<Icon id={id} open={open} />}
-      className="bg-[#E9E4DA]"
+      className="bg-card"
     >
-      <AccordionHeader
-        onClick={() => handleOpen(id)}
-        className="px-4 text-[#111827] bg-[#E9E4DA]"
-      >
-        <p>{title}</p>
+      <AccordionHeader onClick={() => handleOpen(id)} className="px-4 bg-card">
+        <p className="text">{title}</p>
       </AccordionHeader>
-      <AccordionBody className="px-4 pb-4 text-[#111827] bg-[#E9E4DA]">
-        <p> {content} </p>
+      <AccordionBody className="px-4 pb-4 bg-card">
+        <p className="text"> {content} </p>
       </AccordionBody>
     </Accordion>
   );
@@ -54,7 +51,10 @@ export function DefaultAccordion({ items }) {
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
   return (
-    <div className="border-2 border-[#3E3A4D] rounded-[20px] overflow-hidden bg-[#E9E4DA]">
+    <div
+      className="border-2 rounded-[20px] overflow-hidden bg-card"
+      style={{ borderColor: "var(--accordion-border, rgba(62,58,77,0.8))" }}
+    >
       {items.map((item, index) => (
         <AccordionItem
           key={index}

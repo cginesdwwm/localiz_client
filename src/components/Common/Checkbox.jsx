@@ -23,11 +23,9 @@ const Checkbox = forwardRef(
 
           <span
             aria-hidden
-            style={{
-              backgroundColor: checked ? "#1b9476" : "#D9D9D9",
-              border: checked ? "none" : "1px solid #bdbdbd",
-            }}
-            className={`w-5 h-5 rounded-[5px] flex items-center justify-center transition-all duration-150
+            className={`checkbox-box ${
+              checked ? "checkbox-box--checked" : ""
+            } w-5 h-5 rounded-[5px] flex items-center justify-center transition-all duration-150
               peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-1`}
           >
             <svg
@@ -35,7 +33,9 @@ const Checkbox = forwardRef(
               viewBox="0 0 20 20"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              style={{ color: checked ? "#ffffff" : "transparent" }}
+              style={{
+                color: checked ? "var(--checkbox-checkmark)" : "transparent",
+              }}
             >
               <path
                 d="M4 10l3 3 9-9"

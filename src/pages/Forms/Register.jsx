@@ -11,6 +11,7 @@ import { signUp } from "../../api/auth.api";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import Checkbox from "../../components/Common/Checkbox";
+import FocusRing from "../../components/Common/FocusRing";
 
 import { frenchForbiddenWords } from "../../utils/forbiddenWords";
 
@@ -272,259 +273,260 @@ export default function Register() {
   return (
     <div className="p-1">
       <form
-        className="register-form flex flex-col gap-4 mb-6 mx-auto max-w-[400px]"
+        className="flex flex-col gap-4 mb-6 mx-auto max-w-[400px]"
         onSubmit={handleSubmit(onSubmit)}
       >
-        {/* Prénom */}
-        <div className="flex flex-col">
-          <Controller
-            name="firstName"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="firstName"
-                placeholder="Prénom"
-                aria-label="Prénom"
-                onInput={() => {}}
-                error={errors.firstName?.message}
-                minLength={2}
-                maxLength={50}
-              />
-            )}
-          />
-        </div>
-
-        {/* Nom */}
-        <div className="flex flex-col">
-          <Controller
-            name="lastName"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="lastName"
-                placeholder="Nom"
-                aria-label="Nom"
-                onInput={() => {}}
-                error={errors.lastName?.message}
-                minLength={2}
-                maxLength={35}
-              />
-            )}
-          />
-        </div>
-
-        {/* Pseudo */}
-        <div className="flex flex-col">
-          <Controller
-            name="username"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="username"
-                placeholder="Pseudo"
-                aria-label="Pseudo"
-                onInput={() => {}}
-                error={errors.username?.message}
-                minLength={4}
-                maxLength={20}
-              />
-            )}
-          />
-          <p className="text-sm text-gray-500">
-            Attention : votre pseudo ne pourra pas être modifié par la suite.
-            Pour toute demande de changement, il vous faudra contacter le
-            support.
-          </p>
-        </div>
-
-        {/* Email */}
-        <div className="flex flex-col">
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="email"
-                type="email"
-                placeholder="Adresse email"
-                aria-label="Adresse email"
-                onInput={() => {}}
-                error={errors.email?.message}
-              />
-            )}
-          />
-        </div>
-
-        {/* Téléphone */}
-        <div className="flex flex-col">
-          <Controller
-            name="phone"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="phone"
-                placeholder="Téléphone"
-                aria-label="Téléphone"
-                onInput={() => {}}
-                error={errors.phone?.message}
-                maxLength={10}
-              />
-            )}
-          />
-        </div>
-
-        {/* Code postal */}
-        <div className="flex flex-col">
-          <Controller
-            name="postalCode"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="postalCode"
-                placeholder="Code postal"
-                aria-label="Code postal"
-                onInput={() => {}}
-                error={errors.postalCode?.message}
-                maxLength={5}
-              />
-            )}
-          />
-        </div>
-
-        {/* Date de naissance */}
-        <div className="flex flex-col">
-          <Controller
-            name="birthday"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="birthday"
-                type="date"
-                placeholder="Date de naissance"
-                aria-label="Date de naissance"
-                onInput={() => {}}
-                error={errors.birthday?.message}
-              />
-            )}
-          />
-        </div>
-
-        {/* Genre */}
-        <div className="flex flex-col">
-          <select
-            {...register("gender")}
-            id="gender"
-            aria-label="Genre"
-            aria-required="true"
-            aria-invalid={errors.gender ? "true" : "false"}
-            aria-describedby={errors.gender ? "gender-error" : undefined}
-            className="w-full h-12 rounded border px-3 py-2 text-sm text-[#303030]"
-          >
-            <option value="">Genre</option>
-            <option value="female">Femme</option>
-            <option value="male">Homme</option>
-            <option value="other">Autre / Je préfère ne pas répondre</option>
-          </select>
-          {errors.gender && (
-            <p id="gender-error" className="error-text">
-              {errors.gender.message}
-            </p>
-          )}
-        </div>
-
-        {/* Mot de passe */}
-        <div className="flex flex-col mt-4">
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="password"
-                type="password"
-                placeholder="Mot de passe"
-                aria-label="Mot de passe"
-                onInput={() => {}}
-                error={errors.password?.message}
-                minLength={8}
-                maxLength={30}
-              />
-            )}
-          />
-        </div>
-
-        {/* Confirmation */}
-        <div className="flex flex-col">
-          <Controller
-            name="confirmPassword"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirmer le mot de passe"
-                aria-label="Confirmer le mot de passe"
-                onInput={() => {}}
-                error={errors.confirmPassword?.message}
-              />
-            )}
-          />
-        </div>
-
-        {/* Conditions */}
-        <Controller
-          name="agreeToTerms"
-          control={control}
-          render={({ field }) => (
-            <div className="flex items-start">
-              <div className="flex items-center h-5">
-                <Checkbox
-                  id="agreeToTerms"
-                  ariaLabel={
-                    "J'accepte les conditions générales et la politique de confidentialité"
-                  }
-                  checked={!!field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                  aria-required="true"
-                  aria-invalid={errors.agreeToTerms ? "true" : "false"}
-                  aria-describedby={
-                    errors.agreeToTerms ? "agreeToTerms-error" : undefined
-                  }
+        <FocusRing>
+          {/* Prénom */}
+          <div className="flex flex-col">
+            <Controller
+              name="firstName"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="firstName"
+                  placeholder="Prénom"
+                  aria-label="Prénom"
+                  onInput={() => {}}
+                  error={errors.firstName?.message}
+                  minLength={2}
+                  maxLength={50}
                 />
-              </div>
-              <div className="ml-3 text-sm">
-                <div>
-                  J'ai lu et j'accepte les{" "}
-                  <a href="/legal#cgu" className="underline">
-                    conditions générales
-                  </a>{" "}
-                  et la{" "}
-                  <a href="/legal#privacy" className="underline">
-                    politique de confidentialité
-                  </a>
-                  .
-                </div>
-                {errors.agreeToTerms && (
-                  <p
-                    id="agreeToTerms-error"
-                    className="error-text text-sm mt-1"
-                  >
-                    {errors.agreeToTerms.message}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-        />
+              )}
+            />
+          </div>
 
+          {/* Nom */}
+          <div className="flex flex-col">
+            <Controller
+              name="lastName"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="lastName"
+                  placeholder="Nom"
+                  aria-label="Nom"
+                  onInput={() => {}}
+                  error={errors.lastName?.message}
+                  minLength={2}
+                  maxLength={35}
+                />
+              )}
+            />
+          </div>
+
+          {/* Pseudo */}
+          <div className="flex flex-col">
+            <Controller
+              name="username"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="username"
+                  placeholder="Pseudo"
+                  aria-label="Pseudo"
+                  onInput={() => {}}
+                  error={errors.username?.message}
+                  minLength={4}
+                  maxLength={20}
+                />
+              )}
+            />
+            <p className="text-sm text-gray-500">
+              Attention : vous ne pourrez pas modifier votre pseudo par la
+              suite. Pour toute demande de changement, il vous faudra contacter
+              le support.
+            </p>
+          </div>
+
+          {/* Email */}
+          <div className="flex flex-col">
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="email"
+                  type="email"
+                  placeholder="Adresse email"
+                  aria-label="Adresse email"
+                  onInput={() => {}}
+                  error={errors.email?.message}
+                />
+              )}
+            />
+          </div>
+
+          {/* Téléphone */}
+          <div className="flex flex-col">
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="phone"
+                  placeholder="Téléphone"
+                  aria-label="Téléphone"
+                  onInput={() => {}}
+                  error={errors.phone?.message}
+                  maxLength={10}
+                />
+              )}
+            />
+          </div>
+
+          {/* Code postal */}
+          <div className="flex flex-col">
+            <Controller
+              name="postalCode"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="postalCode"
+                  placeholder="Code postal"
+                  aria-label="Code postal"
+                  onInput={() => {}}
+                  error={errors.postalCode?.message}
+                  maxLength={5}
+                />
+              )}
+            />
+          </div>
+
+          {/* Date de naissance */}
+          <div className="flex flex-col">
+            <Controller
+              name="birthday"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="birthday"
+                  type="date"
+                  placeholder="Date de naissance"
+                  aria-label="Date de naissance"
+                  onInput={() => {}}
+                  error={errors.birthday?.message}
+                />
+              )}
+            />
+          </div>
+
+          {/* Genre */}
+          <div className="flex flex-col">
+            <select
+              {...register("gender")}
+              id="gender"
+              aria-label="Genre"
+              aria-required="true"
+              aria-invalid={errors.gender ? "true" : "false"}
+              aria-describedby={errors.gender ? "gender-error" : undefined}
+              className="w-full h-12 rounded border px-3 py-2 text-sm input-surface"
+            >
+              <option value="">Genre</option>
+              <option value="female">Femme</option>
+              <option value="male">Homme</option>
+              <option value="other">Autre / Je préfère ne pas répondre</option>
+            </select>
+            {errors.gender && (
+              <p id="gender-error" className="error-text">
+                {errors.gender.message}
+              </p>
+            )}
+          </div>
+
+          {/* Mot de passe */}
+          <div className="flex flex-col mt-4">
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="password"
+                  type="password"
+                  placeholder="Mot de passe"
+                  aria-label="Mot de passe"
+                  onInput={() => {}}
+                  error={errors.password?.message}
+                  minLength={8}
+                  maxLength={30}
+                />
+              )}
+            />
+          </div>
+
+          {/* Confirmation */}
+          <div className="flex flex-col">
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirmer le mot de passe"
+                  aria-label="Confirmer le mot de passe"
+                  onInput={() => {}}
+                  error={errors.confirmPassword?.message}
+                />
+              )}
+            />
+          </div>
+
+          {/* Conditions */}
+          <Controller
+            name="agreeToTerms"
+            control={control}
+            render={({ field }) => (
+              <div className="flex items-start">
+                <div className="flex items-center h-5">
+                  <Checkbox
+                    id="agreeToTerms"
+                    ariaLabel={
+                      "J'accepte les conditions générales et la politique de confidentialité"
+                    }
+                    checked={!!field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                    aria-required="true"
+                    aria-invalid={errors.agreeToTerms ? "true" : "false"}
+                    aria-describedby={
+                      errors.agreeToTerms ? "agreeToTerms-error" : undefined
+                    }
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <div>
+                    J'ai lu et j'accepte les{" "}
+                    <a href="/legal#cgu" className="underline">
+                      conditions générales
+                    </a>{" "}
+                    et la{" "}
+                    <a href="/legal#privacy" className="underline">
+                      politique de confidentialité
+                    </a>
+                    .
+                  </div>
+                  {errors.agreeToTerms && (
+                    <p
+                      id="agreeToTerms-error"
+                      className="error-text text-sm mt-1"
+                    >
+                      {errors.agreeToTerms.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+          />
+        </FocusRing>
         <Button
           type="submit"
           disabled={!isValid}
@@ -535,9 +537,14 @@ export default function Register() {
           S'inscrire
         </Button>
 
-        <NavLink to="/login" className="font-bold m-1 text-lg">
-          Déjà inscrit ?
-        </NavLink>
+        <div className="mt-4 text-center">
+          <NavLink
+            to="/login"
+            className="font-bold text-lg inline-block leading-tight"
+          >
+            Déjà inscrit·e ?
+          </NavLink>
+        </div>
       </form>
     </div>
   );

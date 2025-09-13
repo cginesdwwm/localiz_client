@@ -34,6 +34,7 @@ import RegisterSuccess from "./pages/Forms/RegisterSuccess";
 import Login from "./pages/Forms/Login";
 import ChangePassword from "./pages/Forms/ChangePassword";
 import ForgotPassword from "./pages/Forms/ForgotPassword";
+import ChangePasswordSuccess from "./pages/Forms/ChangePasswordSuccess";
 
 import Homepage from "./pages/Homepage/Homepage";
 import Splashscreen from "./pages/Homepage/Splashscreen";
@@ -117,6 +118,7 @@ export const router = createBrowserRouter([
           </UserConnected>
         ),
       },
+      { path: "/password/success", element: <ChangePasswordSuccess /> },
       { path: "/contact", element: <Contact /> },
 
       // --- Deals ---

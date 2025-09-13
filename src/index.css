@@ -1,45 +1,145 @@
-/* Main stylesheet - theme variables + base rules */
-@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Mulish:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;600&display=swap");
+/*
+  Main stylesheet - theme variables + base rules
+
+  Theme toggle instructions:
+  - To enable the light theme, add the class `theme-light` to the document root
+    (e.g. <html class="theme-light"> or <body class="theme-light">).
+  - Themeable variables are defined in :root and overridden inside
+    `.theme-light`.
+
+  Primary variables you can tune:
+  - --bg                 : page background
+  - --text               : main text color
+  - --input-bg           : input background color
+  - --input-text         : input text color
+  - --btn-cta-bg         : primary CTA background
+  - --btn-text-contrast  : button text color
+  - --focus-outline      : focus ring color (used by `.focus-ring`)
+  - --focus-outline-width: focus outline width
+  - --focus-shadow-color : focus shadow color
+  - --focus-shadow-blur  : focus shadow blur radius
+
+  Notes:
+  - The `.focus-ring` wrapper class scopes the focus ring rules to specific
+    form groups (recommended for controlling where the prominent focus
+    appearance appears).
+  - Light-theme focus values are intentionally preserved; do not change them
+    unless you want the light theme focus ring to visually change.
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Mulish:wght@400;600;700&family=Quicksand:wght@400;600;700&display=swap");
 @import "tailwindcss";
 
-/*
-  Theme variables
-  - Default theme is defined in :root (dark teal background)
-  - .theme-light applied on <html> or <body> will switch to the light theme
-*/
+/* ======================================================================
+   THEME VARIABLES
+   - Default values live in :root
+   - Light theme overrides applied when `.theme-light` is set on <html> or <body>
+   ====================================================================== */
+
 :root {
+  /* Base UI */
   --bg: #124660;
   --text: #ffffff;
-  --splash-text: #f4ebd6; /* only used in Splashscreen => .front-heading */
-  --input-bg: #d9d9d9;
-  --input-text: #4a4a4a;
+  --splash-text: #f4ebd6;
 
-  /* Button variables (default theme) */
+  /* Inputs */
+  --input-bg: #d9d9d9;
+  --input-text: #000000;
+  --input-placeholder: #4a4a4a;
+
+  /* Buttons */
   --btn-cta-bg: #1b9476;
   --btn-danger-bg: #d42424;
   --btn-filter-bg: #1b9476;
   --btn-text-contrast: #ffffff;
+
+  /* Focus ring */
+  --focus-outline: var(--btn-cta-bg);
+  --focus-outline-width: 3px;
+  --focus-shadow-color: rgba(27, 148, 118, 0.1);
+  --focus-shadow-blur: 20px;
+
+  /* Checkbox colors */
+  --checkbox-checked-bg: var(--btn-cta-bg);
+  --checkbox-unchecked-bg: #d9d9d9;
+  --checkbox-border: #bdbdbd;
+  --checkbox-checkmark: var(--btn-text-contrast);
+  /* Accordion / panel border */
+  --accordion-border: rgba(62, 58, 77, 0.8);
+  /* Card / modal surfaces */
+  --card-bg: #ffffff;
+  --modal-z: 1;
+
+  /* Chart strokes */
+  --chart-grid-stroke: rgba(255, 255, 255, 0.07); /* #ffffff12 */
+  --chart-axis-stroke: rgba(255, 255, 255, 0.56); /* #ffffff90 */
+  /* Chart palette (can be overridden in .theme-light) */
+  --chart-color-0: #60a5fa;
+  --chart-color-1: #34d399;
+  --chart-color-2: #fb7185;
+  --chart-color-3: #fbbf24;
+  --chart-color-4: #a78bfa;
 }
 
-/* Light theme override (apply by adding .theme-light to <html> or <body>) */
+/* Card / modal helpers */
+.modal-card {
+  background-color: var(--card-bg);
+  opacity: 1;
+  z-index: var(--modal-z);
+}
+.bg-card {
+  background-color: var(--card-bg);
+}
+
+/* Input helpers */
+.input-surface {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+.placeholder-muted::placeholder {
+  color: var(--input-placeholder);
+  font-family: "Mulish", sans-serif;
+}
+
+/* Light theme overrides */
 .theme-light {
   --bg: #f4ebd6;
   --text: #000000;
   --splash-text: #124660;
+
   --input-bg: #bdbdbd;
   --input-text: #3a3a3a;
 
-  /* Light theme overrides for buttons */
+  /* Buttons */
   --btn-cta-bg: #8bd59e;
   --btn-danger-bg: #ff4c4c;
   --btn-filter-bg: #8bd59e;
   --btn-text-contrast: #000000;
+
+  /* Light-theme focus overrides */
+  --focus-outline: #8bd59e;
+  --focus-shadow-color: rgba(139, 213, 158, 0.25);
+  /* Light theme accordion border */
+  --accordion-border: rgba(62, 58, 77, 0.6);
+  /* Chart palette in light theme (defaults mirror dark theme palette) */
+  --chart-color-0: #60a5fa;
+  --chart-color-1: #34d399;
+  --chart-color-2: #fb7185;
+  --chart-color-3: #fbbf24;
+  --chart-color-4: #a78bfa;
 }
 
 /* Smooth transitions for theme changes */
 * {
   transition: background-color 200ms ease, color 200ms ease,
     border-color 200ms ease;
+}
+
+/* Box-sizing reset to avoid subpixel overflow and consistent layout */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 /* Global layout */
@@ -50,6 +150,7 @@ body,
 }
 
 body {
+  margin: 0;
   background-color: var(--bg);
   color: var(--text);
   /* Default body font for regular text */
@@ -59,7 +160,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Typography rules */
+/* Helper: center content vertically/horizontally without causing scroll
+   Use this where you want full-viewport centering (replaces various ad-hoc patterns) */
+.center-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* -----------------------------
+   TYPOGRAPHY
+   ----------------------------- */
+
 /* Titles across the app use Fredoka and are bold */
 h1,
 h2,
@@ -70,11 +182,16 @@ h6,
 .title,
 .heading {
   font-family: "Fredoka";
-  font-weight: 700; /* bold */
+  font-weight: 700;
   color: inherit;
 }
 
-/* UI text and labels (form labels, small UI copy) use Quicksand */
+/* Quick helper to force Quicksand where needed (e.g. short titles) */
+.font-quicksand {
+  font-family: "Quicksand", sans-serif;
+}
+
+/* UI text and labels */
 .ui-text,
 label,
 .form-label,
@@ -83,7 +200,7 @@ label,
   font-weight: 400;
 }
 
-/* Regular paragraph/body text remains Mulish */
+/* Regular paragraph/body text */
 p,
 .text,
 .body-text {
@@ -91,7 +208,7 @@ p,
   font-weight: 400;
 }
 
-/* Ensure text inherits the global color unless explicitly styled */
+/* Elements should inherit the global color unless overridden */
 a,
 p,
 span,
@@ -102,11 +219,12 @@ b {
   color: inherit;
 }
 
-/* Splashscreen special heading */
+/* -----------------------------
+   SPLASHSCREEN
+   ----------------------------- */
 .front-heading {
   color: var(--splash-text);
   transition: opacity 600ms ease, transform 600ms ease, color 200ms ease;
-  /* slightly larger than the default h1 to make the splash headline stand out */
   font-size: 2.25rem;
   line-height: 1.05;
 }
@@ -117,7 +235,9 @@ b {
   }
 }
 
-/* Inputs styling across the app */
+/* -----------------------------
+   FORMS / INPUTS
+   ----------------------------- */
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -125,50 +245,69 @@ input[type="search"],
 textarea,
 select {
   background-color: var(--input-bg);
-  color: #000000;
+  color: var(--input-text);
   border: 1px solid rgba(0, 0, 0, 0.12);
   padding: 0.5rem 0.75rem;
   border-radius: 14px;
   outline: none;
 }
 
-/* Placeholder color: slightly muted relative to input text */
+/* Placeholder styling */
 input::placeholder,
 textarea::placeholder {
-  color: rgba(0, 0, 0, 0.45);
-  /* Use Mulish for placeholders to match project input text */
+  color: var(--input-placeholder);
   font-family: "Mulish", sans-serif;
 }
 
-/* Buttons should inherit text color (keeps contrast consistent) */
-button {
-  color: inherit;
-}
-
-/* Accessibility helpers */
+/* Accessibility: simple focus fallback */
 :focus {
   outline: 3px solid rgba(255, 255, 255, 0.12);
   outline-offset: 2px;
 }
 
-/* Register page: green focus ring for form controls only inside the register form */
-.register-form input:focus,
-.register-form select:focus,
-.register-form textarea:focus {
-  outline: 3px solid var(--btn-cta-bg);
+/* Scoped reusable focus ring (wrap inputs with .focus-ring) */
+.focus-ring input:focus,
+.focus-ring select:focus,
+.focus-ring textarea:focus {
+  outline: var(--focus-outline-width) solid var(--focus-outline);
   outline-offset: 2px;
-  border-color: var(--btn-cta-bg);
-  box-shadow: 0 0 0 4px rgba(27, 148, 118, 0.08);
+  border-color: var(--focus-outline);
+  box-shadow: 0 0 var(--focus-shadow-blur) var(--focus-shadow-color);
 }
 
-/* Error / validation text color */
+/* Checkbox visual helper (use by Checkbox component) */
+.checkbox-box {
+  width: 1.25rem; /* 20px */
+  height: 1.25rem;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 150ms ease, border 150ms ease, color 150ms ease;
+  background-color: var(--checkbox-unchecked-bg);
+  border: 1px solid var(--checkbox-border);
+}
+.checkbox-box--checked {
+  background-color: var(--checkbox-checked-bg);
+  border: none;
+}
+.checkbox-box svg {
+  color: transparent;
+}
+.checkbox-box--checked svg {
+  color: var(--checkbox-checkmark);
+}
+
+/* Validation / error text */
 .error-text,
 .form-error,
 .field-error {
   color: #ffc107;
 }
 
-/* Base button styles */
+/* -----------------------------
+   BUTTONS
+   ----------------------------- */
 .btn {
   display: flex;
   align-items: center;
@@ -178,34 +317,26 @@ button {
   border: none;
   cursor: pointer;
   color: var(--btn-text-contrast);
-  font-family: "Quicksand", sans-serif; /* UI font for button labels */
+  font-family: "Quicksand", sans-serif;
   font-weight: 600;
-  border-radius: 14px; /* default radius for most buttons */
+  border-radius: 14px;
 }
 
-/* CTA button */
 .btn-cta {
   background-color: var(--btn-cta-bg);
 }
-
-/* Danger button */
 .btn-danger {
   background-color: var(--btn-danger-bg);
 }
-
-/* Filter button */
 .btn-filter {
   background-color: var(--btn-filter-bg);
   border-radius: 16px;
 }
 
-/* Disabled state */
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
-/* Hover states */
 .btn-cta:hover:not(:disabled),
 .btn-filter:hover:not(:disabled) {
   filter: brightness(0.95);
@@ -214,14 +345,15 @@ button {
   filter: brightness(0.92);
 }
 
-/* Ghost button (transparent / minimal) */
 .btn-ghost {
   background: transparent;
   color: var(--text);
   padding: 0.5rem 0.75rem;
 }
 
-/* Splashscreen transitions (match JS FADE = 600ms) */
+/* -----------------------------
+   SPLASH TRANSITIONS & HELPERS
+   ----------------------------- */
 .splashscreen {
   opacity: 1;
   transform: translateY(0) scale(1);
@@ -233,23 +365,17 @@ button {
   transform: translateY(-16px) scale(0.99);
   pointer-events: none;
 }
-
 .splashscreen.leaving .front-heading {
   opacity: 0;
   transform: translateY(-6px);
 }
-
-/* Remove any gap between the splash image and the heading */
 .splashscreen img {
   display: block;
   margin: 0;
 }
-
 .splashscreen .front-heading {
   margin-top: 0;
 }
-
-/* Remove padding/gap from the immediate splash container so logo and heading are flush */
 .splashscreen > .flex-col-center {
   padding: 0;
   gap: 0;

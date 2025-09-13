@@ -19,9 +19,32 @@ import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import Button from "../../components/Common/Button";
 import { getAdminStats, getAdminHealth } from "../../api/admin.api";
 
-const COLORS = ["#60A5FA", "#34D399", "#FB7185", "#FBBF24", "#A78BFA"];
+const DEFAULT_COLORS = ["#60A5FA", "#34D399", "#FB7185", "#FBBF24", "#A78BFA"];
+
+function readCssVar(name, fallback) {
+  try {
+    const val = getComputedStyle(document.documentElement).getPropertyValue(
+      name
+    );
+    return val ? val.trim() : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export default function AdminDashboard() {
+  const chartGridStroke = readCssVar(
+    "--chart-grid-stroke",
+    "rgba(255,255,255,0.07)"
+  );
+  const chartAxisStroke = readCssVar(
+    "--chart-axis-stroke",
+    "rgba(255,255,255,0.56)"
+  );
+  // Build palette from CSS variables (fall back to DEFAULT_COLORS)
+  const COLORS = DEFAULT_COLORS.map((c, i) =>
+    readCssVar(`--chart-color-${i}`, c)
+  );
   const [stats, setStats] = useState(null);
   const [health, setHealth] = useState(null);
   const [healthUpdatedAt, setHealthUpdatedAt] = useState(null);
@@ -226,15 +249,18 @@ export default function AdminDashboard() {
                 <div style={{ width: "100%", height: 220 }}>
                   <ResponsiveContainer>
                     <LineChart data={timeline}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#ffffff12" />
-                      <XAxis dataKey="name" stroke="#ffffff90" />
-                      <YAxis stroke="#ffffff90" />
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke={chartGridStroke}
+                      />
+                      <XAxis dataKey="name" stroke={chartAxisStroke} />
+                      <YAxis stroke={chartAxisStroke} />
                       <Tooltip />
                       <Legend verticalAlign="top" />
                       <Line
                         type="monotone"
                         dataKey="users"
-                        stroke="#60A5FA"
+                        stroke={COLORS[0]}
                         strokeWidth={2}
                         dot={false}
                       />
@@ -242,7 +268,7 @@ export default function AdminDashboard() {
                         <Line
                           type="monotone"
                           dataKey="deals"
-                          stroke="#34D399"
+                          stroke={COLORS[1]}
                           strokeWidth={2}
                           dot={false}
                         />
@@ -253,7 +279,7 @@ export default function AdminDashboard() {
                         <Line
                           type="monotone"
                           dataKey="listings"
-                          stroke="#FBBF24"
+                          stroke={COLORS[3]}
                           strokeWidth={2}
                           dot={false}
                         />

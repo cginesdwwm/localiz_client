@@ -6,6 +6,7 @@ import { uploadImage } from "../../lib/uploadService";
 import { useBlog } from "../../context/BlogContext";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
+import FocusRing from "../../components/Common/FocusRing";
 
 const schema = yup.object({
   title: yup.string().required("Le titre est obligatoire"),
@@ -125,10 +126,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
       ></div>
 
       <div className="flex min-h-full items-center justify-center p-4">
-        <div
-          className="w-full max-w-2xl rounded-3xl shadow-2xl"
-          style={{ backgroundColor: "#ffffff", opacity: 1, zIndex: 1 }}
-        >
+        <div className="w-full max-w-2xl rounded-3xl shadow-2xl modal-card">
           <div className="flex items-center justify-between p-6 pb-4">
             <div className="flex items-center gap-3">
               <div>
@@ -150,144 +148,140 @@ export default function AddBlogModal({ isOpen, onClose }) {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="px-6 pb-6">
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Titre de l'article
-                </label>
-                <Controller
-                  name="title"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      placeholder="Donnez un titre accrocheur à votre article..."
-                      className={`w-full border-2 rounded-xl p-4 focus:outline-none focus:ring-4 transition-all ${
-                        errors.title
-                          ? "border-red-500 focus:border-red-500 focus:ring-red-100"
-                          : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"
-                      }`}
-                      style={{ backgroundColor: "#ffffff", opacity: 1 }}
-                      error={errors.title?.message}
-                    />
-                  )}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Contenu
-                </label>
-                <Controller
-                  name="content"
-                  control={control}
-                  render={({ field }) => (
-                    <div>
-                      <textarea
-                        placeholder="Rédigez votre article ici..."
-                        rows="6"
+            <FocusRing>
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Titre de l'article
+                  </label>
+                  <Controller
+                    name="title"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
                         {...field}
-                        className={`w-full border-2 rounded-xl p-4 focus:outline-none focus:ring-4 transition-all resize-none ${
-                          errors.content
+                        placeholder="Donnez un titre accrocheur à votre article..."
+                        className={`w-full border-2 rounded-xl p-4 input-surface focus:outline-none focus:ring-4 transition-all ${
+                          errors.title
                             ? "border-red-500 focus:border-red-500 focus:ring-red-100"
                             : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"
                         }`}
-                        style={{ backgroundColor: "#ffffff", opacity: 1 }}
+                        error={errors.title?.message}
                       />
-                      {errors.content && (
-                        <p className="error-text text-sm mt-1">
-                          {errors.content.message}
-                        </p>
-                      )}
+                    )}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Contenu
+                  </label>
+                  <Controller
+                    name="content"
+                    control={control}
+                    render={({ field }) => (
+                      <div>
+                        <textarea
+                          placeholder="Rédigez votre article ici..."
+                          rows="6"
+                          {...field}
+                          className={`w-full border-2 rounded-xl p-4 input-surface focus:outline-none focus:ring-4 transition-all resize-none placeholder:text-[15px] ${
+                            errors.content
+                              ? "border-red-500 focus:border-red-500 focus:ring-red-100"
+                              : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"
+                          }`}
+                        />
+                        {errors.content && (
+                          <p className="error-text text-sm mt-1">
+                            {errors.content.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Image
+                  </label>
+
+                  {!preview ? (
+                    <div
+                      className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer hover:border-blue-400 hover:bg-blue-50 ${
+                        dragActive
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-300 bg-gray-50"
+                      }`}
+                      onDragEnter={handleDrag}
+                      onDragLeave={handleDrag}
+                      onDragOver={handleDrag}
+                      onDrop={handleDrop}
+                      onClick={() =>
+                        document.getElementById("file-input").click()
+                      }
+                    >
+                      <div className="flex flex-col items-center gap-3">
+                        <div>
+                          <p className="text-lg font-medium text-gray-700">
+                            Glissez votre image ici
+                          </p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            ou cliquez pour parcourir vos fichiers
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-gray-400 mt-2">
+                          <span>PNG, JPG, JPEG jusqu'à 5MB</span>
+                        </div>
+                      </div>
+                      <input
+                        id="file-input"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </div>
+                  ) : (
+                    <div className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50">
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={preview}
+                              alt="Preview"
+                              className="w-12 h-12 object-cover rounded-lg"
+                            />
+                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 text-xl">
+                              ✓
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">
+                                {preview ? "Image sélectionnée" : ""}
+                              </p>
+                              <p className="text-sm text-gray-500">{}</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            className="w-8 h-8 rounded-full text-red-600"
+                            onClick={removeImage}
+                            type="button"
+                          >
+                            ✕
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   )}
-                />
+                  {errors.image && (
+                    <p className="error-text text-sm mt-1">
+                      {errors.image.message}
+                    </p>
+                  )}
+                </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Image
-                </label>
-
-                {!preview ? (
-                  <div
-                    className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer hover:border-blue-400 hover:bg-blue-50 ${
-                      dragActive
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-300 bg-gray-50"
-                    }`}
-                    style={{ opacity: 1 }}
-                    onDragEnter={handleDrag}
-                    onDragLeave={handleDrag}
-                    onDragOver={handleDrag}
-                    onDrop={handleDrop}
-                    onClick={() =>
-                      document.getElementById("file-input").click()
-                    }
-                  >
-                    <div className="flex flex-col items-center gap-3">
-                      <div>
-                        <p className="text-lg font-medium text-gray-700">
-                          Glissez votre image ici
-                        </p>
-                        <p className="text-sm text-gray-500 mt-1">
-                          ou cliquez pour parcourir vos fichiers
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-gray-400 mt-2">
-                        <span>PNG, JPG, JPEG jusqu'à 5MB</span>
-                      </div>
-                    </div>
-                    <input
-                      id="file-input"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className="border-2 border-gray-200 rounded-xl p-4 bg-gray-50"
-                    style={{ opacity: 1 }}
-                  >
-                    <div className="flex flex-col gap-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={preview}
-                            alt="Preview"
-                            className="w-12 h-12 object-cover rounded-lg"
-                          />
-                          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-600 text-xl">
-                            ✓
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">
-                              {preview ? "Image sélectionnée" : ""}
-                            </p>
-                            <p className="text-sm text-gray-500">{}</p>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          className="w-8 h-8 rounded-full text-red-600"
-                          onClick={removeImage}
-                          type="button"
-                        >
-                          ✕
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {errors.image && (
-                  <p className="error-text text-sm mt-1">
-                    {errors.image.message}
-                  </p>
-                )}
-              </div>
-            </div>
+            </FocusRing>
 
             <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
               <Button

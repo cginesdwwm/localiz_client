@@ -171,3 +171,21 @@ export async function signout() {
     console.error("signout error:", error);
   }
 }
+
+export async function requestPasswordReset({ email }) {
+  try {
+    const response = await fetch(buildUrl("/user/forgot-password"), {
+      method: "POST",
+      body: JSON.stringify({ email }),
+      headers: { "Content-type": "application/json" },
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.message || "Erreur envoi email de réinitialisation");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("requestPasswordReset error:", error);
+    throw error;
+  }
+}

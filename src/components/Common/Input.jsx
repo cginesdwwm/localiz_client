@@ -28,7 +28,7 @@ const Input = forwardRef(
     ref
   ) => {
     const base =
-      "w-full rounded border px-3 py-2 text-sm text-[#303030] bg-[#D9D9D9] h-12";
+      "w-full rounded border px-3 py-2 text-sm input-surface placeholder-muted placeholder:text-[15px] h-12";
     const errorClass = error ? "border-yellow-400" : "border-gray-200";
 
     return (

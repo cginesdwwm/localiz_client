@@ -9,6 +9,7 @@ import { SUPABASE_LOGO, localLogo } from "../../constants/logo";
 import { notify } from "../../utils/notify";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
+import FocusRing from "../../components/Common/FocusRing";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Login() {
@@ -82,7 +83,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg)] px-4">
+    <div className="h-screen center-screen bg-[var(--bg)] px-4">
       <div className="w-full max-w-md">
         {/* Logo + Heading */}
         <div className="flex flex-col items-center mb-8">
@@ -103,40 +104,43 @@ export default function Login() {
 
         {/* Form */}
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(submit)}>
-          {/* Email / username */}
-          <Controller
-            name="data"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="data"
-                placeholder="Email ou pseudo"
-                onInput={() => setServerError("")}
-                error={errors.data?.message}
-                className="h-12"
-              />
-            )}
-          />
+          <FocusRing>
+            {/* Email / username */}
+            <Controller
+              name="data"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="data"
+                  placeholder="Email ou pseudo"
+                  onInput={() => setServerError("")}
+                  error={errors.data?.message}
+                  className="h-12"
+                />
+              )}
+            />
 
-          {/* Password */}
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="password"
-                type="password"
-                placeholder="Mot de passe"
-                onInput={() => setServerError("")}
-                error={errors.password?.message}
-                className="h-12"
-              />
-            )}
-          />
+            {/* Password */}
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="password"
+                  type="password"
+                  placeholder="Mot de passe"
+                  onInput={() => setServerError("")}
+                  error={errors.password?.message}
+                  className="h-12"
+                  maxLength={30}
+                />
+              )}
+            />
 
-          {/* Submit button */}
+            {/* Submit button */}
+          </FocusRing>
           <Button
             type="submit"
             variant="cta"
@@ -159,10 +163,7 @@ export default function Login() {
           >
             Mot de passe oublié ?
           </NavLink>
-          <NavLink
-            to="/register"
-            className="text-blue-600 font-bold mt-4 text-lg"
-          >
+          <NavLink to="/register" className="font-bold mt-4 text-lg">
             Créer un compte
           </NavLink>
         </div>

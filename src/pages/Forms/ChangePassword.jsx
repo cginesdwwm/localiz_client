@@ -75,6 +75,7 @@ export default function ChangePassword() {
       <div className="w-full max-w-md">
         <div className="mb-4">
           <BackLink
+            fixed
             to="/settings/manage-account"
             label="Modifier le mot de passe"
           />

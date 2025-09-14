@@ -68,6 +68,7 @@
   --accordion-border: rgba(62, 58, 77, 0.8);
   /* Card / modal surfaces */
   --card-bg: #ffffff;
+  --card-text: #000000;
   --modal-z: 1;
 
   /* Chart strokes */
@@ -89,6 +90,7 @@
 }
 .bg-card {
   background-color: var(--card-bg);
+  color: var(--card-text);
 }
 
 /* Input helpers */
@@ -119,14 +121,41 @@
   /* Light-theme focus overrides */
   --focus-outline: #8bd59e;
   --focus-shadow-color: rgba(139, 213, 158, 0.25);
+  --card-text: #000000;
   /* Light theme accordion border */
   --accordion-border: rgba(62, 58, 77, 0.6);
+  /* Make unchecked checkboxes slightly darker in light theme for better contrast */
+  --checkbox-unchecked-bg: #bdbdbd;
+  --checkbox-border: #8f8f8f;
   /* Chart palette in light theme (defaults mirror dark theme palette) */
   --chart-color-0: #60a5fa;
   --chart-color-1: #34d399;
   --chart-color-2: #fb7185;
   --chart-color-3: #fbbf24;
   --chart-color-4: #a78bfa;
+}
+
+/* In the light theme, override utility classes that reference white borders
+   so they appear as black/dark borders for better contrast. These target
+   common Tailwind-like classes used in templates (e.g. border-white, border-white/5).
+*/
+.theme-light .border-white {
+  border-color: rgba(0, 0, 0, 1) !important;
+}
+.theme-light .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.05) !important;
+}
+.theme-light .border-white\/30 {
+  border-color: rgba(0, 0, 0, 0.3) !important;
+}
+.theme-light .border-white\/50 {
+  border-color: rgba(0, 0, 0, 0.5) !important;
+}
+.theme-light .border-t.border-white {
+  border-top-color: rgba(0, 0, 0, 1) !important;
+}
+.theme-light .border-t.border-white\/5 {
+  border-top-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 /* Smooth transitions for theme changes */
@@ -184,6 +213,13 @@ h6,
   font-family: "Fredoka";
   font-weight: 700;
   color: inherit;
+}
+
+/* Semantic strong but visually normal
+   Use this class on <strong> when the content should be announced
+   as important by assistive tech but should keep normal visual weight. */
+.strong-normal {
+  font-weight: 400;
 }
 
 /* Quick helper to force Quicksand where needed (e.g. short titles) */
@@ -307,6 +343,16 @@ textarea::placeholder {
 }
 .checkbox-box--checked svg {
   color: var(--checkbox-checkmark);
+}
+
+/* Danger-colored checkbox modifier (use by passing `className="danger-checkbox"` to the Checkbox component)
+   This keeps the change scoped to a single page/component. */
+.danger-checkbox .checkbox-box--checked {
+  background-color: var(--btn-danger-bg);
+  border: none;
+}
+.danger-checkbox .checkbox-box--checked svg {
+  color: var(--btn-text-contrast);
 }
 
 /* Validation / error text */

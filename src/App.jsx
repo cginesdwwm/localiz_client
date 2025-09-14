@@ -19,14 +19,19 @@ function App() {
   // Routes/prefixes dans lesquelles on ne veut pas afficher le header
   const hideHeaderFor = [
     "/",
+    "/about",
+    "/legal",
     "/login",
     "/register",
     "/register/success",
     "/forgot-password",
     "/change-password",
     "/settings/manage-account",
+    "/settings",
+    "/settings/language",
     "/password/success",
     "/confirm-email",
+    "/delete-account",
   ];
 
   const shouldHideHeader =
@@ -34,7 +39,7 @@ function App() {
     hideHeaderFor.some((p) => pathname.startsWith(p + "/"));
 
   return (
-    <div className="h-screen ">
+    <div className="min-h-screen">
       <BlogProvider>
         {!shouldHideHeader && <Header />}
         <main>

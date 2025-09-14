@@ -47,7 +47,7 @@ export default function Splashscreen() {
             if (src !== localLogo) setSrc(localLogo);
           }}
         />
-        <h1 className="mt-0 text-center front-heading title">
+        <h1 className="mt-[-3rem] text-center front-heading title">
           Les bons plans,
           <br />à vol d'oiseau
         </h1>

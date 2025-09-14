@@ -37,6 +37,29 @@ export async function deleteMyAccount() {
 }
 
 /**
+ * Demande de suppression du compte (transmet une raison et détails).
+ * Le serveur peut enregistrer la demande et déclencher la suppression
+ * différée (30 jours) ou effectuer la suppression immédiate selon l'implémentation.
+ */
+export async function requestAccountDeletion(payload) {
+  const response = await fetch(`${BASE_URL}/user/me/delete-request`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || "Erreur lors de la demande de suppression."
+    );
+  }
+
+  return response.json();
+}
+
+/**
  * Change le mot de passe de l'utilisateur.
  * object passwords : Mots de passe actuel et nouveau.
  * returns {Promise<object>} : Message de succès.
@@ -76,6 +99,29 @@ export async function saveMyTheme(theme) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(
       errorData.message || "Erreur lors de la sauvegarde du thème."
+    );
+  }
+
+  return response.json();
+}
+
+/**
+ * Sauvegarde les préférences de cookies de l'utilisateur (requiert cookie d'authentification)
+ * payload example: { measurement: true, personalization: false, marketing: true }
+ */
+export async function saveMyCookiePrefs(payload) {
+  const response = await fetch(`${BASE_URL}/users/me/cookies`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message ||
+        "Erreur lors de la sauvegarde des préférences de cookies."
     );
   }
 

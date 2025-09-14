@@ -19,7 +19,7 @@ export default function Button({
 
   const base = variantMap[variant] || variantMap.cta;
   // Default sizing for buttons across the app. Callers can still append classes.
-  const sizing = "w-3/4 mx-auto";
+  const sizing = "inline-flex items-center justify-center px-4 py-2 rounded-md";
 
   return (
     <button

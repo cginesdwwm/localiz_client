@@ -4,6 +4,7 @@ import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import { getUsersList, deleteUser, toggleUserRole } from "../../api/admin.api";
 import { notify } from "../../utils/notify";
+import ConfirmModal from "../../components/Common/ConfirmModal";
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -28,34 +29,61 @@ export default function AdminUsers() {
     load();
   }, []);
 
-  const handleDelete = async (id) => {
-    const ok = await notify.confirm("Supprimer cet utilisateur ?");
-    if (!ok) return;
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmId, setConfirmId] = useState(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const handleDelete = (id) => {
+    setConfirmId(id);
+    setConfirmOpen(true);
+  };
+
+  const onConfirmDelete = async () => {
+    if (!confirmId) return;
+    setConfirmLoading(true);
     try {
-      await deleteUser(id);
-      setUsers((s) => s.filter((u) => u._id !== id && u.id !== id));
+      await deleteUser(confirmId);
+      setUsers((s) =>
+        s.filter((u) => u._id !== confirmId && u.id !== confirmId)
+      );
       notify.success("Utilisateur supprimé");
     } catch (err) {
       notify.error(err.message || "Erreur lors de la suppression");
+    } finally {
+      setConfirmLoading(false);
+      setConfirmOpen(false);
+      setConfirmId(null);
     }
   };
+  const [roleConfirmOpen, setRoleConfirmOpen] = useState(false);
+  const [roleTarget, setRoleTarget] = useState(null);
+  const [roleConfirmLoading, setRoleConfirmLoading] = useState(false);
 
-  const handleToggleRole = async (u) => {
-    const newRole = u.role === "admin" ? "user" : "admin";
-    const ok = await notify.confirm(
-      `Changer le rôle de ${u.email} en ${newRole} ?`
-    );
-    if (!ok) return;
+  const handleToggleRole = (u) => {
+    setRoleTarget(u);
+    setRoleConfirmOpen(true);
+  };
+
+  const onConfirmToggleRole = async () => {
+    if (!roleTarget) return;
+    const newRole = roleTarget.role === "admin" ? "user" : "admin";
+    setRoleConfirmLoading(true);
     try {
-      await toggleUserRole(u._id || u.id, newRole);
+      await toggleUserRole(roleTarget._id || roleTarget.id, newRole);
       setUsers((s) =>
         s.map((x) =>
-          x._id === u._id || x.id === u.id ? { ...x, role: newRole } : x
+          x._id === roleTarget._id || x.id === roleTarget.id
+            ? { ...x, role: newRole }
+            : x
         )
       );
       notify.success("Rôle modifié");
     } catch (err) {
       notify.error(err.message || "Erreur lors du changement de rôle");
+    } finally {
+      setRoleConfirmLoading(false);
+      setRoleConfirmOpen(false);
+      setRoleTarget(null);
     }
   };
 
@@ -189,6 +217,30 @@ export default function AdminUsers() {
               </Button>
             </div>
           </div>
+          <ConfirmModal
+            open={confirmOpen}
+            title="Confirmer la suppression"
+            message="Supprimer cet utilisateur ?"
+            onCancel={() => setConfirmOpen(false)}
+            onConfirm={onConfirmDelete}
+            cancelLabel="Annuler"
+            confirmLabel={
+              confirmLoading ? "Suppression..." : "Confirmer la suppression"
+            }
+          />
+          <ConfirmModal
+            open={roleConfirmOpen}
+            title="Changer le rôle"
+            message={
+              roleTarget
+                ? `Changer le rôle de ${roleTarget.email} ?`
+                : "Changer le rôle ?"
+            }
+            onCancel={() => setRoleConfirmOpen(false)}
+            onConfirm={onConfirmToggleRole}
+            cancelLabel="Annuler"
+            confirmLabel={roleConfirmLoading ? "En cours..." : "Confirmer"}
+          />
         </div>
       )}
     </div>

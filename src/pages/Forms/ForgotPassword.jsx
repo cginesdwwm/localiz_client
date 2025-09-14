@@ -105,11 +105,14 @@ export default function ForgotPassword() {
         <div className="flex flex-col items-center gap-3 mt-8">
           <NavLink
             to="/login"
-            className="text-[var(--text)] font-semibold underline"
+            className="text-[var(--text)] font-semibold underline font-quicksand"
           >
             Retour à la connexion
           </NavLink>
-          <NavLink to="/register" className="font-bold mt-4 text-lg">
+          <NavLink
+            to="/register"
+            className="font-bold mt-4 text-lg font-quicksand"
+          >
             Créer un compte
           </NavLink>
         </div>

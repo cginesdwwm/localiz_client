@@ -44,6 +44,7 @@ import SwapAndDonate from "./pages/Listings/SwapAndDonate";
 
 import About from "./pages/Other/About";
 import DeleteAccount from "./pages/Other/DeleteAccount";
+import DeleteAccountSuccess from "./pages/Other/DeleteAccountSuccess";
 import ErrorPage from "./pages/Other/ErrorPage";
 import LegalInfo from "./pages/Other/LegalInfo";
 import ConfirmEmail from "./pages/Other/ConfirmEmail";
@@ -62,7 +63,7 @@ import SearchSwaps from "./pages/Search/SearchSwaps";
 
 import CookieSettings from "./pages/SettingsPages/CookieSettings";
 import Language from "./pages/SettingsPages/Language";
-import ManageAccount from "./pages/SettingsPages/ManageAccount";
+import ManageAccount from "./pages/Profile/ManageAccount";
 import Settings from "./pages/SettingsPages/Settings";
 import Theme from "./pages/SettingsPages/Theme";
 
@@ -182,16 +183,37 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/settings/manage-account",
+        path: "/profile/me/manage-account",
         element: (
           <UserConnected>
             <ManageAccount />
           </UserConnected>
         ),
       },
-      { path: "/settings/theme", element: <Theme /> },
-      { path: "/settings/cookies", element: <CookieSettings /> },
-      { path: "/settings/language", element: <Language /> },
+      {
+        path: "/settings/theme",
+        element: (
+          <UserConnected>
+            <Theme />
+          </UserConnected>
+        ),
+      },
+      {
+        path: "/settings/cookies",
+        element: (
+          <UserConnected>
+            <CookieSettings />
+          </UserConnected>
+        ),
+      },
+      {
+        path: "/settings/language",
+        element: (
+          <UserConnected>
+            <Language />
+          </UserConnected>
+        ),
+      },
 
       // --- Other ---
       { path: "/about", element: <About /> },
@@ -205,6 +227,14 @@ export const router = createBrowserRouter([
         element: (
           <UserConnected>
             <DeleteAccount />
+          </UserConnected>
+        ),
+      },
+      {
+        path: "/delete-account/success",
+        element: (
+          <UserConnected>
+            <DeleteAccountSuccess />
           </UserConnected>
         ),
       },

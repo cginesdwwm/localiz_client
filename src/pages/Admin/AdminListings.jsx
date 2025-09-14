@@ -4,6 +4,7 @@ import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import { getListingsList, deleteListing } from "../../api/admin.api";
 import { notify } from "../../utils/notify";
+import ConfirmModal from "../../components/Common/ConfirmModal";
 
 export default function AdminListings() {
   const [listings, setListings] = useState([]);
@@ -30,15 +31,30 @@ export default function AdminListings() {
     };
   }, []);
 
-  const handleDelete = async (id) => {
-    const ok = await notify.confirm("Supprimer cette annonce ?");
-    if (!ok) return;
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmId, setConfirmId] = useState(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const handleDelete = (id) => {
+    setConfirmId(id);
+    setConfirmOpen(true);
+  };
+
+  const onConfirmDelete = async () => {
+    if (!confirmId) return;
+    setConfirmLoading(true);
     try {
-      await deleteListing(id);
-      setListings((s) => s.filter((l) => l._id !== id && l.id !== id));
+      await deleteListing(confirmId);
+      setListings((s) =>
+        s.filter((l) => l._id !== confirmId && l.id !== confirmId)
+      );
       notify.success("Annonce supprimée");
     } catch (err) {
       notify.error(err.message || "Erreur lors de la suppression");
+    } finally {
+      setConfirmLoading(false);
+      setConfirmOpen(false);
+      setConfirmId(null);
     }
   };
 
@@ -163,6 +179,17 @@ export default function AdminListings() {
               </Button>
             </div>
           </div>
+          <ConfirmModal
+            open={confirmOpen}
+            title="Confirmer la suppression"
+            message="Supprimer cette annonce ?"
+            onCancel={() => setConfirmOpen(false)}
+            onConfirm={onConfirmDelete}
+            cancelLabel="Annuler"
+            confirmLabel={
+              confirmLoading ? "Suppression..." : "Confirmer la suppression"
+            }
+          />
         </div>
       )}
     </div>

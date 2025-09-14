@@ -1,6 +1,7 @@
 import { toast } from "react-hot-toast";
 import React from "react";
 import Button from "../components/Common/Button";
+import confirmModal from "../lib/confirmModal";
 
 const DEFAULT = {
   position: "top-center",
@@ -76,5 +77,10 @@ export const notify = {
   custom: (fn, opts = {}) => toast((t) => fn(t), merge(opts)),
 };
 
-// Attache 'confirm' à 'notify' pour faciliter les importations.
-notify.confirm = confirm;
+// Keep the old toast-based confirm available, but prefer a modal confirm for accessibility.
+notify.toastConfirm = confirm;
+notify.confirm = async (message, opts = {}) => {
+  // If opts.forceToast is true, use the old toast confirm; otherwise use modal
+  if (opts && opts.forceToast) return notify.toastConfirm(message, opts);
+  return await confirmModal(message, opts);
+};

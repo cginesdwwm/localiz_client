@@ -3,8 +3,14 @@
 import { useAuth } from "../../context/AuthContext";
 import { saveMyTheme } from "../../api/user.api";
 import { notify } from "../../utils/notify";
-import Button from "../../components/Common/Button";
 import useTheme from "../../hooks/useTheme";
+import BackLink from "../../components/Common/BackLink";
+import Checkbox from "../../components/Common/Checkbox";
+
+const THEMES = [
+  { id: "dark", label: "Sombre (par défaut)" },
+  { id: "light", label: "Clair" },
+];
 
 export default function Theme() {
   const [theme, setTheme] = useTheme();
@@ -22,31 +28,30 @@ export default function Theme() {
   };
 
   return (
-    <div className="space-y-4 p-4">
-      <h2 className="title text-2xl">Apparence</h2>
-      <p className="type-base">
-        Choisis le thème de l'application. Le thème sombre est le thème par
-        défaut.
-      </p>
+    <div className="p-4 mx-auto max-w-xl mt-10">
+      <BackLink fixed to="/settings" label="Thème" />
 
-      <div className="flex items-center gap-3 mt-4">
-        <Button
-          type="button"
-          variant={theme === "dark" ? "cta" : "ghost"}
-          aria-pressed={theme === "dark"}
-          onClick={() => setAndPersist("dark")}
-        >
-          Sombre (par défaut)
-        </Button>
+      <h2 className="font-quicksand !font-bold text-[16px] mt-6 mb-4">
+        Sélectionne le thème de ton choix
+      </h2>
 
-        <Button
-          type="button"
-          variant={theme === "light" ? "cta" : "ghost"}
-          aria-pressed={theme === "light"}
-          onClick={() => setAndPersist("light")}
-        >
-          Clair
-        </Button>
+      <div className="">
+        {THEMES.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setAndPersist(t.id)}
+            className="w-full flex items-center justify-between p-3 border-t border-white first:border-t-0"
+            aria-pressed={theme === t.id}
+          >
+            <span className="font-quicksand !font-bold text-[16px] text-left">
+              {t.label}
+            </span>
+            <Checkbox
+              checked={theme === t.id}
+              onChange={() => setAndPersist(t.id)}
+            />
+          </button>
+        ))}
       </div>
     </div>
   );

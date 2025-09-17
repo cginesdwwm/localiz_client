@@ -74,6 +74,7 @@ export const notify = {
     return toast.success(msg, merge(opts));
   },
   error: (msg, opts = {}) => toast.error(msg, merge(opts)),
+  info: (msg, opts = {}) => toast(msg, merge(opts)),
   custom: (fn, opts = {}) => toast((t) => fn(t), merge(opts)),
 };
 

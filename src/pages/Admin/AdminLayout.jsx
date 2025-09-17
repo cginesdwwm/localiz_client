@@ -4,7 +4,21 @@ export default function AdminLayout({ children }) {
   return (
     <div className="min-h-screen flex bg-[var(--color-bg)]">
       <aside className="w-64 p-6 border-r border-white/5">
-        <h3 className="text-xl font-bold text-white mb-6">Admin</h3>
+        <h3 className="text-xl font-bold text-white mb-3">Admin</h3>
+        <div className="flex gap-2 mb-4">
+          <NavLink
+            to="/admin"
+            className="px-3 py-1 rounded bg-white/5 text-white text-sm"
+          >
+            Dashboard
+          </NavLink>
+          <NavLink
+            to="/"
+            className="px-3 py-1 rounded bg-white/5 text-white text-sm"
+          >
+            Accueil
+          </NavLink>
+        </div>
         <nav className="flex flex-col gap-2">
           <NavLink
             to="/admin"

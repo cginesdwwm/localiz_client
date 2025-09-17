@@ -18,14 +18,25 @@ const ToggleSwitch = forwardRef(
             onChange && onChange(!checked);
           }
         }}
-        className={`w-12 h-7 rounded-full p-[3px] flex items-center transition-colors duration-150 ${
+        className={`w-12 h-7 rounded-full p-[3px] flex items-center ${
           disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
-        } ${checked ? "bg-blue-500" : "bg-gray-300"}`}
+        }`}
+        style={{
+          backgroundColor: checked
+            ? "var(--btn-cta-bg)"
+            : "var(--checkbox-unchecked-bg)",
+          transition: "background-color 300ms cubic-bezier(.4,0,.2,1)",
+        }}
       >
         <span
-          className={`bg-white w-5 h-5 rounded-full shadow transform transition-transform duration-150 ${
-            checked ? "translate-x-5" : "translate-x-0"
-          }`}
+          className={`bg-white w-5 h-5 rounded-full shadow`}
+          style={{
+            transform: checked
+              ? "translateX(20px) scale(1)"
+              : "translateX(0) scale(.95)",
+            transition: "transform 300ms cubic-bezier(.4,0,.2,1)",
+            willChange: "transform",
+          }}
         />
       </button>
     );

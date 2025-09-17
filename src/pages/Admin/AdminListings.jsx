@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
+import { NavLink } from "react-router-dom";
 import { getListingsList, deleteListing } from "../../api/admin.api";
 import { notify } from "../../utils/notify";
 import ConfirmModal from "../../components/Common/ConfirmModal";
@@ -78,10 +79,22 @@ export default function AdminListings() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <header className="mb-6">
-        <h2 className="title text-3xl">Annonces</h2>
-        <p className="text-sm text-white/80 mt-1">
-          Gestion des annonces (troc / dons)
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 className="title text-3xl">Annonces</h2>
+            <p className="text-sm text-white/80 mt-1">
+              Gestion des annonces (troc / dons)
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <NavLink to="/admin">
+              <Button variant="ghost">Tableau de bord</Button>
+            </NavLink>
+            <NavLink to="/">
+              <Button variant="ghost">Accueil</Button>
+            </NavLink>
+          </div>
+        </div>
       </header>
 
       {loading ? (

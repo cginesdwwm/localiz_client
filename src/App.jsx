@@ -9,6 +9,7 @@
 import { Outlet, useLocation } from "react-router-dom"; // Emplacement des routes enfants
 import "./App.css"; // Styles locaux de l'application
 import Header from "./components/Header/Header"; // Le header (nav)
+import Footer from "./components/Footer/Footer";
 import { Toaster } from "react-hot-toast"; // Notifications toast
 import { BlogProvider } from "./context/BlogContext";
 
@@ -16,35 +17,44 @@ function App() {
   const location = useLocation();
   const pathname = location?.pathname || "/";
 
-  // Routes/prefixes dans lesquelles on ne veut pas afficher le header
-  const hideHeaderFor = [
-    "/",
-    "/about",
-    "/legal",
-    "/login",
-    "/register",
-    "/register/success",
-    "/forgot-password",
-    "/change-password",
-    "/settings/manage-account",
-    "/settings",
-    "/settings/language",
-    "/password/success",
-    "/confirm-email",
-    "/delete-account",
+  // Show the header only for a small set of primary pages (whitelist).
+  // This avoids accidentally hiding the header on many pages when new routes are added.
+  const showHeaderFor = [
+    "/homepage",
+    "/profile/me",
+    "/profile",
+    "/listings",
+    "/deals",
+    "/search",
   ];
 
-  const shouldHideHeader =
-    hideHeaderFor.includes(pathname) ||
-    hideHeaderFor.some((p) => pathname.startsWith(p + "/"));
+  const shouldShowHeader =
+    showHeaderFor.includes(pathname) ||
+    showHeaderFor.some((p) => pathname.startsWith(p + "/"));
+
+  // Explicitly hide header on the manage-account page
+  if (pathname === "/profile/me/manage-account") {
+    // override whitelist
+    return (
+      <div className="min-h-screen flex flex-col">
+        <BlogProvider>
+          <main className="flex-1">
+            <Outlet />
+          </main>
+        </BlogProvider>
+        <Toaster position="top-center" toastOptions={{ duration: 6000 }} />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <BlogProvider>
-        {!shouldHideHeader && <Header />}
-        <main>
+        {shouldShowHeader && <Header />}
+        <main className="flex-1">
           <Outlet />
         </main>
+        {shouldShowHeader && <Footer />}
       </BlogProvider>
       <Toaster position="top-center" toastOptions={{ duration: 6000 }} />
     </div>

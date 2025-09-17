@@ -52,6 +52,7 @@ import ConfirmEmailSuccess from "./pages/Other/ConfirmEmailSuccess";
 import ConfirmEmailExpired from "./pages/Other/ConfirmEmailExpired";
 import ConfirmEmailError from "./pages/Other/ConfirmEmailError";
 import Contact from "./pages/Forms/Contact";
+import PublishChoice from "./pages/Forms/PublishChoice";
 
 import ProfileMe from "./pages/Profile/ProfileMe";
 import ProfileOther from "./pages/Profile/ProfileOther";
@@ -169,6 +170,7 @@ export const router = createBrowserRouter([
 
       // --- Search ---
       { path: "/search", element: <Search /> },
+      { path: "/publish", element: <PublishChoice /> },
       { path: "/search/deals", element: <SearchDeals /> },
       { path: "/search/donations", element: <SearchDonations /> },
       { path: "/search/swaps", element: <SearchSwaps /> },

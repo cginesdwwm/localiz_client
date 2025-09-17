@@ -18,11 +18,11 @@ export default function BackLink({ to, label, className = "", fixed = false }) {
         <span className="text-white text-3xl leading-none" aria-hidden>
           ←
         </span>
-      </NavLink>
 
-      <span className="backlink pointer-events-none ml-2 text-[var(--text)]">
-        {label}
-      </span>
+        <span className="pointer-events-none ml-2 backlink backlink-text">
+          {label}
+        </span>
+      </NavLink>
     </div>
   );
 }

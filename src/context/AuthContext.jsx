@@ -7,6 +7,7 @@ import { useContext, useState, useEffect } from "react";
 import { createContext } from "react";
 import { useLoaderData } from "react-router-dom";
 import { signout, signIn, getCurrentUser } from "../api/auth.api";
+import { updateMyProfile } from "../api/user.api";
 import { notify } from "../utils/notify";
 import useTheme from "../hooks/useTheme";
 
@@ -72,6 +73,20 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const updateUser = async (payload) => {
+    const res = await updateMyProfile(payload);
+    const updated = res?.user ?? null;
+    if (updated) {
+      setUserConnected(updated);
+      try {
+        localStorage.setItem("user", JSON.stringify(updated));
+      } catch {
+        // ignore
+      }
+    }
+    return updated;
+  };
+
   // Try to refresh from API on mount if we don't have a user yet
   // Hydrate user from server if not present. We include dependencies so
   // the effect re-runs if the relevant inputs change (safe and explicit).
@@ -128,6 +143,7 @@ export function AuthProvider({ children }) {
         isAuthenticated: !!userConnected,
         login,
         logout,
+        updateUser,
       }}
     >
       {children}

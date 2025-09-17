@@ -164,6 +164,21 @@ export default function Register() {
         /^(?:(?:0[1-9]|[1-8]\d|9[0-5]|20)\d{3}|(?:971|972|973|974|975|976|977|978|984|986|987|988)\d{2})$/,
         "Format de code postal non valide (France métropolitaine, Corse ou DOM-TOM)."
       ),
+    city: yup
+      .string()
+      .nullable()
+      .max(100, "La ville ne peut pas dépasser 100 caractères.")
+      .test(
+        "forbidden-words-city",
+        "Le nom de la ville contient un mot interdit.",
+        (value) => {
+          if (!value) return true;
+          const lowerCaseValue = value.toLowerCase();
+          return !frenchForbiddenWords.some((word) =>
+            lowerCaseValue.includes(word.toLowerCase())
+          );
+        }
+      ),
     birthday: yup
       .date()
       .typeError("Veuillez entrer une date valide.")
@@ -544,6 +559,13 @@ export default function Register() {
               </ul>
             )}
           </div>
+
+          {/* Hidden field to ensure selected city is part of form values */}
+          <Controller
+            name="city"
+            control={control}
+            render={({ field }) => <input type="hidden" {...field} />}
+          />
 
           {/* Date de naissance */}
           <div className="flex flex-col">

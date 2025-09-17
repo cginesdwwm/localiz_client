@@ -84,6 +84,28 @@ export async function changeMyPassword(passwords) {
 }
 
 /**
+ * Met à jour le profil de l'utilisateur connecté.
+ * payload: objet avec les champs à mettre à jour, ex: { bio: '...' }
+ */
+export async function updateMyProfile(payload) {
+  const response = await fetch(`${BASE_URL}/users/me`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || "Erreur lors de la mise à jour du profil."
+    );
+  }
+
+  return response.json();
+}
+
+/**
  * Sauvegarde la préférence de thème de l'utilisateur (nécessite un cookie d'authentification)
  * { theme: 'dark' | 'light' }
  */

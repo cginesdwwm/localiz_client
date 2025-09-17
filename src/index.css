@@ -234,6 +234,11 @@ h6,
   font-size: 18px;
 }
 
+/* Link text color for back links; uses theme-aware variable */
+.backlink-text {
+  color: var(--splash-text);
+}
+
 /* UI text and labels */
 .ui-text,
 label,
@@ -436,4 +441,44 @@ textarea::placeholder {
 .splashscreen > .flex-col-center {
   padding: 0;
   gap: 0;
+}
+
+/* Site header styling: matches page background, subtle shadow, and theme-aware text
+   Use `.site-header` on the header element to apply these rules. */
+.site-header {
+  background-color: var(--bg);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 1);
+}
+.site-header a {
+  color: inherit;
+}
+
+/* Footer top shadow to mirror header shadow (subtle, inverted) */
+.footer-top-shadow {
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+}
+
+/* Header link helpers: remove default underlines and provide a link-like logout button
+   - .header-link: utility to ensure no underline and keep pointer cursor.
+   - .header-logout: makes the <button> look and behave like a simple link and
+     turns it the same red as the danger button on hover. */
+.header-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+.header-link:hover {
+  text-decoration: none;
+}
+.header-logout {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  cursor: pointer;
+}
+.header-logout:hover {
+  color: var(--btn-danger-bg);
 }

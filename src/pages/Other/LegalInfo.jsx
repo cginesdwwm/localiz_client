@@ -20,8 +20,8 @@ export default function LegalInfo() {
     return () => clearTimeout(t);
   }, [hash, pathname]);
   return (
-    <div className="p-1 mx-auto">
-      <BackLink fixed={true} to="/settings" label="Informations légales" />
+    <div className="p-10 mx-auto">
+      <BackLink to="/settings" label="Informations légales" />
 
       <section className="mt-16 text-left">
         {/* === Mentions légales === */}

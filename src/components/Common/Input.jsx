@@ -8,6 +8,7 @@
 */
 
 import { forwardRef, useState } from "react";
+import "./Input.css";
 
 const Input = forwardRef(
   (

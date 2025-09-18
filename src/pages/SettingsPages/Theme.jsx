@@ -29,7 +29,7 @@ export default function Theme() {
 
   return (
     <div className="p-4 mx-auto max-w-xl mt-10">
-      <BackLink fixed to="/settings" label="Thème" />
+      <BackLink to="/settings" label="Thème" />
 
       <h2 className="font-quicksand !font-bold text-[16px] mt-6 mb-4">
         Sélectionne le thème de ton choix

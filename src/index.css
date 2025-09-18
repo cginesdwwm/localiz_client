@@ -1,11 +1,19 @@
 /*
   Main stylesheet - theme variables + base rules
 
+  Organization:
+  1) Imports
+  2) Theme variables (:root + .theme-light)
+  3) Global resets & layout
+  4) Typography
+  5) Form controls & focus
+  6) Components (buttons, cards, checkbox, header/footer)
+  7) Pages / splash helpers
+  8) Theme-specific utility overrides
+
   Theme toggle instructions:
   - To enable the light theme, add the class `theme-light` to the document root
     (e.g. <html class="theme-light"> or <body class="theme-light">).
-  - Themeable variables are defined in :root and overridden inside
-    `.theme-light`.
 
   Primary variables you can tune:
   - --bg                 : page background
@@ -18,13 +26,6 @@
   - --focus-outline-width: focus outline width
   - --focus-shadow-color : focus shadow color
   - --focus-shadow-blur  : focus shadow blur radius
-
-  Notes:
-  - The `.focus-ring` wrapper class scopes the focus ring rules to specific
-    form groups (recommended for controlling where the prominent focus
-    appearance appears).
-  - Light-theme focus values are intentionally preserved; do not change them
-    unless you want the light theme focus ring to visually change.
 */
 
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Mulish:wght@400;600;700&family=Quicksand:wght@400;600;700&display=swap");
@@ -82,27 +83,6 @@
   --chart-color-4: #a78bfa;
 }
 
-/* Card / modal helpers */
-.modal-card {
-  background-color: var(--card-bg);
-  opacity: 1;
-  z-index: var(--modal-z);
-}
-.bg-card {
-  background-color: var(--card-bg);
-  color: var(--card-text);
-}
-
-/* Input helpers */
-.input-surface {
-  background-color: var(--input-bg);
-  color: var(--input-text);
-}
-.placeholder-muted::placeholder {
-  color: var(--input-placeholder);
-  font-family: "Mulish", sans-serif;
-}
-
 /* Light theme overrides */
 .theme-light {
   --bg: #f4ebd6;
@@ -135,28 +115,9 @@
   --chart-color-4: #a78bfa;
 }
 
-/* In the light theme, override utility classes that reference white borders
-   so they appear as black/dark borders for better contrast. These target
-   common Tailwind-like classes used in templates (e.g. border-white, border-white/5).
-*/
-.theme-light .border-white {
-  border-color: rgba(0, 0, 0, 1) !important;
-}
-.theme-light .border-white\/5 {
-  border-color: rgba(0, 0, 0, 0.05) !important;
-}
-.theme-light .border-white\/30 {
-  border-color: rgba(0, 0, 0, 0.3) !important;
-}
-.theme-light .border-white\/50 {
-  border-color: rgba(0, 0, 0, 0.5) !important;
-}
-.theme-light .border-t.border-white {
-  border-top-color: rgba(0, 0, 0, 1) !important;
-}
-.theme-light .border-t.border-white\/5 {
-  border-top-color: rgba(0, 0, 0, 0.05) !important;
-}
+/* ======================================================================
+   GLOBAL RESET, LAYOUT & HELPERS
+   ====================================================================== */
 
 /* Smooth transitions for theme changes */
 * {
@@ -189,17 +150,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Helper: center content vertically/horizontally without causing scroll
-   Use this where you want full-viewport centering (replaces various ad-hoc patterns) */
+/* Helper: center content vertically/horizontally without causing scroll */
 .center-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-/* -----------------------------
+
+/* Small helpers used by components */
+.modal-card {
+  background-color: var(--card-bg);
+  opacity: 1;
+  z-index: var(--modal-z);
+}
+.bg-card {
+  background-color: var(--card-bg);
+  color: var(--card-text);
+}
+
+/* ======================================================================
    TYPOGRAPHY
-   ----------------------------- */
+   ====================================================================== */
 
 /* Titles across the app use Fredoka and are bold */
 h1,
@@ -215,28 +187,38 @@ h6,
   color: inherit;
 }
 
-/* Semantic strong but visually normal
-   Use this class on <strong> when the content should be announced
-   as important by assistive tech but should keep normal visual weight. */
+/* Semantic strong but visually normal */
 .strong-normal {
   font-weight: 400;
 }
 
-/* Quick helper to force Quicksand where needed (e.g. short titles) */
+/* Quicksand helper */
 .font-quicksand {
   font-family: "Quicksand", sans-serif;
 }
 
-/* Small Fredoka bold helper used by compact labels */
 .backlink {
   font-family: "Fredoka", sans-serif;
   font-weight: 500;
   font-size: 18px;
 }
-
-/* Link text color for back links; uses theme-aware variable */
 .backlink-text {
   color: var(--splash-text);
+}
+.backlink-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+}
+.backlink-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-outline-width, 3px) var(--focus-outline);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+.backlink-link:focus > span[aria-hidden] {
+  transform: translateX(-1px);
 }
 
 /* UI text and labels */
@@ -267,25 +249,11 @@ b {
   color: inherit;
 }
 
-/* -----------------------------
-   SPLASHSCREEN
-   ----------------------------- */
-.front-heading {
-  color: var(--splash-text);
-  transition: opacity 600ms ease, transform 600ms ease, color 200ms ease;
-  font-size: 2.25rem;
-  line-height: 1.05;
-}
+/* ======================================================================
+   FORMS, INPUTS & FOCUS
+   ====================================================================== */
 
-@media (max-width: 640px) {
-  .front-heading {
-    font-size: 1.75rem;
-  }
-}
-
-/* -----------------------------
-   FORMS / INPUTS
-   ----------------------------- */
+/* Input base styles */
 input[type="text"],
 input[type="tel"],
 input[type="date"],
@@ -311,13 +279,11 @@ textarea::placeholder {
   font-family: "Mulish", sans-serif;
 }
 
-/* Accessibility: simple focus fallback */
+/* Scoped reusable focus ring (wrap inputs with .focus-ring) */
 :focus {
   outline: 3px solid rgba(255, 255, 255, 0.12);
   outline-offset: 2px;
 }
-
-/* Scoped reusable focus ring (wrap inputs with .focus-ring) */
 .focus-ring input:focus,
 .focus-ring select:focus,
 .focus-ring textarea:focus {
@@ -327,101 +293,70 @@ textarea::placeholder {
   box-shadow: 0 0 var(--focus-shadow-blur) var(--focus-shadow-color);
 }
 
-/* Checkbox visual helper (use by Checkbox component) */
-.checkbox-box {
-  width: 1.25rem; /* 20px */
-  height: 1.25rem;
-  border-radius: 5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 150ms ease, border 150ms ease, color 150ms ease;
-  background-color: var(--checkbox-unchecked-bg);
-  border: 1px solid var(--checkbox-border);
-}
-.checkbox-box--checked {
-  background-color: var(--checkbox-checked-bg);
-  border: none;
-}
-.checkbox-box svg {
-  color: transparent;
-}
-.checkbox-box--checked svg {
-  color: var(--checkbox-checkmark);
-}
+/* Checkbox visuals moved to `components/Common/Checkbox.css` */
 
-/* Danger-colored checkbox modifier (use by passing `className="danger-checkbox"` to the Checkbox component)
-   This keeps the change scoped to a single page/component. */
-.danger-checkbox .checkbox-box--checked {
-  background-color: var(--btn-danger-bg);
-  border: none;
-}
-.danger-checkbox .checkbox-box--checked svg {
-  color: var(--btn-text-contrast);
-}
-
-/* Validation / error text */
 .error-text,
 .form-error,
 .field-error {
   color: #ffc107;
 }
 
-/* -----------------------------
-   BUTTONS
-   ----------------------------- */
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1rem;
-  border: none;
-  cursor: pointer;
-  color: var(--btn-text-contrast);
-  font-family: "Quicksand", sans-serif;
-  font-weight: 600;
-  border-radius: 14px;
-}
+/* Input helpers moved to components/Common/Input.css */
 
-.btn-cta {
-  background-color: var(--btn-cta-bg);
-}
-.btn-danger {
-  background-color: var(--btn-danger-bg);
-}
-.btn-filter {
-  background-color: var(--btn-filter-bg);
-  border-radius: 16px;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.btn-cta:hover:not(:disabled),
-.btn-filter:hover:not(:disabled) {
-  filter: brightness(0.95);
-}
-.btn-danger:hover:not(:disabled) {
-  filter: brightness(0.92);
-}
-
-.btn-ghost {
-  background: transparent;
+/* Site header styling */
+.site-header {
+  background-color: var(--bg);
   color: var(--text);
-  padding: 0.5rem 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 1);
+}
+.site-header a {
+  color: inherit;
 }
 
-/* -----------------------------
-   SPLASH TRANSITIONS & HELPERS
-   ----------------------------- */
+.footer-top-shadow {
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.header-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+.header-link:hover {
+  text-decoration: none;
+}
+.header-logout {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  cursor: pointer;
+}
+.header-logout:hover {
+  color: var(--btn-danger-bg);
+}
+
+/* ======================================================================
+   SPLASH / PAGE-SPECIFIC HELPERS
+   ====================================================================== */
+.front-heading {
+  color: var(--splash-text);
+  transition: opacity 600ms ease, transform 600ms ease, color 200ms ease;
+  font-size: 2.25rem;
+  line-height: 1.05;
+}
+@media (max-width: 640px) {
+  .front-heading {
+    font-size: 1.75rem;
+  }
+}
+
 .splashscreen {
   opacity: 1;
   transform: translateY(0) scale(1);
   transition: opacity 600ms ease, transform 600ms ease;
 }
-
 .splashscreen.leaving {
   opacity: 0;
   transform: translateY(-16px) scale(0.99);
@@ -443,42 +378,25 @@ textarea::placeholder {
   gap: 0;
 }
 
-/* Site header styling: matches page background, subtle shadow, and theme-aware text
-   Use `.site-header` on the header element to apply these rules. */
-.site-header {
-  background-color: var(--bg);
-  color: var(--text);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  border-bottom: 1px solid rgba(255, 255, 255, 1);
+/* ======================================================================
+   THEME-SPECIFIC UTILITY OVERRIDES
+   (Targets Tailwind-like utility classes used across the app)
+   ====================================================================== */
+.theme-light .border-white {
+  border-color: rgba(0, 0, 0, 1) !important;
 }
-.site-header a {
-  color: inherit;
+.theme-light .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.05) !important;
 }
-
-/* Footer top shadow to mirror header shadow (subtle, inverted) */
-.footer-top-shadow {
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.12);
+.theme-light .border-white\/30 {
+  border-color: rgba(0, 0, 0, 0.3) !important;
 }
-
-/* Header link helpers: remove default underlines and provide a link-like logout button
-   - .header-link: utility to ensure no underline and keep pointer cursor.
-   - .header-logout: makes the <button> look and behave like a simple link and
-     turns it the same red as the danger button on hover. */
-.header-link {
-  text-decoration: none;
-  cursor: pointer;
+.theme-light .border-white\/50 {
+  border-color: rgba(0, 0, 0, 0.5) !important;
 }
-.header-link:hover {
-  text-decoration: none;
+.theme-light .border-t.border-white {
+  border-top-color: rgba(0, 0, 0, 1) !important;
 }
-.header-logout {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  color: inherit;
-  cursor: pointer;
-}
-.header-logout:hover {
-  color: var(--btn-danger-bg);
+.theme-light .border-t.border-white\/5 {
+  border-top-color: rgba(0, 0, 0, 0.05) !important;
 }

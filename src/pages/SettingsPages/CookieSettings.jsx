@@ -84,8 +84,8 @@ export default function CookieSettings() {
   }
 
   return (
-    <div className="p-1 mx-auto">
-      <BackLink fixed={true} to="/settings" label="Paramètres des cookies" />
+    <div className="p-10 mx-auto">
+      <BackLink to="/settings" label="Paramètres des cookies" />
 
       <section className="mt-26 text-left px-4">
         <p>

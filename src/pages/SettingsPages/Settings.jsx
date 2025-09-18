@@ -10,8 +10,10 @@ import ConfirmModal from "../../components/Common/ConfirmModal";
 import { TbLanguage, TbLogout } from "react-icons/tb";
 import { FaPalette, FaQuestionCircle, FaCookieBite } from "react-icons/fa";
 import { FaNewspaper } from "react-icons/fa6";
+import { SlSpeech } from "react-icons/sl";
 
 const ITEMS = [
+  { to: "/contact", label: "Contact", Icon: SlSpeech },
   { to: "/settings/language", label: "Langue", Icon: TbLanguage },
   { to: "/settings/theme", label: "Thème", Icon: FaPalette },
   { to: "/about", label: "À propos", Icon: FaQuestionCircle },
@@ -52,7 +54,7 @@ export default function Settings() {
 
   return (
     <div className="p-4 max-w-lg mx-auto">
-      <BackLink fixed to="/profile/me/manage-account" label="Paramètres" />
+      <BackLink to="/profile/me/manage-account" label="Paramètres" />
 
       <div className="mt-20">
         {ITEMS.map((it) => {

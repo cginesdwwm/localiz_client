@@ -75,7 +75,6 @@ export default function ChangePassword() {
       <div className="w-full max-w-md">
         <div className="mb-4">
           <BackLink
-            fixed
             to="/settings/manage-account"
             label="Modifier le mot de passe"
           />
@@ -148,15 +147,16 @@ export default function ChangePassword() {
               )}
             />
           </FocusRing>
-
-          <Button
-            type="submit"
-            variant="cta"
-            className="h-12 font-semibold text-base"
-            disabled={isSubmitting}
-          >
-            Modifier le mot de passe
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              type="submit"
+              variant="cta"
+              className="h-12 font-semibold text-base"
+              disabled={isSubmitting}
+            >
+              Modifier le mot de passe
+            </Button>
+          </div>
         </form>
       </div>
     </div>

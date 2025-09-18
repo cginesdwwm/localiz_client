@@ -1,0 +1,26 @@
+/* Input surface and placeholder helpers */
+.input-surface {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+}
+.placeholder-muted::placeholder {
+  color: var(--input-placeholder);
+  font-family: "Mulish", sans-serif;
+}
+
+/* Focus ring scoping is applied via the FocusRing component which uses the .focus-ring class */
+.focus-ring input:focus,
+.focus-ring select:focus,
+.focus-ring textarea:focus {
+  outline: var(--focus-outline-width) solid var(--focus-outline);
+  outline-offset: 2px;
+  border-color: var(--focus-outline);
+  box-shadow: 0 0 var(--focus-shadow-blur) var(--focus-shadow-color);
+}
+
+/* Reusable input base styles (kept minimal here; index.css still provides base) */
+.input-base {
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  border-radius: 14px;
+}

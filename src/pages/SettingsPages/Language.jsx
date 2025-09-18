@@ -33,7 +33,7 @@ export default function Language() {
 
   return (
     <div className="p-4 mx-auto max-w-xl mt-10">
-      <BackLink fixed={true} to="/settings" label="Langue" arrowOnly />
+      <BackLink to="/settings" label="Langue" />
 
       <h2 className="font-quicksand !font-bold text-[16px] mt-6 mb-4">
         Sélectionne la langue de ton choix

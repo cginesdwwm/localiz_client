@@ -8,7 +8,7 @@ export default function DeleteAccountSuccess() {
   return (
     <div className="p-4 text-center">
       <div className="mb-2">
-        <BackLink fixed to="/" label={"Accueil"} />
+        <BackLink to="/" label={"Accueil"} />
       </div>
       <h2 className="heading font-quicksand font-bold text-2xl mb-4">
         Compte supprimé

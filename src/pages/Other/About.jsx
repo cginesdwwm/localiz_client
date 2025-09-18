@@ -7,9 +7,9 @@ const SUPABASE_FAVICON =
 
 export default function About() {
   return (
-    <div className="p-2">
+    <div className="p-10">
       <div className="mb-4">
-        <BackLink fixed to="/settings" label="À propos de Localiz" />
+        <BackLink to="/settings" label="À propos de Localiz" />
       </div>
 
       <div className="flex justify-center">

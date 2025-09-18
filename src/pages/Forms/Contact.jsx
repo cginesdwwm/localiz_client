@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/Common/Button";
+import BackLink from "../../components/Common/BackLink";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
 
@@ -46,13 +47,13 @@ export default function Contact() {
   return (
     <div className="h-screen center-screen bg-[var(--bg)] px-4">
       <div className="w-full max-w-md">
+        <BackLink to="/settings" label="Contact" />
         <div className="flex flex-col items-center mb-6">
           <h1 className="text-3xl font-semibold text-center text-[var(--text)]">
-            Contactez-nous
+            Quelque chose à nous dire ?
           </h1>
           <p className="text-sm text-[var(--muted)] mt-2 text-center">
-            Une question, une suggestion ou un problème ? Envoyez-nous un
-            message.
+            Une question, une suggestion ou un problème ? On est à l'écoute !
           </p>
         </div>
 
@@ -65,7 +66,7 @@ export default function Contact() {
                 <Input
                   {...field}
                   id="name"
-                  placeholder="Votre nom"
+                  placeholder="Nom"
                   error={errors.name?.message}
                   className="h-12"
                 />
@@ -79,7 +80,7 @@ export default function Contact() {
                 <Input
                   {...field}
                   id="email"
-                  placeholder="Votre email"
+                  placeholder="Email"
                   type="email"
                   error={errors.email?.message}
                   className="h-12"
@@ -95,7 +96,7 @@ export default function Contact() {
                   <textarea
                     id="message"
                     {...field}
-                    placeholder="Votre message"
+                    placeholder="Message"
                     rows={6}
                     className="w-full rounded border px-3 py-2 text-sm input-surface placeholder-muted placeholder:text-[15px] resize-vertical"
                     aria-invalid={errors.message ? "true" : "false"}
@@ -112,15 +113,16 @@ export default function Contact() {
               )}
             />
           </FocusRing>
-
-          <Button
-            type="submit"
-            variant="cta"
-            className="h-12 font-semibold text-base"
-            disabled={isSubmitting}
-          >
-            Envoyer
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              type="submit"
+              variant="cta"
+              className="h-12 font-semibold text-base"
+              disabled={isSubmitting}
+            >
+              Envoyer
+            </Button>
+          </div>
         </form>
 
         {serverMsg && (

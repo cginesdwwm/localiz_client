@@ -33,9 +33,16 @@ export default function Language() {
 
   return (
     <div className="p-4 mx-auto max-w-xl mt-10">
-      <BackLink to="/settings" label="Langue" />
+      <BackLink to="/settings" fixed />
 
-      <h2 className="font-quicksand !font-bold text-[16px] mt-6 mb-4">
+      <h1
+        className="text-3xl font-quicksand !font-bold mt-6 mb-4"
+        style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+      >
+        Langue
+      </h1>
+
+      <h2 className="text-2xl font-semibold font-quicksand mt-2 mb-4">
         Sélectionne la langue de ton choix
       </h2>
 

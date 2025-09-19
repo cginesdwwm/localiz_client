@@ -54,9 +54,16 @@ export default function Settings() {
 
   return (
     <div className="p-4 max-w-lg mx-auto">
-      <BackLink to="/profile/me/manage-account" label="Paramètres" />
+      <BackLink to="/profile/me/manage-account" fixed />
 
-      <div className="mt-20">
+      <h1
+        className="text-3xl font-quicksand !font-bold mt-6 mb-4"
+        style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+      >
+        Paramètres
+      </h1>
+
+      <div className="mt-6">
         {ITEMS.map((it) => {
           const IconComp = it.Icon;
           return (

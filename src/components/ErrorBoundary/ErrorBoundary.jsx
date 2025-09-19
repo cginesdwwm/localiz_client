@@ -49,7 +49,7 @@ class ErrorBoundary extends React.Component {
                   />
                 </svg>
               </div>
-              <h2 className="ml-3 text-lg font-medium text-gray-900 dark:text-white">
+              <h2 className="ml-3 text-2xl font-semibold text-gray-900 dark:text-white">
                 Something went wrong
               </h2>
             </div>

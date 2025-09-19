@@ -3,7 +3,7 @@
 export default function Search() {
   return (
     <div>
-      <h2>Search</h2>
+      <h2 className="text-2xl font-semibold">Search</h2>
     </div>
   );
 }

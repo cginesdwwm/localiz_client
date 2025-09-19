@@ -1,20 +1,22 @@
-const BASE_URL = import.meta.env.VITE_SERVER_URL;
+import { BASE_URL } from "../utils/url";
 
 // Récupérer tous les blogs
 export async function getBlogsFromApi() {
   try {
-    const response = await fetch(`${BASE_URL}blog`, {
+    const response = await fetch(`${BASE_URL}/blog`, {
       method: "GET",
     });
+    if (!response.ok) throw new Error("Erreur récupération blogs");
     return await response.json();
   } catch (error) {
     console.error(error);
+    throw error;
   }
 }
 
 // Créer un blog
 export async function createBlog(data) {
-  const response = await fetch(`${BASE_URL}blog`, {
+  const response = await fetch(`${BASE_URL}/blog`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +32,7 @@ export async function createBlog(data) {
 
 export async function rateBlog(blogId, rating) {
   try {
-    const response = await fetch(`${BASE_URL}rating/${blogId}`, {
+    const response = await fetch(`${BASE_URL}/rating/${blogId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -47,7 +49,7 @@ export async function rateBlog(blogId, rating) {
 
 export async function deleteRateBlog(blogId) {
   try {
-    const response = await fetch(`${BASE_URL}rating/${blogId}`, {
+    const response = await fetch(`${BASE_URL}/rating/${blogId}`, {
       method: "DELETE",
       credentials: "include",
     });

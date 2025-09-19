@@ -8,11 +8,15 @@ export default function DeleteAccountSuccess() {
   return (
     <div className="p-4 text-center">
       <div className="mb-2">
-        <BackLink to="/" label={"Accueil"} />
+        <BackLink to="/" fixed />
       </div>
-      <h2 className="heading font-quicksand font-bold text-2xl mb-4">
+
+      <h1
+        className="heading font-quicksand font-bold text-3xl mb-4"
+        style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+      >
         Compte supprimé
-      </h2>
+      </h1>
       <p className="body-text">
         Ta demande de suppression a bien été enregistrée. Pour rappel, ton
         compte est d'abord

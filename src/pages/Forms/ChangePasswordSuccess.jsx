@@ -32,7 +32,12 @@ export default function ChangePasswordSuccess() {
   return (
     <div className="center-screen px-4">
       <div className="w-full max-w-md px-4">
-        <h1 className="front-heading mb-3">Mot de passe modifié !</h1>
+        <h1
+          className="front-heading text-3xl mb-3 font-bold"
+          style={{ fontFamily: "Fredoka" }}
+        >
+          Mot de passe modifié !
+        </h1>
         <p className="mb-3">
           Votre mot de passe a bien été mis à jour. Vous pouvez maintenant vous
           connecter avec votre nouveau mot de passe.

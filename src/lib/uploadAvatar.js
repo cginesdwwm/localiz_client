@@ -1,16 +1,16 @@
 import supabase from "./supabaseClient";
 
-// Uploader une image dans le bucket "deals" et retourne l'URL publique
-export async function uploadDealImage(file) {
+// Uploader une image dans le bucket "avatars" et retourne l'URL publique
+export async function uploadAvatar(file) {
   if (!file) return null;
   const fileExt = file.name.split(".").pop();
   const fileName = `${Date.now()}_${Math.random()
     .toString(36)
     .slice(2)}.${fileExt}`;
-  const filePath = `deals/${fileName}`;
+  const filePath = `avatars/${fileName}`;
 
   const { data: _data, error } = await supabase.storage
-    .from("deals")
+    .from("avatars")
     .upload(filePath, file, { cacheControl: "3600", upsert: false });
 
   if (error) {
@@ -18,7 +18,8 @@ export async function uploadDealImage(file) {
     throw error;
   }
 
-  const publicRes = supabase.storage.from("deals").getPublicUrl(filePath);
+  const publicRes = supabase.storage.from("avatars").getPublicUrl(filePath);
+  // supabase-js v2 may return { data: { publicUrl } } while older versions use { publicURL }
   let publicURL = null;
   try {
     if (publicRes && typeof publicRes === "object") {
@@ -33,10 +34,11 @@ export async function uploadDealImage(file) {
   }
 
   if (!publicURL) {
-    console.warn("uploadDealImage: could not determine public URL", {
-      publicRes,
-      filePath,
-    });
+    console.warn(
+      "uploadAvatar: could not determine public URL from Supabase response",
+      { publicRes, filePath }
+    );
+    // As a last resort try to construct a URL using the SUPABASE_URL and known storage path
     try {
       const projectUrl =
         supabase?.url || import.meta?.env?.VITE_SUPABASE_URL || "";

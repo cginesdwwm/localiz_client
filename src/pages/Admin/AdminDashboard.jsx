@@ -208,7 +208,12 @@ export default function AdminDashboard() {
     <div className="max-w-6xl mx-auto p-6">
       <header className="mb-6">
         <div className="flex items-start justify-between">
-          <h1 className="title text-4xl">Administration</h1>
+          <h1
+            className="title text-3xl font-bold"
+            style={{ fontFamily: "Fredoka" }}
+          >
+            Administration
+          </h1>
           <div className="flex gap-2">
             <NavLink to="/">
               <Button variant="ghost">Accueil</Button>
@@ -246,9 +251,9 @@ export default function AdminDashboard() {
 
           <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             <div className="p-4 rounded-xl bg-white/5">
-              <h3 className="heading text-lg mb-3">
+              <h2 className="text-2xl font-semibold heading mb-3">
                 Évolution des utilisateurs
-              </h3>
+              </h2>
               {timeline && timeline.length ? (
                 <div style={{ width: "100%", height: 220 }}>
                   <ResponsiveContainer>
@@ -299,7 +304,9 @@ export default function AdminDashboard() {
             </div>
 
             <div className="p-4 rounded-xl bg-white/5">
-              <h3 className="heading text-lg mb-3">Répartition</h3>
+              <h2 className="text-2xl font-semibold heading mb-3">
+                Répartition
+              </h2>
               {breakdown && breakdown.length ? (
                 <div style={{ width: "100%", height: 220 }}>
                   <ResponsiveContainer>
@@ -333,9 +340,9 @@ export default function AdminDashboard() {
 
           <section className="p-4 rounded-xl bg-white/5 mb-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-white">
+              <h2 className="text-2xl font-semibold text-white">
                 Santé de l'API
-              </h3>
+              </h2>
               <Button
                 variant="ghost"
                 onClick={refreshHealth}

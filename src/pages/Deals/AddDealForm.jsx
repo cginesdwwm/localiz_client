@@ -52,7 +52,8 @@ export default function AddDealForm() {
     setLoading(true);
     try {
       const file = values.image[0];
-      const imageUrl = await uploadDealImage(file);
+      const res = await uploadDealImage(file);
+      const imageUrl = res?.path || res?.publicURL || null;
 
       const payload = {
         image: imageUrl,

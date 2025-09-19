@@ -14,6 +14,7 @@ import Checkbox from "../../components/Common/Checkbox";
 import FocusRing from "../../components/Common/FocusRing";
 
 import { frenchForbiddenWords } from "../../utils/forbiddenWords";
+import { uploadAvatar } from "../../lib/uploadAvatar";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -73,15 +74,11 @@ export default function Register() {
 
   // Valeurs par défaut du formulaire pour initialisation
   const defaultValues = {
-    firstName: "",
-    lastName: "",
     username: "",
     email: "",
-    phone: "",
     postalCode: "",
     city: "",
     birthday: "",
-    gender: "",
     password: "",
     confirmPassword: "",
     agreeToTerms: false,
@@ -89,44 +86,6 @@ export default function Register() {
 
   // Schéma de validation Yup
   const schema = yup.object({
-    firstName: yup
-      .string()
-      .required("Le prénom est obligatoire.")
-      .min(2, "Le prénom doit faire au moins 2 caractères.")
-      .max(50, "Le prénom ne peut pas dépasser 50 caractères.")
-      .test(
-        "forbidden-words",
-        "Ce prénom contient un mot interdit.",
-        (value) => {
-          // Validation avec la liste de mots importée
-          if (!value) return true;
-          const lowerCaseValue = value.toLowerCase();
-          return !frenchForbiddenWords.some((word) =>
-            lowerCaseValue.includes(word.toLowerCase())
-          );
-        }
-      )
-      .matches(
-        /^[a-zA-ZÀ-ÿ'-]+(?:\s[a-zA-ZÀ-ÿ'-]+)*$/,
-        "Ce champ ne peut contenir que des lettres, des tirets et des apostrophes."
-      ),
-    lastName: yup
-      .string()
-      .required("Le nom est obligatoire.")
-      .min(2, "Le nom doit faire au moins 2 caractères.")
-      .max(35, "Le nom ne peut pas dépasser 35 caractères.")
-      .test("forbidden-words", "Ce nom contient un mot interdit.", (value) => {
-        // Validation avec la liste de mots importée
-        if (!value) return true;
-        const lowerCaseValue = value.toLowerCase();
-        return !frenchForbiddenWords.some((word) =>
-          lowerCaseValue.includes(word.toLowerCase())
-        );
-      })
-      .matches(
-        /^[a-zA-ZÀ-ÿ'-]+(?:\s[a-zA-ZÀ-ÿ'-]+)*$/,
-        "Ce champ ne peut contenir que des lettres, des tirets et des apostrophes."
-      ),
     username: yup
       .string()
       .required("Le pseudo est obligatoire.")
@@ -153,17 +112,7 @@ export default function Register() {
       .email("Format email non valide.")
       .required("L'email est obligatoire.")
       .matches(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g, "Format email non valide."),
-    phone: yup
-      .string()
-      .required("Le numéro de téléphone est obligatoire.")
-      .matches(/^\d{10}$/, "Format de numéro de téléphone non valide."),
-    postalCode: yup
-      .string()
-      .required("Le code postal est obligatoire.")
-      .matches(
-        /^(?:(?:0[1-9]|[1-8]\d|9[0-5]|20)\d{3}|(?:971|972|973|974|975|976|977|978|984|986|987|988)\d{2})$/,
-        "Format de code postal non valide (France métropolitaine, Corse ou DOM-TOM)."
-      ),
+    postalCode: yup.string().required("Le code postal est obligatoire."),
     city: yup
       .string()
       .nullable()
@@ -194,13 +143,6 @@ export default function Register() {
           return value <= cutoff;
         }
       ),
-    gender: yup
-      .string()
-      .required("Le genre est obligatoire.")
-      .oneOf(
-        ["female", "male", "other"],
-        "Veuillez choisir l'une des options."
-      ),
     password: yup
       .string()
       .required("Le mot de passe est obligatoire.")
@@ -224,7 +166,6 @@ export default function Register() {
 
   // Initialisation du formulaire avec react-hook-form
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors, isValid },
@@ -245,6 +186,12 @@ export default function Register() {
   const [selectedTown, setSelectedTown] = useState("");
 
   const suggestionsRef = useRef(null);
+
+  // Avatar states
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const avatarInputRef = useRef(null);
 
   // Fetch towns when postalQuery is 5 digits (debounced)
   useEffect(() => {
@@ -300,10 +247,36 @@ export default function Register() {
     return () => document.removeEventListener("click", onDocClick);
   }, []);
 
+  // cleanup preview URL when file changes
+  useEffect(() => {
+    if (!avatarFile) return;
+    const url = URL.createObjectURL(avatarFile);
+    setAvatarPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [avatarFile]);
+
   // Fonction de soumission du formulaire
   async function onSubmit(values) {
     try {
-      const data = await signUp(values);
+      const payload = { ...values };
+
+      // If user selected a local avatar file, upload it first to Supabase
+      if (avatarFile) {
+        try {
+          setAvatarUploading(true);
+          const res = await uploadAvatar(avatarFile);
+          payload.profilePhoto = res?.path || res?.publicURL || null;
+        } catch (err) {
+          console.error("Avatar upload failed:", err);
+          notify.error("Impossible d'uploader la photo de profil.");
+          setAvatarUploading(false);
+          return;
+        } finally {
+          setAvatarUploading(false);
+        }
+      }
+
+      const data = await signUp(payload);
       // Récupère expiresAt envoyé par le serveur (timestamp ms)
       const expiresAt = data?.expiresAt;
       // Persister l'expiration en sessionStorage afin de survivre à un reload
@@ -337,13 +310,6 @@ export default function Register() {
           type: "manual",
           message: errorMessage,
         });
-      } else if (
-        errorMessage.includes("Le numéro de téléphone est déjà utilisé.")
-      ) {
-        setError("phone", {
-          type: "manual",
-          message: errorMessage,
-        });
       } else {
         // Pour toutes les autres erreurs, on affiche un toast générique
         notify.error(
@@ -354,9 +320,12 @@ export default function Register() {
   }
 
   return (
-    <div className="p-1">
+    <div className="p-4">
       <div className="mb-4 text-center">
-        <h1 className="text-4xl font-bold text-center text-[var(--text)] mb-8">
+        <h1
+          className="text-3xl font-bold text-center text-[var(--text)] mb-8"
+          style={{ fontFamily: "Fredoka" }}
+        >
           Inscription
         </h1>
       </div>
@@ -364,47 +333,49 @@ export default function Register() {
         className="flex flex-col gap-5 mb-6 mx-auto max-w-[400px]"
         onSubmit={handleSubmit(onSubmit)}
       >
+        {/* Avatar selector */}
+        <div className="flex flex-col items-center">
+          <label
+            htmlFor="avatar"
+            className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center mb-2 cursor-pointer"
+            aria-label="Sélectionner une photo de profil"
+          >
+            {avatarPreview ? (
+              <img
+                src={avatarPreview}
+                alt="Prévisualisation avatar"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="text-gray-500 font-bold text-2xl">+</div>
+            )}
+          </label>
+          <input
+            id="avatar"
+            ref={avatarInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={async (e) => {
+              const f = e.target.files && e.target.files[0];
+              if (!f) return;
+              // basic client-side validation: file size limit 5MB
+              if (f.size > 5 * 1024 * 1024) {
+                notify.error("La photo doit faire moins de 5MB.");
+                e.target.value = null;
+                return;
+              }
+              setAvatarFile(f);
+              // set a placeholder form value (will be replaced by uploaded URL on submit)
+              setValue("profilePhoto", "");
+            }}
+          />
+          <div className="text-sm text-muted">Photo de profil</div>
+          {avatarUploading && (
+            <div className="text-sm text-primary mt-1">Upload en cours...</div>
+          )}
+        </div>
         <FocusRing>
-          {/* Prénom */}
-          <div className="flex flex-col">
-            <Controller
-              name="firstName"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  id="firstName"
-                  placeholder="Prénom"
-                  aria-label="Prénom"
-                  onInput={() => {}}
-                  error={errors.firstName?.message}
-                  minLength={2}
-                  maxLength={50}
-                />
-              )}
-            />
-          </div>
-
-          {/* Nom */}
-          <div className="flex flex-col">
-            <Controller
-              name="lastName"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  id="lastName"
-                  placeholder="Nom"
-                  aria-label="Nom"
-                  onInput={() => {}}
-                  error={errors.lastName?.message}
-                  minLength={2}
-                  maxLength={35}
-                />
-              )}
-            />
-          </div>
-
           {/* Pseudo */}
           <div className="flex flex-col">
             <Controller
@@ -449,45 +420,6 @@ export default function Register() {
             />
           </div>
 
-          {/* Téléphone */}
-          <div className="flex flex-col">
-            <Controller
-              name="phone"
-              control={control}
-              render={({ field }) => {
-                const raw = field.value || "";
-                const cleaned = String(raw).replace(/\D/g, "").slice(0, 10);
-
-                return (
-                  <Input
-                    {...field}
-                    id="phone"
-                    // show raw digits (no spaces) so the input looks identical
-                    value={cleaned}
-                    // keep form state as raw digits
-                    onChange={(e) => {
-                      const nextDigits = String(e.target.value)
-                        .replace(/\D/g, "")
-                        .slice(0, 10);
-                      field.onChange(nextDigits);
-                    }}
-                    onBlur={field.onBlur}
-                    ref={field.ref}
-                    type="tel"
-                    inputMode="tel"
-                    autoComplete="tel"
-                    pattern="[0-9]*"
-                    placeholder="Téléphone"
-                    aria-label="Téléphone"
-                    error={errors.phone?.message}
-                    maxLength={10}
-                    className="h-12"
-                  />
-                );
-              }}
-            />
-          </div>
-
           {/* Code postal */}
           <div className="flex flex-col">
             <Controller
@@ -524,12 +456,9 @@ export default function Register() {
                     onBlur={field.onBlur}
                     ref={field.ref}
                     type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
                     placeholder="Code postal"
                     aria-label="Code postal"
                     error={errors.postalCode?.message}
-                    maxLength={5}
                     className="h-12"
                   />
                 );
@@ -584,29 +513,6 @@ export default function Register() {
                 />
               )}
             />
-          </div>
-
-          {/* Genre */}
-          <div className="flex flex-col">
-            <select
-              {...register("gender")}
-              id="gender"
-              aria-label="Genre"
-              aria-required="true"
-              aria-invalid={errors.gender ? "true" : "false"}
-              aria-describedby={errors.gender ? "gender-error" : undefined}
-              className="w-full h-12 rounded border px-3 py-2 text-sm input-surface"
-            >
-              <option value="">Genre</option>
-              <option value="female">Femme</option>
-              <option value="male">Homme</option>
-              <option value="other">Autre / Je préfère ne pas répondre</option>
-            </select>
-            {errors.gender && (
-              <p id="gender-error" className="error-text">
-                {errors.gender.message}
-              </p>
-            )}
           </div>
 
           {/* Mot de passe */}

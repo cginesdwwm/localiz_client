@@ -3,7 +3,7 @@
 export default function SwapAndDonate() {
   return (
     <div>
-      <h2>Swap & Donate</h2>
+      <h2 className="text-2xl font-semibold">Swap & Donate</h2>
     </div>
   );
 }

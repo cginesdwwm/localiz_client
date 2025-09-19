@@ -74,11 +74,15 @@ export default function ChangePassword() {
     <div className="h-screen center-screen bg-[var(--bg)] px-4">
       <div className="w-full max-w-md">
         <div className="mb-4">
-          <BackLink
-            to="/settings/manage-account"
-            label="Modifier le mot de passe"
-          />
+          <BackLink to="/profile/me/manage-account" fixed />
         </div>
+
+        <h1
+          className="text-3xl !font-bold font-quicksand mb-4"
+          style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+        >
+          Modifier le mot de passe
+        </h1>
 
         <div className="mb-4">
           <p className="text-[16px] !font-bold font-quicksand">

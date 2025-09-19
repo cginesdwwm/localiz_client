@@ -3,7 +3,7 @@
 export default function SearchSwaps() {
   return (
     <div>
-      <h2>Search - Swaps</h2>
+      <h2 className="text-2xl font-semibold">Search - Swaps</h2>
     </div>
   );
 }

@@ -77,9 +77,18 @@ export default function DeleteAccount() {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <BackLink to="/profile/me/manage-account" label="Supprimer mon compte" />
+      <div className="mb-4">
+        <BackLink to="/profile/me/manage-account" fixed />
+      </div>
 
-      <label className="block mb-2 mt-16 !font-bold">
+      <h1
+        className="text-3xl !font-bold mb-4"
+        style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+      >
+        Supprimer mon compte
+      </h1>
+
+      <label className="block mb-2 mt-2 !font-bold">
         Raison de la suppression
       </label>
       <select
@@ -137,7 +146,7 @@ export default function DeleteAccount() {
 
       <div className="mt-6">
         <Button
-          variant="danger"
+          className="btn btn-danger"
           disabled={!confirmed || !reason || loading}
           onClick={() => setShowModal(true)}
         >

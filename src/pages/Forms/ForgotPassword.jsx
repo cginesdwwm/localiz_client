@@ -47,7 +47,10 @@ export default function ForgotPassword() {
     <div className="h-screen center-screen bg-[var(--bg)] px-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
-          <h1 className="text-3xl font-bold text-center text-[var(--text)]">
+          <h1
+            className="text-3xl font-bold text-center text-[var(--text)]"
+            style={{ fontFamily: "Fredoka" }}
+          >
             Mot de passe oublié
           </h1>
           <p className="text-sm text-center text-gray-500 mt-2">
@@ -92,7 +95,7 @@ export default function ForgotPassword() {
         ) : (
           <div className="border border-white/50 p-4 rounded-2xl text-center">
             <div className="text-4xl mb-4">✅</div>
-            <h2 className="text-xl font-semibold mb-2">
+            <h2 className="text-2xl font-semibold mb-2">
               Vérifiez votre boîte mail
             </h2>
             <p className="text-sm text-gray-500">

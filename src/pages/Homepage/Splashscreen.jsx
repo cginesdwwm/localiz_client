@@ -47,7 +47,10 @@ export default function Splashscreen() {
             if (src !== localLogo) setSrc(localLogo);
           }}
         />
-        <h1 className="mt-[-3rem] text-center front-heading title">
+        <h1
+          className="mt-[-3rem] text-3xl text-center front-heading title font-bold"
+          style={{ fontFamily: "Fredoka" }}
+        >
           Les bons plans,
           <br />à vol d'oiseau
         </h1>

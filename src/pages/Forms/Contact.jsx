@@ -3,13 +3,15 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/Common/Button";
-import BackLink from "../../components/Common/BackLink";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
+import { notify } from "../../utils/notify";
+import BackLink from "../../components/Common/BackLink";
 
 const schema = yup.object({
   name: yup.string().required("Le nom est requis"),
   email: yup.string().email("Email invalide").required("L'email est requis"),
+  subject: yup.string().required("L'objet est requis"),
   message: yup
     .string()
     .min(20, "Le message est trop court")
@@ -21,6 +23,7 @@ export default function Contact() {
   const {
     handleSubmit,
     control,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: yupResolver(schema), mode: "onBlur" });
 
@@ -38,21 +41,33 @@ export default function Contact() {
           payload?.message || "Erreur lors de l'envoi du message"
         );
       }
-      setServerMsg("Message envoyé — nous vous répondrons bientôt.");
+      const successMsg = "Message envoyé — nous vous répondrons bientôt.";
+      setServerMsg(successMsg);
+      notify.success(successMsg);
+      // reset form fields
+      reset();
     } catch (err) {
-      setServerMsg(err.message || "Impossible d'envoyer le message");
+      const m = err.message || "Impossible d'envoyer le message";
+      setServerMsg(m);
+      notify.error(m);
     }
   }
 
   return (
     <div className="h-screen center-screen bg-[var(--bg)] px-4">
       <div className="w-full max-w-md">
-        <BackLink to="/settings" label="Contact" />
+        <BackLink to="/" fixed />
+        <h1
+          className="text-3xl font-bold text-center text-[var(--text)]"
+          style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+        >
+          Contact
+        </h1>
         <div className="flex flex-col items-center mb-6">
-          <h1 className="text-3xl font-semibold text-center text-[var(--text)]">
+          <h2 className="text-2xl font-semibold text-center text-[var(--text)] mt-1">
             Quelque chose à nous dire ?
-          </h1>
-          <p className="text-sm text-[var(--muted)] mt-2 text-center">
+          </h2>
+          <p className="text-[var(--muted)] mt-1 text-center">
             Une question, une suggestion ou un problème ? On est à l'écoute !
           </p>
         </div>
@@ -83,6 +98,20 @@ export default function Contact() {
                   placeholder="Email"
                   type="email"
                   error={errors.email?.message}
+                  className="h-12"
+                />
+              )}
+            />
+
+            <Controller
+              name="subject"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="subject"
+                  placeholder="Objet du message"
+                  error={errors.subject?.message}
                   className="h-12"
                 />
               )}

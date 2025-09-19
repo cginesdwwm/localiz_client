@@ -97,7 +97,10 @@ export default function Login() {
               e.currentTarget.src = localLogo;
             }}
           />
-          <h1 className="text-4xl font-bold text-center text-[var(--text)]">
+          <h1
+            className="text-3xl font-bold text-center text-[var(--text)]"
+            style={{ fontFamily: "Fredoka" }}
+          >
             Connexion
           </h1>
         </div>
@@ -141,14 +144,20 @@ export default function Login() {
 
             {/* Submit button */}
           </FocusRing>
-          <Button
-            type="submit"
-            variant="cta"
-            className="h-12 font-semibold text-base"
-          >
-            Se connecter
-          </Button>
+          <div className="flex justify-center">
+            <div className="w-3/4">
+              <Button
+                type="submit"
+                variant="cta"
+                className="w-full h-12 font-semibold text-base"
+              >
+                Se connecter
+              </Button>
+            </div>
+          </div>
         </form>
+
+        {/* Google sign-in removed */}
 
         {/* Server error */}
         {serverError && (

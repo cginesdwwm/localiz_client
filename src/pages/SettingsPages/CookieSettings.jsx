@@ -85,152 +85,163 @@ export default function CookieSettings() {
 
   return (
     <div className="p-10 mx-auto">
-      <BackLink to="/settings" label="Paramètres des cookies" />
+      <BackLink to="/settings" fixed />
 
-      <section className="mt-26 text-left px-4">
-        <p>
-          Chez <strong>Localiz</strong>, <strong>ta vie privée compte.</strong>
-        </p>
+      <div className="p-12">
+        <h1
+          className="text-3xl font-quicksand !font-bold mb-4"
+          style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+        >
+          Paramètres des cookies
+        </h1>
 
-        <p>
-          Ici, tu peux à tout moment choisir et gérer les cookies utilisés dans
-          l'application, en fonction de tes préférences.
-        </p>
-      </section>
-
-      <section className="mt-8 text-left px-4">
-        <h3 className="font-quicksand !font-bold text-[18px] mb-3 underline">
-          C'est quoi, un cookie ?
-        </h3>
-
-        <p>
-          Les cookies sont de petits fichiers stockés sur ton appareil
-          (smartphone, tablette…). Ils permettent à Localiz de fonctionner
-          correctement, de mémoriser tes réglages, de t'afficher des contenus
-          utiles, et d'améliorer ton expérience.
-        </p>
-      </section>
-
-      <section className="mt-8 text-left px-4 ">
-        <h3 className="font-quicksand !font-bold text-[18px] mb-3 underline">
-          Tes préférences
-        </h3>
-        <p>
-          Tu peux activer ou désactiver les catégories de cookies ci-dessous :
-        </p>
-
-        <div className="mt-6">
-          {/* Essentiels */}
-          <div>
-            <p className="font-quicksand !font-bold text-[16px] m-0">
-              ✅ Cookies essentiels (obligatoires)
-            </p>
-            <p>
-              Ces cookies sont indispensables au bon fonctionnement de Localiz
-              (connexion, sécurité, langue, accessibilité, etc.). Tu ne peux pas
-              les désactiver. Toujours actifs.
-            </p>
-            <div className="mt-3">
-              <ToggleSwitch
-                checked={true}
-                disabled
-                ariaLabel="Cookies essentiels"
-              />
-            </div>
-          </div>
-
-          {/* Mesure d'audience */}
-          <div className="mt-8">
-            <p className="font-quicksand !font-bold text-[16px] m-0">
-              📊 Cookies de mesure d'audience
-            </p>
-            <p>
-              Ils nous aident à comprendre comment tu utilises Localiz (pages
-              visitées, fréquence, clics…) pour améliorer l'appli. Aucune donnée
-              personnelle identifiable n'est enregistrée.
-            </p>
-            <div className="mt-3">
-              <ToggleSwitch
-                checked={prefs.measurement}
-                onChange={(v) => setPref("measurement", v)}
-                ariaLabel="Cookies de mesure d'audience"
-              />
-            </div>
-          </div>
-
-          {/* Personnalisation */}
-          <div className="mt-8">
-            <p className="font-quicksand !font-bold text-[16px] m-0">
-              🎯 Cookies de personnalisation
-            </p>
-            <p>
-              Ces cookies permettent de t'afficher des bons plans, annonces ou
-              suggestions en lien avec ta localisation ou tes centres d'intérêt.
-            </p>
-            <div className="mt-3">
-              <ToggleSwitch
-                checked={prefs.personalization}
-                onChange={(v) => setPref("personalization", v)}
-                ariaLabel="Cookies de personnalisation"
-              />
-            </div>
-          </div>
-
-          {/* Marketing */}
-          <div className="mt-8">
-            <p className="font-quicksand !font-bold text-[16px] m-0">
-              📢 Cookies marketing & réseaux sociaux
-            </p>
-            <p>
-              Utilisés si tu partages du contenu via les réseaux sociaux ou si
-              on affiche un jour des événements ou offres partenaires liés à ta
-              région.
-            </p>
-            <div className="mt-3">
-              <ToggleSwitch
-                checked={prefs.marketing}
-                onChange={(v) => setPref("marketing", v)}
-                ariaLabel="Cookies marketing et réseaux sociaux"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 mb-12">
-          <p className="font-quicksand !font-bold text-[18px] mb-3 underline">
-            Besoin de plus d'infos ?
+        <section className="mt-10 text-left">
+          <p>
+            Chez <strong>Localiz</strong>,{" "}
+            <strong>ta vie privée compte.</strong>
           </p>
-          <p className="m-0">
-            Tu peux consulter la{" "}
-            <Link to="/legal#cookies" className="underline">
-              Politique de confidentialité
-            </Link>{" "}
-            ou nous écrire à
-            <a href="mailto:contact@localiz.fr" className="underline ml-1">
-              contact@localiz.fr
-            </a>
-            .
-          </p>
-        </div>
 
-        <div className="mt-4 flex flex-col gap-3 items-center">
-          <div>
-            <Button onClick={() => handleConfirm()} variant="primary">
-              Confirmer la sélection
-            </Button>
+          <p>
+            Ici, tu peux à tout moment choisir et gérer les cookies utilisés
+            dans l'application, en fonction de tes préférences.
+          </p>
+        </section>
+
+        <section className="mt-8 text-left">
+          <h2 className="text-[20px] font-semibold font-quicksand mb-3 underline">
+            C'est quoi, un cookie ?
+          </h2>
+
+          <p>
+            Les cookies sont de petits fichiers stockés sur ton appareil
+            (smartphone, tablette…). Ils permettent à Localiz de fonctionner
+            correctement, de mémoriser tes réglages, de t'afficher des contenus
+            utiles, et d'améliorer ton expérience.
+          </p>
+        </section>
+
+        <section className="mt-8 text-left">
+          <h2 className="text-[20px] font-semibold font-quicksand mb-3 underline">
+            Tes préférences
+          </h2>
+          <p>
+            Tu peux activer ou désactiver les catégories de cookies ci-dessous :
+          </p>
+
+          <div className="mt-6">
+            {/* Essentiels */}
+            <div>
+              <p className="font-quicksand !font-bold text-[16px] m-0">
+                ✅ Cookies essentiels (obligatoires)
+              </p>
+              <p>
+                Ces cookies sont indispensables au bon fonctionnement de Localiz
+                (connexion, sécurité, langue, accessibilité, etc.). Tu ne peux
+                pas les désactiver. Toujours actifs.
+              </p>
+              <div className="mt-3">
+                <ToggleSwitch
+                  checked={true}
+                  disabled
+                  ariaLabel="Cookies essentiels"
+                />
+              </div>
+            </div>
+
+            {/* Mesure d'audience */}
+            <div className="mt-8">
+              <p className="font-quicksand !font-bold text-[16px] m-0">
+                📊 Cookies de mesure d'audience
+              </p>
+              <p>
+                Ils nous aident à comprendre comment tu utilises Localiz (pages
+                visitées, fréquence, clics…) pour améliorer l'appli. Aucune
+                donnée personnelle identifiable n'est enregistrée.
+              </p>
+              <div className="mt-3">
+                <ToggleSwitch
+                  checked={prefs.measurement}
+                  onChange={(v) => setPref("measurement", v)}
+                  ariaLabel="Cookies de mesure d'audience"
+                />
+              </div>
+            </div>
+
+            {/* Personnalisation */}
+            <div className="mt-8">
+              <p className="font-quicksand !font-bold text-[16px] m-0">
+                🎯 Cookies de personnalisation
+              </p>
+              <p>
+                Ces cookies permettent de t'afficher des bons plans, annonces ou
+                suggestions en lien avec ta localisation ou tes centres
+                d'intérêt.
+              </p>
+              <div className="mt-3">
+                <ToggleSwitch
+                  checked={prefs.personalization}
+                  onChange={(v) => setPref("personalization", v)}
+                  ariaLabel="Cookies de personnalisation"
+                />
+              </div>
+            </div>
+
+            {/* Marketing */}
+            <div className="mt-8">
+              <p className="font-quicksand !font-bold text-[16px] m-0">
+                📢 Cookies marketing & réseaux sociaux
+              </p>
+              <p>
+                Utilisés si tu partages du contenu via les réseaux sociaux ou si
+                on affiche un jour des événements ou offres partenaires liés à
+                ta région.
+              </p>
+              <div className="mt-3">
+                <ToggleSwitch
+                  checked={prefs.marketing}
+                  onChange={(v) => setPref("marketing", v)}
+                  ariaLabel="Cookies marketing et réseaux sociaux"
+                />
+              </div>
+            </div>
           </div>
-          <div>
-            <Button onClick={() => handleAcceptAll()} variant="primary">
-              Accepter tout
-            </Button>
+
+          <div className="mt-8 mb-12">
+            <p className="font-quicksand !font-bold text-[18px] mb-3 underline">
+              Besoin de plus d'infos ?
+            </p>
+            <p className="m-0">
+              Tu peux consulter la{" "}
+              <Link to="/legal#cookies" className="underline">
+                Politique de confidentialité
+              </Link>{" "}
+              ou nous écrire à
+              <a href="mailto:contact@localiz.fr" className="underline ml-1">
+                contact@localiz.fr
+              </a>
+              .
+            </p>
           </div>
-          <div>
-            <Button onClick={() => handleRefuseAll()} variant="danger">
-              Refuser tout
-            </Button>
+
+          <div className="mt-4 flex flex-col gap-3 items-center">
+            <div>
+              <Button onClick={() => handleConfirm()} variant="primary">
+                Confirmer la sélection
+              </Button>
+            </div>
+            <div>
+              <Button onClick={() => handleAcceptAll()} variant="primary">
+                Accepter tout
+              </Button>
+            </div>
+            <div>
+              <Button onClick={() => handleRefuseAll()} variant="danger">
+                Refuser tout
+              </Button>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

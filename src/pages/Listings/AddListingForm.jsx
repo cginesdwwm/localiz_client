@@ -40,7 +40,8 @@ export default function AddListingForm() {
     setLoading(true);
     try {
       const file = values.image[0];
-      const imageUrl = await uploadListingImage(file);
+      const res = await uploadListingImage(file);
+      const imageUrl = res?.path || res?.publicURL || null;
 
       const payload = {
         title: values.locationName,

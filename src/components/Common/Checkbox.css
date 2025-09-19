@@ -9,6 +9,9 @@
   background-color: var(--checkbox-unchecked-bg);
   border: 1px solid var(--checkbox-border);
 }
+.square-checkbox .checkbox-box {
+  border-radius: 0;
+}
 .checkbox-box--checked {
   background-color: var(--checkbox-checked-bg);
   border: none;

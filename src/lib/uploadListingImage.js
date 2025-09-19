@@ -18,13 +18,38 @@ export async function uploadListingImage(file) {
     throw error;
   }
 
-  const { publicURL, error: urlError } = supabase.storage
-    .from("listings")
-    .getPublicUrl(filePath);
-  if (urlError) {
-    console.error("Supabase getPublicUrl error", urlError);
-    throw urlError;
+  const publicRes = supabase.storage.from("listings").getPublicUrl(filePath);
+  let publicURL = null;
+  try {
+    if (publicRes && typeof publicRes === "object") {
+      if (publicRes.publicURL) publicURL = publicRes.publicURL;
+      else if (publicRes.data && publicRes.data.publicUrl)
+        publicURL = publicRes.data.publicUrl;
+      else if (publicRes.data && publicRes.data.publicURL)
+        publicURL = publicRes.data.publicURL;
+    }
+  } catch (e) {
+    void e;
   }
 
-  return publicURL;
+  if (!publicURL) {
+    console.warn("uploadListingImage: could not determine public URL", {
+      publicRes,
+      filePath,
+    });
+    try {
+      const projectUrl =
+        supabase?.url || import.meta?.env?.VITE_SUPABASE_URL || "";
+      if (projectUrl) {
+        publicURL = `${projectUrl.replace(
+          /\/$/,
+          ""
+        )}/storage/v1/object/public/${filePath}`;
+      }
+    } catch (e) {
+      void e;
+    }
+  }
+
+  return { path: filePath, publicURL: publicURL || null };
 }

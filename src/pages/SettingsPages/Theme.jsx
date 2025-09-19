@@ -29,29 +29,38 @@ export default function Theme() {
 
   return (
     <div className="p-4 mx-auto max-w-xl mt-10">
-      <BackLink to="/settings" label="Thème" />
+      <BackLink to="/settings" fixed />
 
-      <h2 className="font-quicksand !font-bold text-[16px] mt-6 mb-4">
-        Sélectionne le thème de ton choix
-      </h2>
+      <div className="p-12">
+        <h1
+          className="text-3xl font-bold font-quicksand mt-6 mb-4"
+          style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+        >
+          Thème
+        </h1>
 
-      <div className="">
-        {THEMES.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setAndPersist(t.id)}
-            className="w-full flex items-center justify-between p-3 border-t border-white first:border-t-0"
-            aria-pressed={theme === t.id}
-          >
-            <span className="font-quicksand !font-bold text-[16px] text-left">
-              {t.label}
-            </span>
-            <Checkbox
-              checked={theme === t.id}
-              onChange={() => setAndPersist(t.id)}
-            />
-          </button>
-        ))}
+        <h2 className="text-2xl font-semibold font-quicksand mt-2 mb-4">
+          Sélectionne le thème de ton choix
+        </h2>
+
+        <div className="">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setAndPersist(t.id)}
+              className="w-full flex items-center justify-between p-3 border-t border-white first:border-t-0"
+              aria-pressed={theme === t.id}
+            >
+              <span className="font-quicksand !font-bold text-[16px] text-left">
+                {t.label}
+              </span>
+              <Checkbox
+                checked={theme === t.id}
+                onChange={() => setAndPersist(t.id)}
+              />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

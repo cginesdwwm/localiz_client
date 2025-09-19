@@ -20,7 +20,7 @@ export default function BlogCard({ blog }) {
       </div>
       <div className="p-5 flex-grow flex flex-col">
         <div className="h-16 mb-2">
-          <h2 className="text-xl font-bold text-gray-900 line-clamp-2 leading-tight">
+          <h2 className="text-2xl font-semibold text-gray-900 line-clamp-2 leading-tight">
             {blog.title}
           </h2>
         </div>

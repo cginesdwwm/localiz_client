@@ -59,6 +59,16 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Helper to let external code (e.g. OAuth) set the user state directly
+  const setUser = (user) => {
+    setUserConnected(user || null);
+    try {
+      localStorage.setItem("user", JSON.stringify(user || null));
+    } catch (err) {
+      console.warn("Failed to persist user", err);
+    }
+  };
+
   const logout = async () => {
     try {
       await signout();
@@ -94,16 +104,10 @@ export function AuthProvider({ children }) {
     let mounted = true;
     async function refresh() {
       // Debug logs to help diagnose reload logout issues
-      console.debug("AuthContext.refresh start", {
-        loaderData: loaderData ?? null,
-        stored: stored ?? null,
-        userConnected: userConnected ?? null,
-      });
 
       if (!userConnected) {
         try {
           const me = await getCurrentUser();
-          console.debug("AuthContext.getCurrentUser response", { me });
           const serverUser = me?.user ?? me ?? null;
           if (serverUser && mounted) {
             setUserConnected(serverUser);
@@ -142,6 +146,7 @@ export function AuthProvider({ children }) {
         user: userConnected,
         isAuthenticated: !!userConnected,
         login,
+        setUser,
         logout,
         updateUser,
       }}

@@ -3,7 +3,7 @@
 export default function ProfileMe() {
   return (
     <div>
-      <h2>Profile (me)</h2>
+      <h2 className="text-2xl font-semibold">Profile (me)</h2>
     </div>
   );
 }

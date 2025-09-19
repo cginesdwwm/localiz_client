@@ -5,7 +5,8 @@ import { BASE_URL } from "../utils/url";
  * returns {Promise<object>} : Le profil utilisateur.
  */
 export async function getMyProfile() {
-  const response = await fetch(`${BASE_URL}/user/me`);
+  const url = `${BASE_URL}/user/me`;
+  const response = await fetch(url);
 
   if (!response.ok) {
     const errorData = await response.json();
@@ -88,7 +89,8 @@ export async function changeMyPassword(passwords) {
  * payload: objet avec les champs à mettre à jour, ex: { bio: '...' }
  */
 export async function updateMyProfile(payload) {
-  const response = await fetch(`${BASE_URL}/users/me`, {
+  const url = `${BASE_URL}/users/me`;
+  const response = await fetch(url, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

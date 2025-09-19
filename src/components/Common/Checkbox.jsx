@@ -26,8 +26,7 @@ const Checkbox = forwardRef(
             aria-hidden
             className={`checkbox-box ${
               checked ? "checkbox-box--checked" : ""
-            } w-5 h-5 rounded-[5px] flex items-center justify-center transition-all duration-150
-              peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-1`}
+            } w-5 h-5 rounded-[5px] flex items-center justify-center transition-all duration-150 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-400 peer-focus-visible:ring-offset-1`}
           >
             <svg
               className={`w-3 h-3 transition-colors duration-150`}

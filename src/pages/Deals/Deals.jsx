@@ -3,7 +3,7 @@
 export default function Deals() {
   return (
     <div>
-      <h2>Deals</h2>
+      <h2 className="text-2xl font-semibold">Deals</h2>
     </div>
   );
 }

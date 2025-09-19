@@ -82,12 +82,8 @@ export default function Homepage() {
   return (
     <div className="mt-4 text-center">
       <h1
-        className="title"
-        style={{
-          fontSize: "24px",
-          fontWeight: 600,
-          fontFamily: "Fredoka, sans-serif",
-        }}
+        className="heading text-center text-[28px] font-semibold"
+        style={{ fontFamily: "Fredoka, sans-serif" }}
       >
         {!isAuthenticated
           ? "Bienvenue sur Localiz !"
@@ -99,23 +95,19 @@ export default function Homepage() {
               return name ? `${tpl}, ${name}` : tpl;
             })()}
       </h1>
-
-      <div className="flex flex-col items-center">
-        <img
-          src={SUPABASE_FAVICON}
-          alt="Localiz logo"
-          className="w-24 h-24 p-0 m-0"
-        />
-
-        {isAuthenticated && (
-          <p
-            className="text-[18px]"
-            style={{ fontFamily: "Fredoka, sans-serif" }}
-          >
-            {message}
-          </p>
-        )}
-      </div>
+      <img
+        src={SUPABASE_FAVICON}
+        alt="Localiz logo"
+        className="w-24 h-24 p-0 m-0 block mx-auto"
+      />
+      {isAuthenticated && (
+        <p
+          className="text-[18px]"
+          style={{ fontFamily: "Fredoka, sans-serif" }}
+        >
+          {message}
+        </p>
+      )}
     </div>
   );
 }

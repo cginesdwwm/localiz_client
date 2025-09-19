@@ -1,62 +1,45 @@
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { NavLink } from "react-router-dom";
 
-export default function BackLink({
-  to,
-  label,
-  className = "",
-  fixed = true,
-  arrowOnly = true,
-}) {
-  // Default position: fixed at top-left of viewport
-  const positionClass = fixed
-    ? "fixed top-6 left-6 z-50"
-    : "absolute top-6 left-6 z-40";
-
-  // When arrowOnly is true, render the arrow as the interactive NavLink
-  // and render the label as non-interactive text (but still accessible).
-  if (arrowOnly) {
-    return (
-      <div className={`${positionClass} flex items-center ${className}`.trim()}>
-        <NavLink
-          to={to || -1}
-          aria-label={label ? `Retour vers ${label}` : "Retour"}
-          className="backlink-link p-0 flex items-center"
-        >
-          <span className="text-white text-3xl leading-none" aria-hidden>
-            ←
-          </span>
-        </NavLink>
-
-        {/*
-          The visible label is hidden from assistive technology because the
-          interactive arrow link already provides an `aria-label` announcing
-          the destination. Hiding the visual label prevents duplicate
-          announcements for screen reader users while keeping the text
-          readable visually.
-        */}
-        <span className="ml-2 backlink backlink-text" aria-hidden={true}>
-          {label}
-        </span>
-      </div>
-    );
-  }
-
-  // Default behavior: whole area is clickable
-  return (
-    <div className={`${positionClass} flex items-center ${className}`.trim()}>
+export default function BackLink({ to, className = "", fixed = false }) {
+  const content = (
+    <div className={`flex items-center ${className}`.trim()}>
       <NavLink
         to={to || -1}
-        aria-label={label ? `Retour vers ${label}` : "Retour"}
-        className="p-0 flex items-center"
+        aria-label={"Retour"}
+        className="backlink-link p-0 flex items-center"
       >
         <span className="text-white text-3xl leading-none" aria-hidden>
           ←
         </span>
-
-        <span className="pointer-events-none ml-2 backlink backlink-text">
-          {label}
-        </span>
       </NavLink>
     </div>
   );
+
+  const [container, setContainer] = useState(null);
+
+  useEffect(() => {
+    if (!fixed) return;
+    const node = document.createElement("div");
+    // Use explicit inline styles so the container doesn't stretch across the
+    // viewport (some environments can make a block fixed element full-width).
+    node.style.position = "fixed";
+    node.style.top = "1.5rem"; /* tailwind 'top-6' */
+    node.style.left = "1.5rem"; /* tailwind 'left-6' */
+    node.style.zIndex = "50";
+    node.style.display = "inline-block";
+    document.body.appendChild(node);
+    setContainer(node);
+    return () => {
+      if (node.parentNode) node.parentNode.removeChild(node);
+    };
+  }, [fixed]);
+
+  if (fixed) {
+    if (!container) return null;
+    return createPortal(content, container);
+  }
+
+  return content;
 }

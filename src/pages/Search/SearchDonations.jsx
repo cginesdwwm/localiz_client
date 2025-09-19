@@ -3,7 +3,7 @@
 export default function SearchDonations() {
   return (
     <div>
-      <h2>Search - Donations</h2>
+      <h2 className="text-2xl font-semibold">Search - Donations</h2>
     </div>
   );
 }

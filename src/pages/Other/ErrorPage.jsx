@@ -38,7 +38,12 @@ export default function ErrorPage() {
     <div className="min-h-screen flex items-center justify-center p-6 bg-transparent">
       <div className="w-full max-w-2xl bg-white/5 border border-gray-200 rounded-xl p-8 shadow-sm text-center">
         <p className="text-6xl font-extrabold text-gray-800 mb-2">{code}</p>
-        <h1 className="front-heading text-2xl mb-4">{message}</h1>
+        <h1
+          className="front-heading text-3xl mb-4 font-bold"
+          style={{ fontFamily: "Fredoka" }}
+        >
+          {message}
+        </h1>
         <p className="text-gray-600 mb-6">
           Nous sommes désolés — quelque chose s'est mal passé. Vous pouvez
           retourner à l'accueil ou réessayer plus tard.

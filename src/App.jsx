@@ -1,5 +1,4 @@
 /*
-  App.jsx
   - Composant principal qui définit la mise en page générale (header + contenu + toaster).
   - Outlet (react-router) est une zone où les composants enfants s'affichent
     en fonction de la route courante (définie dans `router.jsx`).
@@ -47,7 +46,7 @@ function App() {
     );
   }
 
-  return (
+  const AppContent = (
     <div className="min-h-screen flex flex-col">
       <BlogProvider>
         {shouldShowHeader && <Header />}
@@ -59,6 +58,8 @@ function App() {
       <Toaster position="top-center" toastOptions={{ duration: 6000 }} />
     </div>
   );
+
+  return AppContent;
 }
 
 export default App;

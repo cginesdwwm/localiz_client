@@ -3,7 +3,7 @@
 export default function ProfileOther() {
   return (
     <div>
-      <h2>Profile (other user)</h2>
+      <h2 className="text-2xl font-semibold">Profile (other user)</h2>
     </div>
   );
 }

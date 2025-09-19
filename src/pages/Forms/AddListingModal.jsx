@@ -129,7 +129,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
           <div className="flex items-center justify-between p-6 pb-4">
             <div className="flex items-center gap-3">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-semibold text-gray-900">
                   Nouvel article
                 </h2>
                 <p className="text-sm text-gray-500">

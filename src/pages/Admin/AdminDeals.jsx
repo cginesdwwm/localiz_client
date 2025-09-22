@@ -138,6 +138,7 @@ export default function AdminDeals() {
                 <tr>
                   <th className="p-2">ID</th>
                   <th className="p-2">Titre</th>
+                  <th className="p-2">Catégorie</th>
                   <th className="p-2">Auteur</th>
                   <th className="p-2">Actions</th>
                 </tr>
@@ -153,6 +154,9 @@ export default function AdminDeals() {
                     </td>
                     <td className="p-2 text-sm text-white">
                       {d.title || d.titre || "-"}
+                    </td>
+                    <td className="p-2 text-sm text-white/80">
+                      {d.tag || "-"}
                     </td>
                     <td className="p-2 text-sm text-white">
                       {d.author || d.userEmail || "-"}

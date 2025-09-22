@@ -9,13 +9,18 @@ import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
 import BackLink from "../../components/Common/BackLink";
+import { DEAL_TAGS } from "../../constants/dealTags";
 
 const schema = yup.object({
   image: yup.mixed().required("Image requise"),
   title: yup.string().required("Titre requis"),
+  tag: yup
+    .string()
+    .oneOf(DEAL_TAGS, "Tag invalide")
+    .required("Catégorie requise"),
   streetAddress: yup
     .string()
-    .required("Adresse (rue) requise")
+    .required("Adresse requise")
     .min(3, "Adresse trop courte"),
   postalCode: yup
     .string()
@@ -101,6 +106,7 @@ export default function AddDealForm() {
         image: imageUrl,
         images: extraImages,
         title: values.title,
+        tag: values.tag,
         startDate: values.startDate,
         endDate: values.endDate || null,
         description: values.description,
@@ -256,11 +262,11 @@ export default function AddDealForm() {
   }, [streetRaw, postalQuery]);
 
   return (
-    <div className="p-4">
+    <div className="px-4 py-6">
       <BackLink to="/publish" fixed />
-      <div className="mb-4 text-center">
+      <div className="mb-6 text-center">
         <h1
-          className="text-3xl font-bold text-center text-[var(--text)] mb-8"
+          className="text-3xl font-bold text-[var(--text)]"
           style={{ fontFamily: "Fredoka" }}
         >
           Publier un bon plan
@@ -268,47 +274,57 @@ export default function AddDealForm() {
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-5 mb-6 mx-auto max-w-[400px]"
+        className="flex flex-col mx-auto max-w-[400px]"
       >
         <FocusRing>
           {/* Titre */}
-          <Controller
-            name="title"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="title"
-                placeholder="Titre du bon plan"
-                label="Titre"
-                size="base"
-                required
-                className="w-full"
-                error={errors.title?.message}
-              />
-            )}
-          />
+          <div className="mb-6">
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="title"
+                  placeholder="Titre du bon plan"
+                  label="Titre"
+                  size="base"
+                  required
+                  className="w-full"
+                  error={errors.title?.message}
+                />
+              )}
+            />
+          </div>
 
-          {/* Lieu (nom du lieu ou ville) */}
-          <Controller
-            name="locationName"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="locationName"
-                placeholder="L'endroit exact (ex: Nom du commerce, restaurant...)"
-                label="Lieu"
-                size="base"
-                className="w-full"
-                required
-                error={errors.locationName?.message}
-              />
+          {/* Tag / Catégorie */}
+          <div className="mb-6">
+            <label htmlFor="tag" className="block text-base font-medium mb-2">
+              Catégorie <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="tag"
+              {...register("tag")}
+              className="w-full border px-3 py-2 input-surface h-12 text-base"
+              aria-invalid={!!errors.tag}
+              aria-describedby={errors.tag ? "tag-error" : undefined}
+            >
+              <option value="">Sélectionnez...</option>
+              {DEAL_TAGS.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+            {errors.tag && (
+              <p id="tag-error" className="text-xs mt-1 error-text">
+                {errors.tag.message}
+              </p>
             )}
-          />
+          </div>
 
           {/* Images (max 4) drag & drop */}
-          <div className="mb-4">
+          <div className="mb-6">
             <label className="block text-base font-medium">
               Images (jusqu'à 4) *
             </label>
@@ -444,7 +460,7 @@ export default function AddDealForm() {
                   <div className="mt-3">
                     <Button
                       type="button"
-                      variant="ghost"
+                      variant="cta"
                       className="px-4 py-2"
                       onClick={() =>
                         document.getElementById("deal-image-input")?.click()
@@ -492,8 +508,28 @@ export default function AddDealForm() {
             )}
           </div>
 
+          {/* Lieu (nom du lieu ou ville) */}
+          <div className="mb-6">
+            <Controller
+              name="locationName"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="locationName"
+                  placeholder="L'endroit exact (ex: Nom du commerce, restaurant...)"
+                  label="Lieu"
+                  size="base"
+                  className="w-full"
+                  required
+                  error={errors.locationName?.message}
+                />
+              )}
+            />
+          </div>
+
           {/* Adresse */}
-          <div className="mb-2" ref={streetRef}>
+          <div className="mb-6" ref={streetRef}>
             <Controller
               name="streetAddress"
               control={control}
@@ -515,7 +551,7 @@ export default function AddDealForm() {
               )}
             />
             {showStreetSuggestions && streetSuggestions.length > 0 && (
-              <ul className="mt-[-8px] mb-2 bg-white text-black border rounded max-h-56 overflow-auto">
+              <ul className="mt-1 bg-white text-black border rounded max-h-56 overflow-auto">
                 {streetSuggestions.map((f) => {
                   const p = f?.properties || {};
                   const label = p.label || "";
@@ -530,14 +566,16 @@ export default function AddDealForm() {
                           shouldDirty: true,
                           shouldValidate: true,
                         });
-                        setStreetRaw(street);
+                        // Clear the query driving suggestions so it doesn't reopen
+                        setStreetRaw("");
                         if (p.postcode) {
                           setValue("postalCode", p.postcode, {
                             shouldDirty: true,
                             shouldValidate: true,
                           });
                           setPostalRaw(p.postcode);
-                          setPostalQuery(p.postcode);
+                          // Clear postal query to avoid reopening towns dropdown
+                          setPostalQuery("");
                         }
                         if (p.city) {
                           setValue("city", p.city, {
@@ -546,6 +584,8 @@ export default function AddDealForm() {
                           });
                           setSelectedTown(p.city);
                         }
+                        // Also ensure towns suggestions dropdown is closed
+                        setShowSuggestions(false);
                         setShowStreetSuggestions(false);
                       }}
                     >
@@ -558,7 +598,7 @@ export default function AddDealForm() {
           </div>
 
           {/* Adresse (Code postal + Ville) */}
-          <div className="flex flex-col">
+          <div className="flex flex-col mb-2">
             <Controller
               name="postalCode"
               control={control}
@@ -640,41 +680,45 @@ export default function AddDealForm() {
           />
 
           {/* Dates */}
-          <Controller
-            name="startDate"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="startDate"
-                type="date"
-                label="Date de début"
-                size="base"
-                required
-                className="w-full"
-                error={errors.startDate?.message}
-              />
-            )}
-          />
+          <div className="mb-6">
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="startDate"
+                  type="date"
+                  label="Date de début"
+                  size="base"
+                  required
+                  className="w-full"
+                  error={errors.startDate?.message}
+                />
+              )}
+            />
+          </div>
 
-          <Controller
-            name="endDate"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="endDate"
-                type="date"
-                label="Date de fin (optionnelle)"
-                size="base"
-                className="w-full"
-                error={errors.endDate?.message}
-              />
-            )}
-          />
+          <div className="mb-6">
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="endDate"
+                  type="date"
+                  label="Date de fin (optionnelle)"
+                  size="base"
+                  className="w-full"
+                  error={errors.endDate?.message}
+                />
+              )}
+            />
+          </div>
 
           {/* Conditions d'accès */}
-          <div className="mb-2">
+          <div className="mb-6">
             <label
               htmlFor="accessConditionsType"
               className="block text-base font-medium mb-1"
@@ -736,7 +780,7 @@ export default function AddDealForm() {
             {(accessType === "reservation" ||
               accessType === "reduction" ||
               accessType === "other") && (
-              <p className="text-sm text-gray-600 mt-2 mb-4">
+              <p className="text-sm text-gray-600 mt-2">
                 Merci de préciser les détails (horaires, contact, conditions de
                 réduction, etc.) dans la description ci-dessous.
               </p>
@@ -744,24 +788,26 @@ export default function AddDealForm() {
           </div>
 
           {/* Site web */}
-          <Controller
-            name="website"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                id="website"
-                placeholder="https://exemple.com"
-                label="Site web (optionnel)"
-                size="base"
-                className="w-full"
-                error={errors.website?.message}
-              />
-            )}
-          />
+          <div className="mb-6">
+            <Controller
+              name="website"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  id="website"
+                  placeholder="https://exemple.com"
+                  label="Site web (optionnel)"
+                  size="base"
+                  className="w-full"
+                  error={errors.website?.message}
+                />
+              )}
+            />
+          </div>
 
           {/* Description */}
-          <div className="mb-2">
+          <div className="mb-6">
             <label
               htmlFor="description"
               className="block text-base font-medium mb-1"
@@ -811,7 +857,7 @@ export default function AddDealForm() {
             type="submit"
             disabled={loading || descriptionValue.length < 20}
             aria-disabled={loading || descriptionValue.length < 20}
-            className={`mt-6 ${
+            className={`${
               loading || descriptionValue.length < 20
                 ? "opacity-50 cursor-not-allowed"
                 : ""

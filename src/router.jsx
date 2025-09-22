@@ -26,6 +26,7 @@ import AdminDeals from "./pages/Admin/AdminDeals";
 import AdminListings from "./pages/Admin/AdminListings";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import ContactMessages from "./pages/Admin/ContactMessages";
+import AdminCategories from "./pages/Admin/AdminCategories";
 
 import Deals from "./pages/Deals/Deals";
 // import DealDetails from "./pages/Deals/DealDetails";
@@ -260,6 +261,7 @@ export const router = createBrowserRouter([
           { path: "deals", element: <AdminDeals /> },
           { path: "listings", element: <AdminListings /> },
           { path: "messages", element: <ContactMessages /> },
+          { path: "categories", element: <AdminCategories /> },
         ],
       },
     ],

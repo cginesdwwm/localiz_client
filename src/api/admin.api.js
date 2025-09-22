@@ -182,3 +182,74 @@ export async function deleteListing(listingId) {
     );
   }
 }
+
+// --- Categories ---
+export async function getCategories() {
+  const response = await fetch(`${BASE_URL}/admin/categories`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || "Erreur lors du chargement des catégories.");
+  }
+  return response.json();
+}
+
+export async function createCategory({ type, name, active = true }) {
+  const response = await fetch(`${BASE_URL}/admin/categories`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ type, name, active }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(
+      err.message || "Erreur lors de la création de la catégorie."
+    );
+  }
+  return response.json();
+}
+
+export async function updateCategory(id, { name, active }) {
+  const response = await fetch(`${BASE_URL}/admin/categories/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ name, active }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(
+      err.message || "Erreur lors de la mise à jour de la catégorie."
+    );
+  }
+  return response.json();
+}
+
+export async function deleteCategory(id) {
+  const response = await fetch(`${BASE_URL}/admin/categories/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(
+      err.message || "Erreur lors de la suppression de la catégorie."
+    );
+  }
+}
+
+export async function moveCategory(id, direction) {
+  const response = await fetch(`${BASE_URL}/admin/categories/${id}/move`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ direction }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || "Erreur lors du réordonnancement.");
+  }
+  return response.json();
+}

@@ -15,19 +15,21 @@ export default function PublishChoice() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
-          to="/listings/create"
-          className="flex items-center justify-center rounded-lg p-6 bg-white/5 hover:bg-white/10 text-center"
-        >
-          <h2 className="text-2xl font-semibold">
-            Publier une annonce (Troc/Don)
-          </h2>
-        </Link>
-
-        <Link
           to="/deals/create"
           className="flex items-center justify-center rounded-lg p-6 bg-white/5 hover:bg-white/10 text-center"
         >
           <h2 className="text-2xl font-semibold">Publier un bon plan</h2>
+        </Link>
+
+        <Link
+          to="/listings/create"
+          className="flex items-center justify-center rounded-lg p-6 bg-white/5 hover:bg-white/10 text-center"
+        >
+          <h2 className="text-2xl font-semibold">
+            Publier une annonce
+            <br />
+            (troc ou don)
+          </h2>
         </Link>
       </div>
     </div>

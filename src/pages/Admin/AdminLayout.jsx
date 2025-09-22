@@ -71,6 +71,16 @@ export default function AdminLayout({ children }) {
           >
             Messages
           </NavLink>
+          <NavLink
+            to="/admin/categories"
+            className={({ isActive }) =>
+              `p-2 rounded ${
+                isActive ? "bg-white/5 text-white" : "text-white/80"
+              }`
+            }
+          >
+            Catégories
+          </NavLink>
         </nav>
       </aside>
 

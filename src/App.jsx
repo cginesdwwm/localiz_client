@@ -34,7 +34,8 @@ function App() {
   // Explicitly hide header on pages that require full focus (no chrome)
   if (
     pathname === "/profile/me/manage-account" ||
-    pathname === "/deals/create"
+    pathname === "/deals/create" ||
+    pathname === "/listings/create"
   ) {
     // override whitelist
     return (

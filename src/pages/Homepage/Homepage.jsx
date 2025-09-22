@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { WELCOME_MESSAGES, DAILY_GREETINGS } from "../../constants";
 
 const SUPABASE_FAVICON =
-  "https://pjrrvzxomdowrraykone.supabase.co/storage/v1/object/public/public-assets/favicon.png";
+  "https://pjrrvzxomdowrraykone.supabase.co/storage/v1/object/public/public-assets/favicon.webp";
 
 export default function Homepage() {
   const { user, isAuthenticated } = useAuth() || {};

@@ -68,6 +68,8 @@ import Language from "./pages/SettingsPages/Language";
 import ManageAccount from "./pages/Profile/ManageAccount";
 import Settings from "./pages/SettingsPages/Settings";
 import Theme from "./pages/SettingsPages/Theme";
+import AddListingForm from "./pages/Listings/AddListingForm";
+import AddDealForm from "./pages/Deals/AddDealForm";
 
 const validateRouteId = (id) => /^[a-zA-Z0-9-_]{1,50}$/.test(id);
 
@@ -126,6 +128,7 @@ export const router = createBrowserRouter([
 
       // --- Deals ---
       { path: "/deals", element: <Deals /> },
+      { path: "/deals/create", element: <AddDealForm /> },
       {
         path: "/deals/:id",
         // element: <DealDetails />,
@@ -139,6 +142,7 @@ export const router = createBrowserRouter([
 
       // --- Listings (Troc & Don) ---
       { path: "/listings", element: <SwapAndDonate /> },
+      { path: "/listings/create", element: <AddListingForm /> },
       {
         path: "/listings/:id",
         loader: ({ params }) => {

@@ -31,8 +31,11 @@ function App() {
     showHeaderFor.includes(pathname) ||
     showHeaderFor.some((p) => pathname.startsWith(p + "/"));
 
-  // Explicitly hide header on the manage-account page
-  if (pathname === "/profile/me/manage-account") {
+  // Explicitly hide header on pages that require full focus (no chrome)
+  if (
+    pathname === "/profile/me/manage-account" ||
+    pathname === "/deals/create"
+  ) {
     // override whitelist
     return (
       <div className="min-h-screen flex flex-col">

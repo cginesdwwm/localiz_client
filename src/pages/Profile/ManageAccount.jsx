@@ -417,7 +417,10 @@ function FieldEditor({
                 // keep digits only and limit to 10 chars
                 next = String(next).replace(/\D/g, "").slice(0, 10);
               }
-              setValue(field, next, { shouldDirty: true });
+              setValue(field, next, {
+                shouldDirty: true,
+                shouldValidate: true,
+              });
             }}
             className="w-full p-1 text-sm bg-transparent outline-none"
             aria-describedby={err ? `${inputId}-error` : undefined}
@@ -458,7 +461,15 @@ export default function ManageAccount() {
         bio: yup.string().max(120, "Trop long"),
         birthday: yup
           .string()
-          .matches(/^$|^\d{4}-\d{2}-\d{2}$/, "Date invalide"),
+          .matches(/^$|^\d{4}-\d{2}-\d{2}$/, "Date invalide")
+          .test("min-age", "Vous devez avoir au moins 16 ans.", (value) => {
+            if (!value) return true;
+            const d = new Date(value);
+            if (Number.isNaN(d.getTime())) return false;
+            const cutoff = new Date();
+            cutoff.setFullYear(cutoff.getFullYear() - 16);
+            return d <= cutoff;
+          }),
         gender: yup.string().oneOf(["", "female", "male", "other"]),
         profilePhoto: yup.string(),
         showFirstName: yup.boolean(),
@@ -474,8 +485,12 @@ export default function ManageAccount() {
     setValue,
     reset,
     setError,
-    formState: { errors, isSubmitting },
-  } = useForm({ resolver: yupResolver(schema), defaultValues: {} });
+    formState: { errors, isSubmitting, isValid },
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {},
+    mode: "onChange",
+  });
 
   // compute a snapshot and list of missing profile fields so we can
   // show a dismissible banner. We compute here so we can react to
@@ -537,7 +552,7 @@ export default function ManageAccount() {
     } catch (e) {
       void e;
     }
-  }, [user, reset]);
+  }, [user, reset, avatarPreview, pendingAvatarFile]);
 
   // revoke preview URL on unmount
   useEffect(() => {
@@ -554,10 +569,13 @@ export default function ManageAccount() {
   }, []);
 
   // memoize payload to avoid repeated computation in render
-  // use form's `getValues` to get a snapshot when needed
+  // ensure we re-run when form values change by watching the form
+  const watchedValues = watch();
   const memoPayload = useMemo(() => {
     const values =
-      typeof control?.getValues === "function" ? control.getValues() : watch();
+      typeof control?.getValues === "function"
+        ? control.getValues()
+        : watchedValues;
     const current = {
       bio: user?.bio || "",
       lastName: user?.lastName || user?.nom || "",
@@ -588,7 +606,7 @@ export default function ManageAccount() {
     }
 
     return payload;
-  }, [watch, user, control]);
+  }, [watchedValues, user, control]);
 
   async function onSubmit(values) {
     try {
@@ -851,7 +869,10 @@ export default function ManageAccount() {
                     // keep file until user saves
                     setPendingAvatarFile(f);
                     // clear any saved profilePhoto value in form until upload
-                    setValue("profilePhoto", "", { shouldDirty: true });
+                    setValue("profilePhoto", "", {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    });
                   } catch (err) {
                     console.error(err);
                   } finally {
@@ -894,7 +915,9 @@ export default function ManageAccount() {
           <div className="border border-gray-200 rounded-lg p-4 dark:bg-midnight">
             <BioField
               value={watch("bio")}
-              onChange={(v) => setValue("bio", v, { shouldDirty: true })}
+              onChange={(v) =>
+                setValue("bio", v, { shouldDirty: true, shouldValidate: true })
+              }
               disabled={isSubmitting}
             />
           </div>
@@ -1032,14 +1055,17 @@ export default function ManageAccount() {
             onClick={handleSubmit(onSubmit)}
             disabled={
               isSubmitting ||
+              !isValid ||
               (Object.keys(memoPayload).length === 0 && !pendingAvatarFile)
             }
             aria-disabled={
               isSubmitting ||
+              !isValid ||
               (Object.keys(memoPayload).length === 0 && !pendingAvatarFile)
             }
             className={
-              Object.keys(memoPayload).length === 0 && !pendingAvatarFile
+              (Object.keys(memoPayload).length === 0 && !pendingAvatarFile) ||
+              !isValid
                 ? "opacity-60 cursor-not-allowed"
                 : ""
             }

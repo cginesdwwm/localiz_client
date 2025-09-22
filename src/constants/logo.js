@@ -1,9 +1,9 @@
 // Centralized logo URL configuration and local fallback for the client.
 // Priority (most to least): Vite env var VITE_PUBLIC_LOGO_URL -> hardcoded Supabase public URL -> local bundled asset.
-import localLogo from "../assets/images/logo.png";
+import localLogo from "../assets/images/logo.webp";
 
 const FALLBACK_SUPABASE_LOGO =
-  "https://pjrrvzxomdowrraykone.supabase.co/storage/v1/object/public/public-assets/logo.png";
+  "https://pjrrvzxomdowrraykone.supabase.co/storage/v1/object/public/public-assets/logo.webp";
 
 // Vite exposes env vars via import.meta.env
 const envLogo =

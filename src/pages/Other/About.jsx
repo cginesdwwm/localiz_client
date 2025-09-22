@@ -1,9 +1,9 @@
 // PAGE A PROPOS DE LOCALIZ
 import BackLink from "../../components/Common/BackLink";
-import faviconLocal from "../../assets/images/favicon.png";
+import faviconLocal from "../../assets/images/favicon.webp";
 
 const SUPABASE_FAVICON =
-  "https://pjrrvzxomdowrraykone.supabase.co/storage/v1/object/public/public-assets/favicon.png";
+  "https://pjrrvzxomdowrraykone.supabase.co/storage/v1/object/public/public-assets/favicon.webp";
 
 export default function About() {
   return (

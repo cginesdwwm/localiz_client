@@ -1,4 +1,5 @@
 import { NavLink, useLocation } from "react-router-dom";
+import logo from "../../assets/images/logo.webp";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function Header() {
@@ -12,7 +13,16 @@ export default function Header() {
     <header className="w-full h-16 site-header">
       <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         <NavLink to="/homepage" className="inline-flex items-center">
-          <span className="title text-3xl">LOCALIZ</span>
+          <img
+            src={logo}
+            alt="Localiz"
+            className="h-20 w-auto"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src =
+                "https://pjrrvzxomdowrraykone.supabase.co/storage/v1/object/public/public-assets/logo.webp";
+            }}
+          />
         </NavLink>
 
         {/* Main navigation */}

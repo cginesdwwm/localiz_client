@@ -16,8 +16,9 @@ async function copy(srcRel, destRel) {
 async function main() {
   // Files to copy: [sourceRelative, destRelative]
   const files = [
+    ["src/assets/images/favicon.webp", "public/favicon.webp"],
     ["src/assets/images/favicon.png", "public/favicon.png"],
-    ["src/assets/images/logo.png", "public/og-image.png"],
+    ["src/assets/images/logo.webp", "public/og-image.webp"],
   ];
 
   for (const [s, d] of files) {

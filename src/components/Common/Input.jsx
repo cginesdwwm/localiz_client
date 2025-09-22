@@ -21,6 +21,8 @@ const Input = forwardRef(
       placeholder,
       className = "",
       label,
+      labelClassName,
+      size = "sm", // "sm" | "base"
       error,
       required = false,
       autoComplete,
@@ -33,7 +35,11 @@ const Input = forwardRef(
     const isPassword = type === "password";
 
     const base =
-      "w-full rounded border px-3 py-2 text-sm input-surface placeholder-muted placeholder:text-[15px] h-12";
+      "w-full border px-3 input-surface placeholder-muted input-vert-center";
+    const sizeClass =
+      size === "base"
+        ? "text-base placeholder:text-[15px]"
+        : "text-sm placeholder:text-[15px]";
     const errorClass = error ? "border-yellow-400" : "border-gray-200";
 
     // When password field and using toggle, we wrap input + button
@@ -43,7 +49,12 @@ const Input = forwardRef(
           {label && (
             <label
               htmlFor={id || name}
-              className="block text-sm font-medium mb-1"
+              className={
+                labelClassName ||
+                `block ${
+                  size === "base" ? "text-base" : "text-sm"
+                } font-medium mb-1`
+              }
             >
               {label}
               {required ? " *" : ""}
@@ -60,7 +71,7 @@ const Input = forwardRef(
               onChange={onChange}
               placeholder={placeholder}
               autoComplete={autoComplete}
-              className={`${base} ${errorClass} ${className} pr-12`.trim()}
+              className={`${base} ${sizeClass} ${errorClass} ${className} pr-12`.trim()}
               aria-invalid={!!error}
               aria-describedby={error ? `${id || name}-error` : undefined}
               {...rest}
@@ -129,7 +140,12 @@ const Input = forwardRef(
         {label && (
           <label
             htmlFor={id || name}
-            className="block text-sm font-medium mb-1"
+            className={
+              labelClassName ||
+              `block ${
+                size === "base" ? "text-base" : "text-sm"
+              } font-medium mb-1`
+            }
           >
             {label}
             {required ? " *" : ""}
@@ -144,7 +160,7 @@ const Input = forwardRef(
           onChange={onChange}
           placeholder={placeholder}
           autoComplete={autoComplete}
-          className={`${base} ${errorClass} ${className}`.trim()}
+          className={`${base} ${sizeClass} ${errorClass} ${className}`.trim()}
           aria-invalid={!!error}
           aria-describedby={error ? `${id || name}-error` : undefined}
           {...rest}

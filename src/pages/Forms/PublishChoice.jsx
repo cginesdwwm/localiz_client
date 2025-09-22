@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
+import BackLink from "../../components/Common/BackLink";
 
 export default function PublishChoice() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
+      <BackLink to="/" fixed />
       <h1
         className="text-3xl font-ui mb-4 font-bold"
         style={{ fontFamily: "Fredoka" }}
@@ -14,20 +16,18 @@ export default function PublishChoice() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           to="/listings/create"
-          className="block rounded-lg p-6 bg-white/5 hover:bg-white/10 text-center"
+          className="flex items-center justify-center rounded-lg p-6 bg-white/5 hover:bg-white/10 text-center"
         >
           <h2 className="text-2xl font-semibold">
             Publier une annonce (Troc/Don)
           </h2>
-          <p className="mt-2 text-sm">Créer un listing pour troc ou don.</p>
         </Link>
 
         <Link
           to="/deals/create"
-          className="block rounded-lg p-6 bg-white/5 hover:bg-white/10 text-center"
+          className="flex items-center justify-center rounded-lg p-6 bg-white/5 hover:bg-white/10 text-center"
         >
           <h2 className="text-2xl font-semibold">Publier un bon plan</h2>
-          <p className="mt-2 text-sm">Publier une offre commerciale.</p>
         </Link>
       </div>
     </div>

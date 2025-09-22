@@ -161,7 +161,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
                       <Input
                         {...field}
                         placeholder="Donnez un titre accrocheur à votre article..."
-                        className={`w-full border-2 rounded-xl p-4 input-surface focus:outline-none focus:ring-4 transition-all ${
+                        className={`w-full border-2 p-4 input-surface focus:outline-none focus:ring-4 transition-all ${
                           errors.title
                             ? "border-red-500 focus:border-red-500 focus:ring-red-100"
                             : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"
@@ -185,7 +185,7 @@ export default function AddBlogModal({ isOpen, onClose }) {
                           placeholder="Rédigez votre article ici..."
                           rows="6"
                           {...field}
-                          className={`w-full border-2 rounded-xl p-4 input-surface focus:outline-none focus:ring-4 transition-all resize-none placeholder:text-[15px] ${
+                          className={`w-full border-2 p-4 input-surface focus:outline-none focus:ring-4 transition-all resize-none placeholder:text-[15px] ${
                             errors.content
                               ? "border-red-500 focus:border-red-500 focus:ring-red-100"
                               : "border-gray-200 focus:border-blue-500 focus:ring-blue-100"

@@ -81,7 +81,6 @@ export default function Contact() {
                 <Input
                   {...field}
                   id="name"
-                  placeholder="Nom"
                   error={errors.name?.message}
                   className="h-12"
                 />
@@ -127,7 +126,7 @@ export default function Contact() {
                     {...field}
                     placeholder="Message"
                     rows={6}
-                    className="w-full rounded border px-3 py-2 text-sm input-surface placeholder-muted placeholder:text-[15px] resize-vertical"
+                    className="w-full border px-3 py-2 text-sm input-surface placeholder-muted placeholder:text-[15px] resize-vertical"
                     aria-invalid={errors.message ? "true" : "false"}
                     aria-describedby={
                       errors.message ? "message-error" : undefined

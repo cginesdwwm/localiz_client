@@ -24,3 +24,11 @@
   color: var(--input-text);
   border-radius: 14px;
 }
+
+/* Enforce consistent height and vertical centering for inputs */
+.input-vert-center {
+  height: 48px; /* matches h-12 */
+  padding-top: 12px; /* matches py-3 */
+  padding-bottom: 12px;
+  line-height: 1.25;
+}

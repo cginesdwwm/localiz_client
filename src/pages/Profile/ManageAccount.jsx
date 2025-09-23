@@ -13,6 +13,8 @@ import ToggleSwitch from "../../components/Common/ToggleSwitch";
 import { BASE_URL } from "../../utils/url";
 import { uploadAvatar } from "../../lib/uploadAvatar";
 import { avatarUrl } from "../../lib/avatarUrl";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
+import useFocusHeading from "../../hooks/useFocusHeading";
 
 function BioField({ value = "", onChange, disabled }) {
   return (
@@ -100,7 +102,9 @@ function MaPositionRow({ postalCode }) {
         </div>
         <div className="col-span-2">
           <p className="text-sm">{postalCode || "-"}</p>
-          <div>{loading ? "Chargement..." : town || "-"}</div>
+          <div role="status" aria-live="polite" aria-atomic="true">
+            {loading ? "Chargement..." : town || "-"}
+          </div>
         </div>
       </div>
     </div>
@@ -122,6 +126,7 @@ function MaPositionEditable({ postalCode: initialPostal }) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedTown, setSelectedTown] = useState("");
   const suggestionsRef = useRef(null);
+  const listboxId = "postal-suggestions";
 
   useEffect(() => {
     let mounted = true;
@@ -221,6 +226,12 @@ function MaPositionEditable({ postalCode: initialPostal }) {
     return () => document.removeEventListener("click", onDocClick);
   }, []);
 
+  function selectTown(t) {
+    setPostalRaw(postalQuery);
+    setSelectedTown(t);
+    setShowSuggestions(false);
+  }
+
   async function onConfirm() {
     const cleaned = String(postalRaw || "")
       .replace(/\D/g, "")
@@ -306,21 +317,39 @@ function MaPositionEditable({ postalCode: initialPostal }) {
                     type="text"
                     placeholder="Code postal"
                     aria-label="Code postal"
+                    aria-haspopup="listbox"
+                    aria-expanded={showSuggestions && towns.length > 0}
+                    aria-controls={
+                      showSuggestions && towns.length > 0
+                        ? listboxId
+                        : undefined
+                    }
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     className="h-12"
                     onBlur={() => {}}
                   />
 
                   <div className="relative" ref={suggestionsRef}>
                     {showSuggestions && towns && towns.length > 0 && (
-                      <ul className="absolute z-20 left-0 right-0 mt-2 bg-white text-black rounded border max-h-56 overflow-auto">
+                      <ul
+                        id={listboxId}
+                        role="listbox"
+                        aria-label="Suggestions de villes"
+                        className="absolute z-20 left-0 right-0 mt-2 bg-white text-black rounded border max-h-56 overflow-auto"
+                      >
                         {towns.map((t) => (
                           <li
                             key={t.code}
+                            role="option"
+                            tabIndex={0}
                             className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                            onClick={() => {
-                              setPostalRaw(postalQuery);
-                              setSelectedTown(t.nom);
-                              setShowSuggestions(false);
+                            onClick={() => selectTown(t.nom)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                selectTown(t.nom);
+                              }
                             }}
                           >
                             {t.nom}
@@ -440,6 +469,9 @@ function FieldEditor({
 
 export default function ManageAccount() {
   const { user, updateUser } = useAuth() || {};
+  const headingRef = useRef(null);
+  useDocumentTitle("Gérer mon compte");
+  useFocusHeading(headingRef);
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const avatarInputRef = useRef(null);
@@ -696,7 +728,7 @@ export default function ManageAccount() {
   }
 
   return (
-    <div className="p-6 relative max-w-3xl mx-auto">
+    <main className="p-6 relative max-w-3xl mx-auto" role="main">
       <div className="mb-6">
         <BackLink to="/profile/me" fixed />
       </div>
@@ -708,6 +740,7 @@ export default function ManageAccount() {
             fontFamily: "Fredoka",
             color: "#F4EBD6",
           }}
+          ref={headingRef}
         >
           Gérer mon compte
         </h1>
@@ -1099,6 +1132,6 @@ export default function ManageAccount() {
           </div>
         </section>
       </div>
-    </div>
+    </main>
   );
 }

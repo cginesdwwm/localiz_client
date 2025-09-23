@@ -127,7 +127,12 @@ const Input = forwardRef(
             </button>
           </div>
           {error && (
-            <p id={`${id || name}-error`} className="text-xs mt-1 error-text">
+            <p
+              id={`${id || name}-error`}
+              className="text-xs mt-1 error-text"
+              role="alert"
+              aria-live="assertive"
+            >
               {error}
             </p>
           )}
@@ -166,7 +171,12 @@ const Input = forwardRef(
           {...rest}
         />
         {error && (
-          <p id={`${id || name}-error`} className="text-xs mt-1 error-text">
+          <p
+            id={`${id || name}-error`}
+            className="text-xs mt-1 error-text"
+            role="alert"
+            aria-live="assertive"
+          >
             {error}
           </p>
         )}

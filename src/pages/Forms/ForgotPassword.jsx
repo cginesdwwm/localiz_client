@@ -1,13 +1,14 @@
 // PAGE MOT DE PASSE OUBLIE
 
 import { useForm, Controller } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink } from "react-router-dom";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
+import ErrorSummary from "../../components/Common/ErrorSummary";
 import { requestPasswordReset } from "../../api/auth.api";
 
 export default function ForgotPassword() {
@@ -31,6 +32,11 @@ export default function ForgotPassword() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const headingRef = useRef(null);
+
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
 
   async function onSubmit(values) {
     try {
@@ -44,10 +50,16 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="h-screen center-screen bg-[var(--bg)] px-4">
+    <section
+      aria-labelledby="forgot-title"
+      className="h-screen center-screen bg-[var(--bg)] px-4"
+    >
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
           <h1
+            id="forgot-title"
+            ref={headingRef}
+            tabIndex={-1}
             className="text-3xl font-bold text-center text-[var(--text)]"
             style={{ fontFamily: "Fredoka" }}
           >
@@ -63,7 +75,13 @@ export default function ForgotPassword() {
           <form
             className="flex flex-col gap-4"
             onSubmit={handleSubmit(onSubmit)}
+            aria-busy={false}
+            noValidate
           >
+            <ErrorSummary
+              errors={errors}
+              fields={[{ name: "email", id: "email", label: "Adresse email" }]}
+            />
             <FocusRing>
               <Controller
                 name="email"
@@ -73,8 +91,11 @@ export default function ForgotPassword() {
                     {...field}
                     id="email"
                     type="email"
+                    label="Adresse email"
                     placeholder="Adresse email"
                     onInput={() => {}}
+                    required
+                    autoComplete="email"
                     error={errors.email?.message}
                     className="h-12"
                   />
@@ -120,6 +141,6 @@ export default function ForgotPassword() {
           </NavLink>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

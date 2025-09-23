@@ -6,6 +6,12 @@ export async function fetchListings() {
   return res.json();
 }
 
+export async function fetchListing(id) {
+  const res = await fetch(`${BASE_URL}/listings/${id}`);
+  if (!res.ok) throw new Error("Annonce introuvable");
+  return res.json();
+}
+
 export async function createListing(payload) {
   const res = await fetch(`${BASE_URL}/listings`, {
     method: "POST",

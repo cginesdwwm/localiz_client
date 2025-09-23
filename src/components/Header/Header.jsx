@@ -12,7 +12,11 @@ export default function Header() {
   return (
     <header className="w-full h-16 site-header">
       <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        <NavLink to="/homepage" className="inline-flex items-center">
+        <NavLink
+          to="/homepage"
+          className="inline-flex items-center"
+          aria-label="Aller à l'accueil"
+        >
           <img
             src={logo}
             alt="Localiz"
@@ -26,7 +30,11 @@ export default function Header() {
         </NavLink>
 
         {/* Main navigation */}
-        <nav className="flex items-center space-x-8">
+        <nav
+          className="flex items-center space-x-8"
+          role="navigation"
+          aria-label="Barre de navigation"
+        >
           {isAuthenticated ? (
             <>
               <NavLink

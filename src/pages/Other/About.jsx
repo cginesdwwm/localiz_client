@@ -1,13 +1,19 @@
 // PAGE A PROPOS DE LOCALIZ
+import { useRef } from "react";
 import BackLink from "../../components/Common/BackLink";
 import faviconLocal from "../../assets/images/favicon.webp";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
+import useFocusHeading from "../../hooks/useFocusHeading";
 
 const SUPABASE_FAVICON =
   "https://pjrrvzxomdowrraykone.supabase.co/storage/v1/object/public/public-assets/favicon.webp";
 
 export default function About() {
+  const headingRef = useRef(null);
+  useDocumentTitle("À propos");
+  useFocusHeading(headingRef);
   return (
-    <div>
+    <main role="main">
       <div className="mb-4">
         <BackLink to="/settings" fixed />
       </div>
@@ -19,6 +25,7 @@ export default function About() {
             fontFamily: "Fredoka",
             color: "#F4EBD6",
           }}
+          ref={headingRef}
         >
           À propos de Localiz
         </h1>
@@ -26,10 +33,12 @@ export default function About() {
         <div className="flex justify-center">
           <img
             src={SUPABASE_FAVICON}
-            alt="Localiz logo"
+            alt="Logo de Localiz"
             width={120}
             height={120}
             className="object-contain"
+            decoding="async"
+            loading="lazy"
             onError={(e) => {
               if (e?.currentTarget) e.currentTarget.src = faviconLocal;
             }}
@@ -37,7 +46,7 @@ export default function About() {
         </div>
 
         <header>
-          <h1
+          <h2
             className="text-3xl heading text-center mt-[-2rem] font-bold"
             style={{
               fontFamily: "Fredoka",
@@ -45,7 +54,7 @@ export default function About() {
             }}
           >
             Localiz
-          </h1>
+          </h2>
           <p
             className="heading text-center"
             style={{ fontWeight: 500, fontSize: "20px", fontFamily: "Fredoka" }}
@@ -53,7 +62,7 @@ export default function About() {
             Les bons plans, à vol d'oiseau
           </p>
         </header>
-        <main className="p-5 space-y-8 text-left">
+        <div className="p-5 space-y-8 text-left">
           <section>
             <h2 className="text-2xl font-semibold font-quicksand underline">
               Notre mission
@@ -61,36 +70,34 @@ export default function About() {
             <div className="body-text mt-2 space-y-3">
               <p>
                 Localiz est une application mobile citoyenne qui connecte les
-                habitants d'un même territoire autour d'un objectif commun :{" "}
-                <strong>partager, échanger, recycler et s'entraider</strong>.
+                habitants d'un même territoire autour d'un objectif commun :
+                <strong> partager, échanger, recycler et s'entraider</strong>.
                 <br /> Dans un monde où tout va vite et où l'on jette trop, nous
-                croyons à la puissance du <strong>lien local</strong>, de la{" "}
-                <strong>consommation responsable</strong> et du{" "}
-                <strong>bon sens collectif</strong>.
+                croyons à la puissance du <strong>lien local</strong>, de la
+                <strong> consommation responsable</strong> et du
+                <strong> bon sens collectif</strong>.
               </p>
 
-              <p>
-                Grâce à Localiz, tu peux :
-                <ul className="list-disc ml-6 mt-2">
-                  <li>
-                    découvrir des <strong>bons plans locaux</strong> (offres
-                    spéciales, événements de quartier, soirées, concerts,
-                    vide-greniers, etc.),
-                  </li>
-                  <li>
-                    <strong>donner, troquer ou recycler</strong> tes objets du
-                    quotidien,
-                  </li>
-                  <li>
-                    trouver des <strong>idées d'upcycling</strong> à réaliser
-                    toi-même, ou en proposer,
-                  </li>
-                  <li>
-                    et <strong>rencontrer des gens près de chez toi</strong> qui
-                    partagent ces mêmes envies.
-                  </li>
-                </ul>
-              </p>
+              <p>Grâce à Localiz, tu peux :</p>
+              <ul className="list-disc ml-6 mt-2">
+                <li>
+                  découvrir des <strong>bons plans locaux</strong> (offres
+                  spéciales, événements de quartier, soirées, concerts,
+                  vide-greniers, etc.),
+                </li>
+                <li>
+                  <strong>donner, troquer ou recycler</strong> tes objets du
+                  quotidien,
+                </li>
+                <li>
+                  trouver des <strong>idées d'upcycling</strong> à réaliser
+                  toi-même, ou en proposer,
+                </li>
+                <li>
+                  et <strong>rencontrer des gens près de chez toi</strong> qui
+                  partagent ces mêmes envies.
+                </li>
+              </ul>
 
               <p>
                 En gros, nous sommes là pour{" "}
@@ -239,8 +246,8 @@ export default function About() {
               </a>
             </p>
           </section>
-        </main>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

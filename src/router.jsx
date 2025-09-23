@@ -29,7 +29,7 @@ import ContactMessages from "./pages/Admin/ContactMessages";
 import AdminCategories from "./pages/Admin/AdminCategories";
 
 import Deals from "./pages/Deals/Deals";
-// import DealDetails from "./pages/Deals/DealDetails";
+import DealDetails from "./pages/Deals/DealDetails";
 
 import Register from "./pages/Forms/Register";
 import RegisterSuccess from "./pages/Forms/RegisterSuccess";
@@ -41,7 +41,7 @@ import ChangePasswordSuccess from "./pages/Forms/ChangePasswordSuccess";
 import Homepage from "./pages/Homepage/Homepage";
 import Splashscreen from "./pages/Homepage/Splashscreen";
 
-// import ListingDetails from "./pages/Listings/ListingDetails";
+import ListingDetails from "./pages/Listings/ListingDetails";
 import SwapAndDonate from "./pages/Listings/SwapAndDonate";
 
 import About from "./pages/Other/About";
@@ -132,7 +132,7 @@ export const router = createBrowserRouter([
       { path: "/deals/create", element: <AddDealForm /> },
       {
         path: "/deals/:id",
-        // element: <DealDetails />,
+        element: <DealDetails />,
         loader: ({ params }) => {
           if (!validateRouteId(params.id)) {
             throw new Response("Annonce introuvable", { status: 400 });
@@ -146,6 +146,7 @@ export const router = createBrowserRouter([
       { path: "/listings/create", element: <AddListingForm /> },
       {
         path: "/listings/:id",
+        element: <ListingDetails />,
         loader: ({ params }) => {
           if (!validateRouteId(params.id)) {
             throw new Response("Annonce introuvable", { status: 400 });

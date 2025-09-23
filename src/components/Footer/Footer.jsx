@@ -11,7 +11,11 @@ export default function Footer() {
   return (
     <footer className="w-full border-t border-white/100 bg-[var(--color-bg)] text-[var(--color-white)] footer-top-shadow mt-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <nav className="flex justify-between items-center text-center">
+        <nav
+          className="flex justify-between items-center text-center"
+          role="navigation"
+          aria-label="Navigation principale"
+        >
           <div className="flex-1 flex justify-center">
             <NavLink
               to="/homepage"
@@ -50,6 +54,7 @@ export default function Footer() {
               type="button"
               className="inline-flex flex-col items-center text-white font-quicksand"
               aria-label="Messages"
+              title="Messages (bientôt)"
             >
               <FaEnvelope className="text-2xl" />
               <span className="mt-0.5">Messages</span>

@@ -51,7 +51,14 @@ const ConfirmEmail = () => {
     })();
   }, [location.search, navigate]);
 
-  if (loading) return <div className="p-6">Confirmation en cours…</div>;
+  if (loading)
+    return (
+      <main className="p-6" role="main">
+        <div role="status" aria-live="polite" aria-busy="true">
+          Confirmation en cours…
+        </div>
+      </main>
+    );
   return null;
 };
 

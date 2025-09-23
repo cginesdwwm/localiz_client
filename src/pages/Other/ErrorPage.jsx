@@ -1,11 +1,15 @@
 // PAGE D'ERREUR
 
+import { useRef } from "react";
 import { useRouteError, useNavigate } from "react-router-dom";
 import Button from "../../components/Common/Button";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
+import useFocusHeading from "../../hooks/useFocusHeading";
 
 export default function ErrorPage() {
   const error = useRouteError();
   const navigate = useNavigate();
+  const headingRef = useRef(null);
 
   const code = error?.status || "Erreur";
   const statusText = error?.statusText || error?.message || "";
@@ -33,14 +37,29 @@ export default function ErrorPage() {
     (typeof code === "number" && codeToFrench[code]) ||
     (statusText && (textMap[statusText] || statusText)) ||
     "Une erreur est survenue.";
+  useDocumentTitle(
+    `${typeof code === "number" ? code : "Erreur"} — ${message}`,
+    { suffix: " | Localiz", replace: true }
+  );
+  useFocusHeading(headingRef);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-transparent">
+    <main
+      className="min-h-screen flex items-center justify-center p-6 bg-transparent"
+      role="main"
+    >
       <div className="w-full max-w-2xl bg-white/5 border border-gray-200 rounded-xl p-8 shadow-sm text-center">
-        <p className="text-6xl font-extrabold text-gray-800 mb-2">{code}</p>
+        <p
+          className="text-6xl font-extrabold text-gray-800 mb-2"
+          aria-hidden="true"
+        >
+          {code}
+        </p>
         <h1
           className="front-heading text-3xl mb-4 font-bold"
           style={{ fontFamily: "Fredoka" }}
+          role="alert"
+          ref={headingRef}
         >
           {message}
         </h1>
@@ -58,6 +77,6 @@ export default function ErrorPage() {
           </Button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

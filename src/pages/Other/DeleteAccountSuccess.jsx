@@ -1,12 +1,18 @@
+import { useRef } from "react";
 import BackLink from "../../components/Common/BackLink";
 import Button from "../../components/Common/Button";
 import { useNavigate } from "react-router-dom";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
+import useFocusHeading from "../../hooks/useFocusHeading";
 
 export default function DeleteAccountSuccess() {
   const navigate = useNavigate();
+  const headingRef = useRef(null);
+  useDocumentTitle("Compte supprimé");
+  useFocusHeading(headingRef);
 
   return (
-    <div className="p-4 text-center">
+    <main className="p-4 text-center" role="main">
       <div className="mb-2">
         <BackLink to="/" fixed />
       </div>
@@ -14,6 +20,7 @@ export default function DeleteAccountSuccess() {
       <h1
         className="heading font-quicksand font-bold text-3xl mb-4"
         style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+        ref={headingRef}
       >
         Compte supprimé
       </h1>
@@ -27,12 +34,16 @@ export default function DeleteAccountSuccess() {
         restaurer ton compte.
       </p>
 
-      <div className="mt-6 flex gap-3 justify-center">
+      <div
+        className="mt-6 flex gap-3 justify-center"
+        role="group"
+        aria-label="Actions disponibles"
+      >
         <Button onClick={() => navigate("/login")}>Se connecter</Button>
         <Button onClick={() => navigate("/register")} variant="ghost">
           S'inscrire
         </Button>
       </div>
-    </div>
+    </main>
   );
 }

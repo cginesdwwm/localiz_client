@@ -402,3 +402,45 @@ textarea::placeholder {
 .theme-light .border-t.border-white\/5 {
   border-top-color: rgba(0, 0, 0, 0.05) !important;
 }
+
+/* ======================================================================
+   ACCESSIBILITY HELPERS (focus-visible + skip links)
+   ====================================================================== */
+/* Prefer focus-visible so mouse users don't see outlines */
+:focus-visible {
+  outline: var(--focus-outline-width) solid var(--focus-outline);
+  outline-offset: 2px;
+}
+
+/* Visually hide content but make it available to SRs; show when focused */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.sr-only:focus {
+  position: absolute !important;
+  top: 0.5rem !important;
+  left: 0.5rem !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0.5rem 0.75rem !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  white-space: normal !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  border: 1px solid currentColor !important;
+  border-radius: 0.375rem !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2) !important;
+  z-index: 9999 !important;
+}

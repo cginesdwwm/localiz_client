@@ -1,12 +1,14 @@
 // PAGE MODIFIER LE MOT DE PASSE
 
 import { useForm, Controller } from "react-hook-form";
+import { useEffect, useRef } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { notify } from "../../utils/notify";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
+import ErrorSummary from "../../components/Common/ErrorSummary";
 import { useNavigate } from "react-router-dom";
 import BackLink from "../../components/Common/BackLink";
 
@@ -34,6 +36,12 @@ export default function ChangePassword() {
     reset,
   } = useForm({ resolver: yupResolver(schema), mode: "onChange" });
   const navigate = useNavigate();
+  const headingRef = useRef(null);
+
+  useEffect(() => {
+    // Move focus to the page heading for SRs upon mount
+    headingRef.current?.focus();
+  }, []);
 
   const onSubmit = async (data) => {
     try {
@@ -71,23 +79,32 @@ export default function ChangePassword() {
   };
 
   return (
-    <div className="h-screen center-screen bg-[var(--bg)] px-4">
+    <section
+      aria-labelledby="page-title"
+      className="h-screen center-screen bg-[var(--bg)] px-4"
+    >
       <div className="w-full max-w-md">
         <div className="mb-4">
           <BackLink to="/profile/me/manage-account" fixed />
         </div>
 
         <h1
+          id="page-title"
+          ref={headingRef}
+          tabIndex={-1}
           className="text-3xl !font-bold font-quicksand mb-4"
           style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
         >
           Modifier le mot de passe
         </h1>
 
-        <div className="mb-4">
+        <section className="mb-4" aria-labelledby="tips-heading">
           <p className="text-[16px] !font-bold font-quicksand">
             Quelques petits conseils pour créer un mot de passe sécurisé :
           </p>
+          <h2 id="tips-heading" className="sr-only">
+            Conseils pour un mot de passe sécurisé
+          </h2>
           <ul
             className="mt-2 list-disc list-inside"
             style={{ fontFamily: "Mulish, sans-serif" }}
@@ -102,9 +119,34 @@ export default function ChangePassword() {
               dictionnaire.
             </li>
           </ul>
-        </div>
+        </section>
 
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+          aria-busy={isSubmitting || undefined}
+          noValidate
+        >
+          <ErrorSummary
+            errors={errors}
+            fields={[
+              {
+                name: "currentPassword",
+                id: "currentPassword",
+                label: "Mot de passe actuel",
+              },
+              {
+                name: "newPassword",
+                id: "newPassword",
+                label: "Nouveau mot de passe",
+              },
+              {
+                name: "confirmPassword",
+                id: "confirmPassword",
+                label: "Confirmation du mot de passe",
+              },
+            ]}
+          />
           <FocusRing>
             <Controller
               name="currentPassword"
@@ -114,8 +156,11 @@ export default function ChangePassword() {
                   {...field}
                   id="currentPassword"
                   type="password"
+                  label="Mot de passe actuel"
                   placeholder="Mot de passe actuel"
                   error={errors.currentPassword?.message}
+                  required
+                  autoComplete="current-password"
                   className="h-12"
                 />
               )}
@@ -129,8 +174,11 @@ export default function ChangePassword() {
                   {...field}
                   id="newPassword"
                   type="password"
+                  label="Nouveau mot de passe"
                   placeholder="Nouveau mot de passe"
                   error={errors.newPassword?.message}
+                  required
+                  autoComplete="new-password"
                   className="h-12"
                 />
               )}
@@ -144,8 +192,11 @@ export default function ChangePassword() {
                   {...field}
                   id="confirmPassword"
                   type="password"
+                  label="Confirmer le nouveau mot de passe"
                   placeholder="Confirmer le nouveau mot de passe"
                   error={errors.confirmPassword?.message}
+                  required
+                  autoComplete="new-password"
                   className="h-12"
                 />
               )}
@@ -163,6 +214,6 @@ export default function ChangePassword() {
           </div>
         </form>
       </div>
-    </div>
+    </section>
   );
 }

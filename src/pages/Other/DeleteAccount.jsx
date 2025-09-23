@@ -1,6 +1,6 @@
 // PAGE SUPPRIMER MON COMPTE
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import BackLink from "../../components/Common/BackLink";
 import Button from "../../components/Common/Button";
 import { requestAccountDeletion } from "../../api/user.api";
@@ -9,6 +9,8 @@ import Checkbox from "../../components/Common/Checkbox";
 import { useAuth } from "../../context/AuthContext";
 import ConfirmModal from "../../components/Common/ConfirmModal";
 
+import useDocumentTitle from "../../hooks/useDocumentTitle";
+import useFocusHeading from "../../hooks/useFocusHeading";
 const REASONS = [
   "Je n'utilise plus Localiz.",
   "Je reçois trop de notifications / emails.",
@@ -23,6 +25,9 @@ const REASONS = [
 ];
 
 export default function DeleteAccount() {
+  const headingRef = useRef(null);
+  useDocumentTitle("Supprimer mon compte");
+  useFocusHeading(headingRef);
   const [reason, setReason] = useState("");
   const [otherText, setOtherText] = useState("");
   const [confirmed, setConfirmed] = useState(false);
@@ -76,7 +81,7 @@ export default function DeleteAccount() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <main className="max-w-2xl mx-auto p-4" role="main">
       <div className="mb-4">
         <BackLink to="/profile/me/manage-account" fixed />
       </div>
@@ -84,30 +89,40 @@ export default function DeleteAccount() {
       <h1
         className="text-3xl !font-bold mb-4"
         style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+        ref={headingRef}
       >
         Supprimer mon compte
       </h1>
 
-      <label className="block mb-2 mt-2 !font-bold">
-        Raison de la suppression
-      </label>
-      <select
-        value={reason}
-        onChange={(e) => setReason(e.target.value)}
-        className="block w-full rounded border px-3 py-2 input-surface"
-      >
-        <option value="">Sélectionner une raison...</option>
-        {REASONS.map((r) => (
-          <option key={r} value={r}>
-            {r}
-          </option>
-        ))}
-      </select>
+      <fieldset className="mt-2">
+        <legend className="block mb-2 !font-bold">
+          Raison de la suppression
+        </legend>
+        <label htmlFor="delete-reason" className="sr-only">
+          Sélectionner une raison
+        </label>
+        <select
+          id="delete-reason"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          className="block w-full rounded border px-3 py-2 input-surface"
+        >
+          <option value="">Sélectionner une raison...</option>
+          {REASONS.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
+      </fieldset>
 
       {reason === "Autre raison" && (
         <div className="mt-3">
-          <label className="block mb-1">Dis-nous en plus (optionnel)</label>
+          <label className="block mb-1" htmlFor="delete-reason-details">
+            Dis-nous en plus (optionnel)
+          </label>
           <textarea
+            id="delete-reason-details"
             value={otherText}
             onChange={(e) => setOtherText(e.target.value)}
             className="w-full rounded border px-3 py-2 input-surface"
@@ -154,7 +169,11 @@ export default function DeleteAccount() {
         </Button>
       </div>
 
-      {error && <p className="error-text mt-2">{error}</p>}
+      {error && (
+        <p className="error-text mt-2" role="alert" aria-live="assertive">
+          {error}
+        </p>
+      )}
 
       {/* Confirmation modal (shared) */}
       <ConfirmModal
@@ -167,6 +186,6 @@ export default function DeleteAccount() {
         confirmLabel={loading ? "Suppression..." : "Confirmer la suppression"}
         confirmClassName="btn btn-danger"
       />
-    </div>
+    </main>
   );
 }

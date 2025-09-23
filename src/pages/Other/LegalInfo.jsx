@@ -1,11 +1,16 @@
 // PAGE INFORMATIONS LEGALES
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation, Link } from "react-router-dom";
 import BackLink from "../../components/Common/BackLink";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
+import useFocusHeading from "../../hooks/useFocusHeading";
 
 export default function LegalInfo() {
   const { hash, pathname } = useLocation();
+  const headingRef = useRef(null);
+  useDocumentTitle("Informations légales");
+  useFocusHeading(headingRef);
 
   useEffect(() => {
     if (!hash) return;
@@ -20,18 +25,19 @@ export default function LegalInfo() {
     return () => clearTimeout(t);
   }, [hash, pathname]);
   return (
-    <div className="p-10 mx-auto">
+    <main className="p-10 mx-auto" role="main">
       <BackLink to="/settings" fixed />
 
       <div className="p-12">
         <h1
           className="text-3xl font-quicksand !font-bold mb-4"
           style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+          ref={headingRef}
         >
           Informations légales
         </h1>
 
-        <section className="mt-4 text-left">
+        <section className="mt-4 text-left" tabIndex={-1} id="mentions-section">
           {/* === Mentions légales === */}
           <h2
             id="mentions"
@@ -103,7 +109,7 @@ export default function LegalInfo() {
           </div>
         </section>
 
-        <section id="cgu" className="mt-12 text-left">
+        <section id="cgu" className="mt-12 text-left" tabIndex={-1}>
           {/* === Conditions générales d'utilisation (CGU) === */}
           <h2 className="text-2xl font-semibold font-quicksand uppercase mb-3 underline">
             Conditions générales d'utilisation (CGU)
@@ -208,7 +214,7 @@ export default function LegalInfo() {
           </div>
         </section>
 
-        <section id="privacy" className="mt-12 text-left">
+        <section id="privacy" className="mt-12 text-left" tabIndex={-1}>
           {/* === Politique de confidentialité === */}
           <h2 className="text-2xl font-semibold font-quicksand uppercase mb-3 underline">
             Politique de confidentialité
@@ -364,7 +370,7 @@ export default function LegalInfo() {
           </div>
         </section>
 
-        <section id="rights" className="mt-12 text-left">
+        <section id="rights" className="mt-12 text-left" tabIndex={-1}>
           {/* === Droits des utilisateurs === */}
           <h2 className="text-2xl font-semibold font-quicksand uppercase mb-3 underline">
             Droits des utilisateurs
@@ -406,7 +412,7 @@ export default function LegalInfo() {
           </div>
         </section>
 
-        <section id="cookies" className="mt-12 mb-8 text-left">
+        <section id="cookies" className="mt-12 mb-8 text-left" tabIndex={-1}>
           {/* === Politique relative aux cookies === */}
           <h2 className="text-2xl font-semibold font-quicksand uppercase mb-3 underline">
             Politique relative aux cookies
@@ -433,6 +439,6 @@ export default function LegalInfo() {
           </div>
         </section>
       </div>
-    </div>
+    </main>
   );
 }

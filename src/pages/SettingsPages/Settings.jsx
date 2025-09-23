@@ -3,8 +3,10 @@
 import { Link } from "react-router-dom";
 import BackLink from "../../components/Common/BackLink";
 import { useAuth } from "../../context/AuthContext";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ConfirmModal from "../../components/Common/ConfirmModal";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
+import useFocusHeading from "../../hooks/useFocusHeading";
 
 // react-icons imports
 import { TbLanguage, TbLogout } from "react-icons/tb";
@@ -42,6 +44,9 @@ function Icon({ name, className = "w-5 h-5 mr-3", ...props }) {
 export default function Settings() {
   const { logout } = useAuth();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const headingRef = useRef(null);
+  useDocumentTitle("Paramètres");
+  useFocusHeading(headingRef);
 
   function handleLogout() {
     setConfirmOpen(true);
@@ -53,12 +58,13 @@ export default function Settings() {
   }
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
+    <main className="p-4 max-w-lg mx-auto" role="main">
       <BackLink to="/profile/me/manage-account" fixed />
 
       <h1
         className="text-3xl font-quicksand !font-bold mt-6 mb-4"
         style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+        ref={headingRef}
       >
         Paramètres
       </h1>
@@ -110,6 +116,6 @@ export default function Settings() {
         confirmLabel="Déconnecter"
         confirmClassName="px-3 py-1 bg-red-500 text-white rounded"
       />
-    </div>
+    </main>
   );
 }

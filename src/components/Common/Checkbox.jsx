@@ -12,9 +12,7 @@ const Checkbox = forwardRef(
           <input
             id={id}
             ref={ref}
-            role="checkbox"
             aria-label={ariaLabel}
-            aria-checked={!!checked}
             type="checkbox"
             checked={checked}
             onChange={onChange}

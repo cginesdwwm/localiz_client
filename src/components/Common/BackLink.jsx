@@ -8,9 +8,10 @@ export default function BackLink({ to, className = "", fixed = false }) {
       <NavLink
         to={to || -1}
         aria-label={"Retour"}
+        title="Revenir en arrière"
         className="backlink-link p-0 flex items-center"
       >
-        <span className="text-white text-3xl leading-none" aria-hidden>
+        <span className="text-white text-3xl leading-none" aria-hidden="true">
           ←
         </span>
       </NavLink>

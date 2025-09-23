@@ -80,8 +80,9 @@ export default function Homepage() {
   }, [isAuthenticated, user]);
 
   return (
-    <div className="mt-4 text-center">
+    <section aria-labelledby="homepage-title" className="mt-4 text-center">
       <h1
+        id="homepage-title"
         className="heading text-center text-[28px] font-semibold"
         style={{ fontFamily: "Fredoka, sans-serif" }}
       >
@@ -104,10 +105,12 @@ export default function Homepage() {
         <p
           className="text-[18px]"
           style={{ fontFamily: "Fredoka, sans-serif" }}
+          role="status"
+          aria-live="polite"
         >
           {message}
         </p>
       )}
-    </div>
+    </section>
   );
 }

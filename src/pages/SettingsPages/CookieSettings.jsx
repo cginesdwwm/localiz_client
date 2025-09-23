@@ -1,6 +1,6 @@
 // PAGE PARAMETRES DES COOKIES
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BackLink from "../../components/Common/BackLink";
 import { saveMyCookiePrefs } from "../../api/user.api";
 import { useAuth } from "../../context/AuthContext";
@@ -8,6 +8,8 @@ import ToggleSwitch from "../../components/Common/ToggleSwitch";
 import { Link } from "react-router-dom";
 import Button from "../../components/Common/Button";
 import { notify } from "../../utils/notify";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
+import useFocusHeading from "../../hooks/useFocusHeading";
 
 export default function CookieSettings() {
   const STORAGE_KEY = "localiz_cookie_preferences";
@@ -83,14 +85,19 @@ export default function CookieSettings() {
     notify.success("Tous les cookies désactivés");
   }
 
+  const headingRef = useRef(null);
+  useDocumentTitle("Paramètres des cookies");
+  useFocusHeading(headingRef);
+
   return (
-    <div className="p-10 mx-auto">
+    <main className="p-10 mx-auto" role="main">
       <BackLink to="/settings" fixed />
 
       <div className="p-12">
         <h1
           className="text-3xl font-quicksand !font-bold mb-4"
           style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
+          ref={headingRef}
         >
           Paramètres des cookies
         </h1>
@@ -131,7 +138,10 @@ export default function CookieSettings() {
           <div className="mt-6">
             {/* Essentiels */}
             <div>
-              <p className="font-quicksand !font-bold text-[16px] m-0">
+              <p
+                id="cookie-essential"
+                className="font-quicksand !font-bold text-[16px] m-0"
+              >
                 ✅ Cookies essentiels (obligatoires)
               </p>
               <p>
@@ -144,13 +154,17 @@ export default function CookieSettings() {
                   checked={true}
                   disabled
                   ariaLabel="Cookies essentiels"
+                  aria-labelledby="cookie-essential"
                 />
               </div>
             </div>
 
             {/* Mesure d'audience */}
             <div className="mt-8">
-              <p className="font-quicksand !font-bold text-[16px] m-0">
+              <p
+                id="cookie-measurement"
+                className="font-quicksand !font-bold text-[16px] m-0"
+              >
                 📊 Cookies de mesure d'audience
               </p>
               <p>
@@ -163,13 +177,17 @@ export default function CookieSettings() {
                   checked={prefs.measurement}
                   onChange={(v) => setPref("measurement", v)}
                   ariaLabel="Cookies de mesure d'audience"
+                  aria-labelledby="cookie-measurement"
                 />
               </div>
             </div>
 
             {/* Personnalisation */}
             <div className="mt-8">
-              <p className="font-quicksand !font-bold text-[16px] m-0">
+              <p
+                id="cookie-personalization"
+                className="font-quicksand !font-bold text-[16px] m-0"
+              >
                 🎯 Cookies de personnalisation
               </p>
               <p>
@@ -182,13 +200,17 @@ export default function CookieSettings() {
                   checked={prefs.personalization}
                   onChange={(v) => setPref("personalization", v)}
                   ariaLabel="Cookies de personnalisation"
+                  aria-labelledby="cookie-personalization"
                 />
               </div>
             </div>
 
             {/* Marketing */}
             <div className="mt-8">
-              <p className="font-quicksand !font-bold text-[16px] m-0">
+              <p
+                id="cookie-marketing"
+                className="font-quicksand !font-bold text-[16px] m-0"
+              >
                 📢 Cookies marketing & réseaux sociaux
               </p>
               <p>
@@ -201,6 +223,7 @@ export default function CookieSettings() {
                   checked={prefs.marketing}
                   onChange={(v) => setPref("marketing", v)}
                   ariaLabel="Cookies marketing et réseaux sociaux"
+                  aria-labelledby="cookie-marketing"
                 />
               </div>
             </div>
@@ -242,6 +265,6 @@ export default function CookieSettings() {
           </div>
         </section>
       </div>
-    </div>
+    </main>
   );
 }

@@ -1,7 +1,7 @@
 // PAGE LOGIN
 
 import { useForm, Controller } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
@@ -10,6 +10,7 @@ import { notify } from "../../utils/notify";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
+import ErrorSummary from "../../components/Common/ErrorSummary";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Login() {
@@ -17,6 +18,7 @@ export default function Login() {
   const { login } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const message = searchParams.get("message");
+  const headingRef = useRef(null);
 
   useEffect(() => {
     if (message !== "success") return;
@@ -68,9 +70,11 @@ export default function Login() {
   });
 
   const [serverError, setServerError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function submit(values) {
     try {
+      setIsSubmitting(true);
       setServerError("");
       const user = await login(values);
       if (user && user.role === "admin") navigate("/admin");
@@ -79,11 +83,20 @@ export default function Login() {
       console.error("Échec de la connexion du formulaire:", error);
       const serverMsg = error?.message || "Échec de la connexion";
       setServerError(serverMsg);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   return (
-    <div className="h-screen center-screen bg-[var(--bg)] px-4">
+    <section
+      aria-labelledby="login-title"
+      className="h-screen center-screen bg-[var(--bg)] px-4"
+    >
       <div className="w-full max-w-md">
         {/* Logo + Heading */}
         <div className="flex flex-col items-center mb-8">
@@ -98,6 +111,9 @@ export default function Login() {
             }}
           />
           <h1
+            id="login-title"
+            ref={headingRef}
+            tabIndex={-1}
             className="text-3xl font-bold text-center text-[var(--text)]"
             style={{ fontFamily: "Fredoka" }}
           >
@@ -106,7 +122,19 @@ export default function Login() {
         </div>
 
         {/* Form */}
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(submit)}>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit(submit)}
+          aria-busy={isSubmitting || undefined}
+          noValidate
+        >
+          <ErrorSummary
+            errors={errors}
+            fields={[
+              { name: "data", id: "data", label: "Email ou pseudo" },
+              { name: "password", id: "password", label: "Mot de passe" },
+            ]}
+          />
           <FocusRing>
             {/* Email / username */}
             <Controller
@@ -116,8 +144,11 @@ export default function Login() {
                 <Input
                   {...field}
                   id="data"
+                  label="Email ou pseudo"
                   placeholder="Email ou pseudo"
                   onInput={() => setServerError("")}
+                  required
+                  autoComplete="username email"
                   error={errors.data?.message}
                   className="h-12"
                 />
@@ -133,11 +164,14 @@ export default function Login() {
                   {...field}
                   id="password"
                   type="password"
+                  label="Mot de passe"
                   placeholder="Mot de passe"
                   onInput={() => setServerError("")}
                   error={errors.password?.message}
                   className="h-12"
                   maxLength={30}
+                  required
+                  autoComplete="current-password"
                 />
               )}
             />
@@ -161,7 +195,13 @@ export default function Login() {
 
         {/* Server error */}
         {serverError && (
-          <p className="error-text mt-4 text-center">{serverError}</p>
+          <p
+            className="error-text mt-4 text-center"
+            role="alert"
+            aria-live="assertive"
+          >
+            {serverError}
+          </p>
         )}
 
         {/* Links */}
@@ -180,6 +220,6 @@ export default function Login() {
           </NavLink>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

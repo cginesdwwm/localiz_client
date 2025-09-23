@@ -7,7 +7,9 @@ export default function Card({ blog }) {
         <div className="aspect-[3/2]">
           <img
             src={blog.image}
-            alt={blog.titre}
+            alt={blog.titre || "Illustration de l'article"}
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
           />
         </div>

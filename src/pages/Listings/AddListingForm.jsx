@@ -10,35 +10,38 @@ import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
 import BackLink from "../../components/Common/BackLink";
 import { LISTING_TAGS } from "../../constants/listingTags";
+import { getPublicCategories } from "../../api/utils.api";
 
-const schema = yup.object({
-  image: yup.mixed().required("Image requise"),
-  title: yup.string().required("Titre requis"),
-  tag: yup
-    .string()
-    .oneOf(LISTING_TAGS, "Catégorie invalide")
-    .required("Catégorie requise"),
-  condition: yup
-    .string()
-    .oneOf(["new", "like_new", "used"], "État invalide")
-    .required("État requis"),
-  postalCode: yup
-    .string()
-    .required("Code postal requis")
-    .matches(/^\d{5}$/i, "Code postal invalide"),
-  city: yup.string().required("Ville requise"),
-  type: yup
-    .string()
-    .oneOf(["swap", "donate"], "Type invalide")
-    .required("Type de transaction requis"),
-  description: yup
-    .string()
-    .required("Description requise")
-    .min(20, "La description doit contenir au moins 20 caractères"),
-});
+const baseSchema = (allowedTags) =>
+  yup.object({
+    image: yup.mixed().required("Image requise"),
+    title: yup.string().required("Titre requis"),
+    tag: yup
+      .string()
+      .oneOf(allowedTags, "Catégorie invalide")
+      .required("Catégorie requise"),
+    condition: yup
+      .string()
+      .oneOf(["new", "like_new", "used"], "État invalide")
+      .required("État requis"),
+    postalCode: yup
+      .string()
+      .required("Code postal requis")
+      .matches(/^\d{5}$/i, "Code postal invalide"),
+    city: yup.string().required("Ville requise"),
+    type: yup
+      .string()
+      .oneOf(["swap", "donate"], "Type invalide")
+      .required("Type de transaction requis"),
+    description: yup
+      .string()
+      .required("Description requise")
+      .min(20, "La description doit contenir au moins 20 caractères"),
+  });
 
 export default function AddListingForm() {
   const [loading, setLoading] = useState(false);
+  const [allowedTags, setAllowedTags] = useState(LISTING_TAGS);
   const [images, setImages] = useState([]); // [{file, url}]
   const [dragActive, setDragActive] = useState(false);
   const [towns, setTowns] = useState([]);
@@ -46,8 +49,10 @@ export default function AddListingForm() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [postalRaw, setPostalRaw] = useState("");
   const [selectedTown, setSelectedTown] = useState("");
+  const [activeTownIndex, setActiveTownIndex] = useState(-1);
   const suggestionsRef = useRef(null);
   const navigate = useNavigate();
+  const postalListboxId = "listing-postal-suggestions";
 
   const {
     register,
@@ -57,9 +62,27 @@ export default function AddListingForm() {
     setValue,
     control,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({ resolver: yupResolver(baseSchema(allowedTags)) });
   const descriptionValue = watch("description") || "";
-  const tagValue = watch("tag") || "";
+
+  // Load categories from API, fallback to constants
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await getPublicCategories();
+        const items = Array.isArray(res?.listing) ? res.listing : [];
+        if (!cancelled && items.length) {
+          setAllowedTags(items);
+        }
+      } catch {
+        // keep fallback LISTING_TAGS
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function onSubmit(values) {
     setLoading(true);
@@ -84,8 +107,13 @@ export default function AddListingForm() {
         description: values.description,
       };
 
-      await createListing(payload);
-      navigate("/listings");
+      const created = await createListing(payload);
+      const id = created?._id || created?.id;
+      if (id) {
+        navigate(`/listings/${encodeURIComponent(id)}`);
+      } else {
+        navigate("/listings");
+      }
     } catch (err) {
       console.error(err);
       if (err && err.payload && Array.isArray(err.payload.errors)) {
@@ -245,7 +273,7 @@ export default function AddListingForm() {
               aria-describedby={errors.tag ? "tag-error" : undefined}
             >
               <option value="">Sélectionnez...</option>
-              {LISTING_TAGS.map((t) => (
+              {allowedTags.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
@@ -304,6 +332,10 @@ export default function AddListingForm() {
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-300 bg-gray-50"
                 }`}
+                role="button"
+                tabIndex={0}
+                aria-label="Ajouter des images pour l'annonce"
+                aria-describedby="listing-images-help"
                 onDragEnter={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -343,6 +375,12 @@ export default function AddListingForm() {
                 onClick={() =>
                   document.getElementById("listing-image-input")?.click()
                 }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    document.getElementById("listing-image-input")?.click();
+                  }
+                }}
               >
                 <div className="flex flex-col items-center gap-2">
                   <p className="text-base font-medium text-gray-700">
@@ -385,13 +423,23 @@ export default function AddListingForm() {
                     );
                   }
                 }}
+                role="button"
+                tabIndex={0}
+                aria-label="Ajouter ou réorganiser des images"
+                aria-describedby="listing-images-help"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    document.getElementById("listing-image-input")?.click();
+                  }
+                }}
               >
                 <div className="flex flex-wrap gap-3">
                   {images.map((it, idx) => (
                     <div key={idx} className="relative">
                       <img
                         src={it.url}
-                        alt={`Prévisualisation ${idx + 1}`}
+                        alt={`Prévisualisation image ${idx + 1}`}
                         className="w-20 h-20 object-cover rounded-lg"
                       />
                       <button
@@ -402,7 +450,9 @@ export default function AddListingForm() {
                           const next = images.filter((_, i) => i !== idx);
                           try {
                             URL.revokeObjectURL(images[idx].url);
-                          } catch {}
+                          } catch {
+                            // ignore revoke failures
+                          }
                           setImages(next);
                           if (next.length === 0) {
                             setValue("image", null, { shouldValidate: true });
@@ -436,6 +486,10 @@ export default function AddListingForm() {
                 )}
               </div>
             )}
+            <p id="listing-images-help" className="sr-only">
+              Vous pouvez glisser-déposer jusqu'à 4 images. Appuyez sur Entrée
+              ou Espace pour ouvrir le sélecteur de fichiers.
+            </p>
             {/* Hidden input to add/select files */}
             <input
               id="listing-image-input"
@@ -443,6 +497,8 @@ export default function AddListingForm() {
               accept="image/*"
               multiple
               className="hidden"
+              aria-hidden="true"
+              tabIndex={-1}
               onChange={(e) => {
                 const incoming = Array.from(e.target.files || []).filter((f) =>
                   f.type?.startsWith("image/")
@@ -465,7 +521,11 @@ export default function AddListingForm() {
               }}
             />
             {errors.image && (
-              <p id="image-error" className="text-xs mt-1 error-text">
+              <p
+                id="image-error"
+                role="alert"
+                className="text-xs mt-1 error-text"
+              >
                 {errors.image.message}
               </p>
             )}
@@ -500,6 +560,8 @@ export default function AddListingForm() {
                       const next = rawInput.replace(/\D/g, "").slice(0, 5);
                       field.onChange(next);
                       setPostalQuery(next);
+                      setShowSuggestions(true);
+                      setActiveTownIndex(-1);
                     }}
                     onBlur={field.onBlur}
                     ref={field.ref}
@@ -509,8 +571,50 @@ export default function AddListingForm() {
                     label="Code postal"
                     size="base"
                     required
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded={showSuggestions && towns.length > 0}
+                    aria-controls={postalListboxId}
+                    aria-activedescendant={
+                      activeTownIndex >= 0 && towns[activeTownIndex]
+                        ? `listing-postal-option-${towns[activeTownIndex].code}`
+                        : undefined
+                    }
                     error={errors.postalCode?.message}
                     className="h-12"
+                    onKeyDown={(e) => {
+                      if (!showSuggestions || towns.length === 0) return;
+                      if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        setActiveTownIndex((i) =>
+                          i < towns.length - 1 ? i + 1 : 0
+                        );
+                      } else if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        setActiveTownIndex((i) =>
+                          i > 0 ? i - 1 : towns.length - 1
+                        );
+                      } else if (e.key === "Enter") {
+                        e.preventDefault();
+                        const idx = activeTownIndex >= 0 ? activeTownIndex : 0;
+                        const t = towns[idx];
+                        if (t) {
+                          setValue("postalCode", postalQuery, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          setValue("city", t.nom, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          setSelectedTown(t.nom);
+                          setPostalRaw(postalQuery);
+                          setShowSuggestions(false);
+                        }
+                      } else if (e.key === "Escape") {
+                        setShowSuggestions(false);
+                      }
+                    }}
                   />
                 );
               }}
@@ -519,11 +623,33 @@ export default function AddListingForm() {
             {/* Suggestions dropdown for towns */}
             <div className="relative" ref={suggestionsRef}>
               {showSuggestions && towns && towns.length > 0 && (
-                <ul className="absolute z-20 left-0 right-0 mt-2 bg-white text-black border rounded max-h-56 overflow-auto">
+                <ul
+                  id={postalListboxId}
+                  role="listbox"
+                  className="absolute z-20 left-0 right-0 mt-2 bg-white text-black border rounded max-h-56 overflow-auto"
+                  aria-label="Villes correspondantes au code postal"
+                >
                   {towns.map((t) => (
                     <li
                       key={t.code}
-                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                      id={`listing-postal-option-${t.code}`}
+                      role="option"
+                      aria-selected={
+                        activeTownIndex >= 0 &&
+                        towns[activeTownIndex] &&
+                        towns[activeTownIndex].code === t.code
+                      }
+                      className={`px-3 py-2 cursor-pointer ${
+                        activeTownIndex >= 0 &&
+                        towns[activeTownIndex] &&
+                        towns[activeTownIndex].code === t.code
+                          ? "bg-gray-100"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onMouseEnter={() => {
+                        const idx = towns.findIndex((tw) => tw.code === t.code);
+                        setActiveTownIndex(idx);
+                      }}
                       onClick={() => {
                         setValue("postalCode", postalQuery, {
                           shouldDirty: true,
@@ -578,6 +704,7 @@ export default function AddListingForm() {
                   {errors.description && (
                     <p
                       id="description-error"
+                      role="alert"
                       className="error-text text-xs mt-1"
                     >
                       {errors.description.message}
@@ -587,7 +714,7 @@ export default function AddListingForm() {
               )}
             />
             {descriptionValue.length < 20 && (
-              <p className="error-text text-sm mt-1">
+              <p className="error-text text-sm mt-1" aria-live="polite">
                 La description doit contenir au moins 20 caractères.
               </p>
             )}

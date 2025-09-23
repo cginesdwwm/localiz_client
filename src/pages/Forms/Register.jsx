@@ -12,6 +12,7 @@ import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import Checkbox from "../../components/Common/Checkbox";
 import FocusRing from "../../components/Common/FocusRing";
+import ErrorSummary from "../../components/Common/ErrorSummary";
 
 import { frenchForbiddenWords } from "../../utils/forbiddenWords";
 import { uploadAvatar } from "../../lib/uploadAvatar";
@@ -20,6 +21,7 @@ export default function Register() {
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const message = params.get("message");
+  const headingRef = useRef(null);
 
   // Garde globale (sessionStorage) pour éviter les toasts dupliqués
   // qui peuvent survenir en développement avec React StrictMode
@@ -168,7 +170,7 @@ export default function Register() {
   const {
     handleSubmit,
     control,
-    formState: { errors, isValid },
+    formState: { errors, isValid, isSubmitting },
     reset,
     setError,
     setValue,
@@ -184,14 +186,25 @@ export default function Register() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [postalRaw, setPostalRaw] = useState("");
   const [selectedTown, setSelectedTown] = useState("");
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const suggestionsRef = useRef(null);
+  const activeOptionRef = useRef(null);
 
   // Avatar states
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
   const [avatarUploading, setAvatarUploading] = useState(false);
   const avatarInputRef = useRef(null);
+
+  // Ensure the active option stays visible when navigating with the keyboard
+  useEffect(() => {
+    if (!showSuggestions) return;
+    const el = activeOptionRef.current;
+    if (el && el.scrollIntoView) {
+      el.scrollIntoView({ block: "nearest" });
+    }
+  }, [activeIndex, showSuggestions]);
 
   // Fetch towns when postalQuery is 5 digits (debounced)
   useEffect(() => {
@@ -217,6 +230,7 @@ export default function Register() {
         if (cancelled) return;
         setTowns(Array.isArray(data) ? data : []);
         setShowSuggestions(true);
+        setActiveIndex(0);
       } catch (err) {
         if (err.name === "AbortError") return;
         setTowns([]);
@@ -319,19 +333,44 @@ export default function Register() {
     }
   }
 
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   return (
-    <div className="p-4">
+    <section aria-labelledby="register-title" className="p-4">
       <div className="mb-4 text-center">
         <h1
+          id="register-title"
+          ref={headingRef}
+          tabIndex={-1}
           className="text-3xl font-bold text-center text-[var(--text)] mb-8"
           style={{ fontFamily: "Fredoka" }}
         >
           Inscription
         </h1>
       </div>
+      <ErrorSummary
+        errors={errors}
+        fields={[
+          { name: "username", id: "username", label: "Pseudo" },
+          { name: "email", id: "email", label: "Adresse email" },
+          { name: "postalCode", id: "postalCode", label: "Code postal" },
+          { name: "birthday", id: "birthday", label: "Date de naissance" },
+          { name: "password", id: "password", label: "Mot de passe" },
+          {
+            name: "confirmPassword",
+            id: "confirmPassword",
+            label: "Confirmer le mot de passe",
+          },
+          { name: "agreeToTerms", id: "agreeToTerms", label: "Conditions" },
+        ]}
+      />
       <form
         className="flex flex-col gap-5 mb-6 mx-auto max-w-[400px]"
         onSubmit={handleSubmit(onSubmit)}
+        aria-busy={isSubmitting || undefined}
+        noValidate
       >
         {/* Avatar selector */}
         <div className="flex flex-col items-center">
@@ -385,12 +424,14 @@ export default function Register() {
                 <Input
                   {...field}
                   id="username"
+                  label="Pseudo"
                   placeholder="Pseudo"
-                  aria-label="Pseudo"
                   onInput={() => {}}
                   error={errors.username?.message}
                   minLength={4}
                   maxLength={20}
+                  required
+                  autoComplete="username"
                 />
               )}
             />
@@ -411,9 +452,11 @@ export default function Register() {
                   {...field}
                   id="email"
                   type="email"
+                  label="Adresse email"
                   placeholder="Adresse email"
-                  aria-label="Adresse email"
                   onInput={() => {}}
+                  required
+                  autoComplete="email"
                   error={errors.email?.message}
                 />
               )}
@@ -432,6 +475,7 @@ export default function Register() {
                 return (
                   <Input
                     id="postalCode"
+                    label="Code postal"
                     // show postal + selected town inside the same input when chosen
                     value={
                       selectedTown
@@ -452,12 +496,47 @@ export default function Register() {
                       const next = rawInput.replace(/\D/g, "").slice(0, 5);
                       field.onChange(next);
                       setPostalQuery(next);
+                      if (next.length === 5) setShowSuggestions(true);
+                    }}
+                    onKeyDown={(e) => {
+                      if (!showSuggestions || !towns || towns.length === 0)
+                        return;
+                      if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        setActiveIndex((i) => (i + 1) % towns.length);
+                      } else if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        setActiveIndex(
+                          (i) => (i - 1 + towns.length) % towns.length
+                        );
+                      } else if (e.key === "Home") {
+                        e.preventDefault();
+                        setActiveIndex(0);
+                      } else if (e.key === "End") {
+                        e.preventDefault();
+                        setActiveIndex(towns.length - 1);
+                      } else if (e.key === "Enter") {
+                        e.preventDefault();
+                        const t = towns[activeIndex];
+                        if (t) {
+                          setValue("postalCode", postalQuery);
+                          setValue("city", t.nom);
+                          setSelectedTown(t.nom);
+                          setShowSuggestions(false);
+                        }
+                      } else if (e.key === "Escape") {
+                        setShowSuggestions(false);
+                      }
                     }}
                     onBlur={field.onBlur}
                     ref={field.ref}
                     type="text"
                     placeholder="Code postal"
-                    aria-label="Code postal"
+                    required
+                    autoComplete="postal-code"
+                    aria-controls="postal-suggestions"
+                    aria-expanded={showSuggestions || undefined}
+                    aria-describedby="postal-help"
                     error={errors.postalCode?.message}
                     className="h-12"
                   />
@@ -469,13 +548,30 @@ export default function Register() {
           {/* Suggestions dropdown (attached to postal code) */}
           <div className="relative" ref={suggestionsRef}>
             {showSuggestions && towns && towns.length > 0 && (
-              <ul className="absolute z-20 left-0 right-0 mt-2 bg-white text-black rounded border max-h-56 overflow-auto">
-                {towns.map((t) => (
+              <ul
+                className="absolute z-20 left-0 right-0 mt-2 bg-white text-black rounded border max-h-56 overflow-auto"
+                role="listbox"
+                aria-label="Villes correspondant au code postal"
+                id="postal-suggestions"
+                aria-activedescendant={
+                  towns[activeIndex]
+                    ? `option-${towns[activeIndex].code}`
+                    : undefined
+                }
+              >
+                {towns.map((t, idx) => (
                   <li
                     key={t.code}
-                    className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                    id={`option-${t.code}`}
+                    className={`px-3 py-2 cursor-pointer text-sm ${
+                      idx === activeIndex ? "bg-gray-100" : "hover:bg-gray-100"
+                    }`}
+                    role="option"
+                    aria-selected={idx === activeIndex}
+                    tabIndex={-1}
+                    ref={idx === activeIndex ? activeOptionRef : null}
+                    onMouseEnter={() => setActiveIndex(idx)}
                     onClick={() => {
-                      // set both postalCode and city in the form
                       setValue("postalCode", postalQuery);
                       setValue("city", t.nom);
                       setSelectedTown(t.nom);
@@ -507,7 +603,9 @@ export default function Register() {
                   id="birthday"
                   type="date"
                   placeholder="Date de naissance"
-                  aria-label="Date de naissance"
+                  label="Date de naissance"
+                  required
+                  autoComplete="bday"
                   onInput={() => {}}
                   error={errors.birthday?.message}
                 />
@@ -525,12 +623,14 @@ export default function Register() {
                   {...field}
                   id="password"
                   type="password"
+                  label="Mot de passe"
                   placeholder="Mot de passe"
-                  aria-label="Mot de passe"
                   onInput={() => {}}
                   error={errors.password?.message}
                   minLength={8}
                   maxLength={30}
+                  required
+                  autoComplete="new-password"
                 />
               )}
             />
@@ -546,10 +646,12 @@ export default function Register() {
                   {...field}
                   id="confirmPassword"
                   type="password"
+                  label="Confirmer le mot de passe"
                   placeholder="Confirmer le mot de passe"
-                  aria-label="Confirmer le mot de passe"
                   onInput={() => {}}
                   error={errors.confirmPassword?.message}
+                  required
+                  autoComplete="new-password"
                 />
               )}
             />
@@ -592,6 +694,8 @@ export default function Register() {
                     <p
                       id="agreeToTerms-error"
                       className="error-text text-sm mt-1"
+                      role="alert"
+                      aria-live="assertive"
                     >
                       {errors.agreeToTerms.message}
                     </p>
@@ -620,6 +724,6 @@ export default function Register() {
           </NavLink>
         </div>
       </form>
-    </div>
+    </section>
   );
 }

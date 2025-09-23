@@ -1,15 +1,17 @@
 import { forwardRef } from "react";
 
 const ToggleSwitch = forwardRef(
-  ({ id, checked, onChange, disabled = false, ariaLabel }, ref) => {
+  ({ id, checked, onChange, disabled = false, ariaLabel, ...rest }, ref) => {
     return (
       <button
         id={id}
         ref={ref}
         role="switch"
         aria-checked={!!checked}
+        aria-disabled={disabled || undefined}
         aria-label={ariaLabel}
         disabled={disabled}
+        {...rest}
         onClick={() => !disabled && onChange && onChange(!checked)}
         onKeyDown={(e) => {
           if (disabled) return;

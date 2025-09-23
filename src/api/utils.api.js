@@ -1,0 +1,12 @@
+import { BASE_URL } from "../utils/url";
+
+export async function getPublicCategories() {
+  const response = await fetch(`${BASE_URL}/utils/categories`, {
+    credentials: "include",
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || "Erreur lors du chargement des catégories.");
+  }
+  return response.json();
+}

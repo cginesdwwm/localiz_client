@@ -10,46 +10,49 @@ import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
 import BackLink from "../../components/Common/BackLink";
 import { DEAL_TAGS } from "../../constants/dealTags";
+import { getPublicCategories } from "../../api/utils.api";
 
-const schema = yup.object({
-  image: yup.mixed().required("Image requise"),
-  title: yup.string().required("Titre requis"),
-  tag: yup
-    .string()
-    .oneOf(DEAL_TAGS, "Tag invalide")
-    .required("Catégorie requise"),
-  streetAddress: yup
-    .string()
-    .required("Adresse requise")
-    .min(3, "Adresse trop courte"),
-  postalCode: yup
-    .string()
-    .required("Code postal requis")
-    .matches(/^\d{5}$/i, "Code postal invalide"),
-  city: yup.string().required("Ville requise"),
-  startDate: yup.string().required("Date de début requise"),
-  endDate: yup.string().nullable(),
-  accessConditionsType: yup
-    .string()
-    .oneOf(["free", "paid", "reservation", "reduction", "other"])
-    .required("Choix requis"),
-  price: yup.number().when("accessConditionsType", {
-    is: "paid",
-    then: (schema) =>
-      schema.required("Prix requis").moreThan(0, "Prix invalide"),
-    otherwise: (schema) => schema.nullable(),
-  }),
-  reservationInfo: yup.string().nullable(),
-  reductionConditions: yup.string().nullable(),
-  website: yup.string().url("URL invalide").nullable(),
-  description: yup
-    .string()
-    .required("Description requise")
-    .min(20, "La description doit contenir au moins 20 caractères"),
-});
+const baseSchema = (allowedTags) =>
+  yup.object({
+    image: yup.mixed().required("Image requise"),
+    title: yup.string().required("Titre requis"),
+    tag: yup
+      .string()
+      .oneOf(allowedTags, "Tag invalide")
+      .required("Catégorie requise"),
+    streetAddress: yup
+      .string()
+      .required("Adresse requise")
+      .min(3, "Adresse trop courte"),
+    postalCode: yup
+      .string()
+      .required("Code postal requis")
+      .matches(/^\d{5}$/i, "Code postal invalide"),
+    city: yup.string().required("Ville requise"),
+    startDate: yup.string().required("Date de début requise"),
+    endDate: yup.string().nullable(),
+    accessConditionsType: yup
+      .string()
+      .oneOf(["free", "paid", "reservation", "reduction", "other"])
+      .required("Choix requis"),
+    price: yup.number().when("accessConditionsType", {
+      is: "paid",
+      then: (schema) =>
+        schema.required("Prix requis").moreThan(0, "Prix invalide"),
+      otherwise: (schema) => schema.nullable(),
+    }),
+    reservationInfo: yup.string().nullable(),
+    reductionConditions: yup.string().nullable(),
+    website: yup.string().url("URL invalide").nullable(),
+    description: yup
+      .string()
+      .required("Description requise")
+      .min(20, "La description doit contenir au moins 20 caractères"),
+  });
 
 export default function AddDealForm() {
   const [loading, setLoading] = useState(false);
+  const [allowedTags, setAllowedTags] = useState(DEAL_TAGS);
   const navigate = useNavigate();
   const [towns, setTowns] = useState([]);
   const [postalQuery, setPostalQuery] = useState("");
@@ -63,6 +66,10 @@ export default function AddDealForm() {
   const [showStreetSuggestions, setShowStreetSuggestions] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [images, setImages] = useState([]); // [{file, url}]
+  const [activeTownIndex, setActiveTownIndex] = useState(-1);
+  const [activeStreetIndex, setActiveStreetIndex] = useState(-1);
+  const postalListboxId = "deal-postal-suggestions";
+  const streetListboxId = "deal-street-suggestions";
 
   const {
     register,
@@ -72,10 +79,28 @@ export default function AddDealForm() {
     setValue,
     control,
     formState: { errors },
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({ resolver: yupResolver(baseSchema(allowedTags)) });
   const accessType = watch("accessConditionsType");
   const descriptionValue = watch("description") || "";
-  const imageValue = watch("image");
+
+  // Load categories from API, fallback to constants
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await getPublicCategories();
+        const items = Array.isArray(res?.deal) ? res.deal : [];
+        if (!cancelled && items.length) {
+          setAllowedTags(items);
+        }
+      } catch {
+        // keep fallback DEAL_TAGS
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function onSubmit(values) {
     setLoading(true);
@@ -123,8 +148,13 @@ export default function AddDealForm() {
         payload.website = values.website;
       }
 
-      await createDeal(payload);
-      navigate("/deals");
+      const created = await createDeal(payload);
+      const id = created?._id || created?.id;
+      if (id) {
+        navigate(`/deals/${encodeURIComponent(id)}`);
+      } else {
+        navigate("/deals");
+      }
     } catch (err) {
       console.error(err);
       // If server sent validation errors in the express-validator format
@@ -310,14 +340,18 @@ export default function AddDealForm() {
               aria-describedby={errors.tag ? "tag-error" : undefined}
             >
               <option value="">Sélectionnez...</option>
-              {DEAL_TAGS.map((t) => (
+              {allowedTags.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>
               ))}
             </select>
             {errors.tag && (
-              <p id="tag-error" className="text-xs mt-1 error-text">
+              <p
+                id="tag-error"
+                role="alert"
+                className="text-xs mt-1 error-text"
+              >
                 {errors.tag.message}
               </p>
             )}
@@ -339,6 +373,10 @@ export default function AddDealForm() {
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-300 bg-gray-50"
                 }`}
+                role="button"
+                tabIndex={0}
+                aria-label="Ajouter des images pour le bon plan"
+                aria-describedby="deal-images-help"
                 onDragEnter={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -378,6 +416,12 @@ export default function AddDealForm() {
                 onClick={() =>
                   document.getElementById("deal-image-input")?.click()
                 }
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    document.getElementById("deal-image-input")?.click();
+                  }
+                }}
               >
                 <div className="flex flex-col items-center gap-2">
                   <p className="text-base font-medium text-gray-700">
@@ -420,13 +464,23 @@ export default function AddDealForm() {
                     );
                   }
                 }}
+                role="button"
+                tabIndex={0}
+                aria-label="Ajouter ou réorganiser des images"
+                aria-describedby="deal-images-help"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    document.getElementById("deal-image-input")?.click();
+                  }
+                }}
               >
                 <div className="flex flex-wrap gap-3">
                   {images.map((it, idx) => (
                     <div key={idx} className="relative">
                       <img
                         src={it.url}
-                        alt={`Prévisualisation ${idx + 1}`}
+                        alt={`Prévisualisation image ${idx + 1}`}
                         className="w-20 h-20 object-cover rounded-lg"
                       />
                       <button
@@ -438,7 +492,9 @@ export default function AddDealForm() {
                           // revoke URL for removed
                           try {
                             URL.revokeObjectURL(images[idx].url);
-                          } catch {}
+                          } catch {
+                            // ignore revoke failures
+                          }
                           setImages(next);
                           if (next.length === 0) {
                             setValue("image", null, { shouldValidate: true });
@@ -479,6 +535,8 @@ export default function AddDealForm() {
               accept="image/*"
               multiple
               className="hidden"
+              aria-hidden="true"
+              tabIndex={-1}
               onChange={(e) => {
                 const incoming = Array.from(e.target.files || []).filter((f) =>
                   f.type?.startsWith("image/")
@@ -502,10 +560,18 @@ export default function AddDealForm() {
               }}
             />
             {errors.image && (
-              <p id="image-error" className="text-xs mt-1 error-text">
+              <p
+                id="image-error"
+                role="alert"
+                className="text-xs mt-1 error-text"
+              >
                 {errors.image.message}
               </p>
             )}
+            <p id="deal-images-help" className="sr-only">
+              Vous pouvez glisser-déposer jusqu'à 4 images. Appuyez sur Entrée
+              ou Espace pour ouvrir le sélecteur de fichiers.
+            </p>
           </div>
 
           {/* Lieu (nom du lieu ou ville) */}
@@ -547,11 +613,68 @@ export default function AddDealForm() {
                     field.onChange(e.target.value);
                     setStreetRaw(e.target.value);
                   }}
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-expanded={
+                    showStreetSuggestions && streetSuggestions.length > 0
+                  }
+                  aria-controls={streetListboxId}
+                  aria-activedescendant={
+                    activeStreetIndex >= 0 &&
+                    streetSuggestions[activeStreetIndex]
+                      ? `deal-street-option-${
+                          streetSuggestions[activeStreetIndex]?.properties
+                            ?.id || activeStreetIndex
+                        }`
+                      : undefined
+                  }
+                  onKeyDown={(e) => {
+                    if (
+                      !showStreetSuggestions ||
+                      streetSuggestions.length === 0
+                    )
+                      return;
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setActiveStreetIndex((i) =>
+                        i < streetSuggestions.length - 1 ? i + 1 : 0
+                      );
+                    } else if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      setActiveStreetIndex((i) =>
+                        i > 0 ? i - 1 : streetSuggestions.length - 1
+                      );
+                    } else if (e.key === "Enter") {
+                      e.preventDefault();
+                      const idx =
+                        activeStreetIndex >= 0 ? activeStreetIndex : 0;
+                      const f = streetSuggestions[idx];
+                      if (f) {
+                        const p = f?.properties || {};
+                        const label = p.label || "";
+                        const streetOnly =
+                          p.name || String(label).split(",")[0];
+                        const street = streetOnly || label;
+                        setValue("streetAddress", street, {
+                          shouldDirty: true,
+                          shouldValidate: true,
+                        });
+                        setShowStreetSuggestions(false);
+                      }
+                    } else if (e.key === "Escape") {
+                      setShowStreetSuggestions(false);
+                    }
+                  }}
                 />
               )}
             />
             {showStreetSuggestions && streetSuggestions.length > 0 && (
-              <ul className="mt-1 bg-white text-black border rounded max-h-56 overflow-auto">
+              <ul
+                id={streetListboxId}
+                role="listbox"
+                className="mt-1 bg-white text-black border rounded max-h-56 overflow-auto"
+                aria-label="Suggestions d'adresse"
+              >
                 {streetSuggestions.map((f) => {
                   const p = f?.properties || {};
                   const label = p.label || "";
@@ -559,7 +682,28 @@ export default function AddDealForm() {
                   return (
                     <li
                       key={p.id || label}
-                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                      id={`deal-street-option-${p.id || label}`}
+                      role="option"
+                      aria-selected={
+                        activeStreetIndex >= 0 &&
+                        streetSuggestions[activeStreetIndex]?.properties?.id ===
+                          p.id
+                      }
+                      className={`px-3 py-2 cursor-pointer ${
+                        activeStreetIndex >= 0 &&
+                        streetSuggestions[activeStreetIndex]?.properties?.id ===
+                          p.id
+                          ? "bg-gray-100"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onMouseEnter={() => {
+                        const idx = streetSuggestions.findIndex(
+                          (it) =>
+                            (it?.properties?.id || it?.properties?.label) ===
+                            (p.id || label)
+                        );
+                        setActiveStreetIndex(idx);
+                      }}
                       onClick={() => {
                         const street = streetOnly || label;
                         setValue("streetAddress", street, {
@@ -626,6 +770,8 @@ export default function AddDealForm() {
                       const next = rawInput.replace(/\D/g, "").slice(0, 5);
                       field.onChange(next);
                       setPostalQuery(next);
+                      setShowSuggestions(true);
+                      setActiveTownIndex(-1);
                     }}
                     onBlur={field.onBlur}
                     ref={field.ref}
@@ -637,6 +783,48 @@ export default function AddDealForm() {
                     required
                     error={errors.postalCode?.message}
                     className="h-12"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded={showSuggestions && towns.length > 0}
+                    aria-controls={postalListboxId}
+                    aria-activedescendant={
+                      activeTownIndex >= 0 && towns[activeTownIndex]
+                        ? `deal-postal-option-${towns[activeTownIndex].code}`
+                        : undefined
+                    }
+                    onKeyDown={(e) => {
+                      if (!showSuggestions || towns.length === 0) return;
+                      if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        setActiveTownIndex((i) =>
+                          i < towns.length - 1 ? i + 1 : 0
+                        );
+                      } else if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        setActiveTownIndex((i) =>
+                          i > 0 ? i - 1 : towns.length - 1
+                        );
+                      } else if (e.key === "Enter") {
+                        e.preventDefault();
+                        const idx = activeTownIndex >= 0 ? activeTownIndex : 0;
+                        const t = towns[idx];
+                        if (t) {
+                          setValue("postalCode", postalQuery, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          setValue("city", t.nom, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          setSelectedTown(t.nom);
+                          setPostalRaw(postalQuery);
+                          setShowSuggestions(false);
+                        }
+                      } else if (e.key === "Escape") {
+                        setShowSuggestions(false);
+                      }
+                    }}
                   />
                 );
               }}
@@ -645,11 +833,33 @@ export default function AddDealForm() {
             {/* Suggestions dropdown for towns */}
             <div className="relative" ref={suggestionsRef}>
               {showSuggestions && towns && towns.length > 0 && (
-                <ul className="absolute z-20 left-0 right-0 mt-2 bg-white text-black border rounded max-h-56 overflow-auto">
+                <ul
+                  id={postalListboxId}
+                  role="listbox"
+                  className="absolute z-20 left-0 right-0 mt-2 bg-white text-black border rounded max-h-56 overflow-auto"
+                  aria-label="Villes correspondantes au code postal"
+                >
                   {towns.map((t) => (
                     <li
                       key={t.code}
-                      className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                      id={`deal-postal-option-${t.code}`}
+                      role="option"
+                      aria-selected={
+                        activeTownIndex >= 0 &&
+                        towns[activeTownIndex] &&
+                        towns[activeTownIndex].code === t.code
+                      }
+                      className={`px-3 py-2 cursor-pointer ${
+                        activeTownIndex >= 0 &&
+                        towns[activeTownIndex] &&
+                        towns[activeTownIndex].code === t.code
+                          ? "bg-gray-100"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onMouseEnter={() => {
+                        const idx = towns.findIndex((tw) => tw.code === t.code);
+                        setActiveTownIndex(idx);
+                      }}
                       onClick={() => {
                         setValue("postalCode", postalQuery, {
                           shouldDirty: true,
@@ -804,6 +1014,15 @@ export default function AddDealForm() {
                 />
               )}
             />
+            {errors.website && (
+              <p
+                id="website-error"
+                role="alert"
+                className="text-xs mt-1 error-text"
+              >
+                {errors.website.message}
+              </p>
+            )}
           </div>
 
           {/* Description */}
@@ -838,6 +1057,7 @@ export default function AddDealForm() {
                   {errors.description && (
                     <p
                       id="description-error"
+                      role="alert"
                       className="error-text text-xs mt-1"
                     >
                       {errors.description.message}
@@ -847,7 +1067,7 @@ export default function AddDealForm() {
               )}
             />
             {descriptionValue.length < 20 && (
-              <p className="error-text text-sm mt-1">
+              <p className="error-text text-sm mt-1" aria-live="polite">
                 La description doit contenir au moins 20 caractères.
               </p>
             )}

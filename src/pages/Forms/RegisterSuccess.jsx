@@ -1,8 +1,9 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function RegisterSuccess() {
   const location = useLocation();
+  const headingRef = useRef(null);
   // On tente d'utiliser expiresAt envoyé par le serveur (ms)
   const serverExpiresAt = location?.state?.expiresAt;
   // Si le user reload la page, lecture en fallback depuis sessionStorage
@@ -40,6 +41,10 @@ export default function RegisterSuccess() {
     }
   }, [serverExpiresAt, fallback, navigate]);
 
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
+
   // Cleanup: si le compte à rebours atteint 0 ou si déjà expiré, on supprime le timer en session
   useEffect(() => {
     if (remaining <= 0 || effectiveExpiresAt <= Date.now()) {
@@ -61,9 +66,15 @@ export default function RegisterSuccess() {
   };
 
   return (
-    <div className="center-screen px-4">
+    <section
+      aria-labelledby="register-success-title"
+      className="center-screen px-4"
+    >
       <div className="w-full max-w-md px-4">
         <h1
+          id="register-success-title"
+          ref={headingRef}
+          tabIndex={-1}
           className="front-heading text-3xl mb-3 font-bold"
           style={{ fontFamily: "Fredoka" }}
         >
@@ -84,7 +95,11 @@ export default function RegisterSuccess() {
             <div className="text-sm text-muted">
               Temps restant pour confirmer
             </div>
-            <div className="text-xl font-mono mt-1">
+            <div
+              className="text-xl font-mono mt-1"
+              role="status"
+              aria-live="polite"
+            >
               {formatTime(remaining)}
             </div>
             <div className="text-sm text-muted mt-2">
@@ -104,6 +119,6 @@ export default function RegisterSuccess() {
           </NavLink>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

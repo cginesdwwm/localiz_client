@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
+import ErrorSummary from "../../components/Common/ErrorSummary";
 import { notify } from "../../utils/notify";
 import BackLink from "../../components/Common/BackLink";
 
@@ -20,12 +21,17 @@ const schema = yup.object({
 
 export default function Contact() {
   const [serverMsg, setServerMsg] = useState("");
+  const headingRef = useRef(null);
   const {
     handleSubmit,
     control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm({ resolver: yupResolver(schema), mode: "onBlur" });
+
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
 
   async function onSubmit(values) {
     setServerMsg("");
@@ -54,10 +60,16 @@ export default function Contact() {
   }
 
   return (
-    <div className="h-screen center-screen bg-[var(--bg)] px-4">
+    <section
+      aria-labelledby="contact-title"
+      className="h-screen center-screen bg-[var(--bg)] px-4"
+    >
       <div className="w-full max-w-md">
         <BackLink to="/" fixed />
         <h1
+          id="contact-title"
+          ref={headingRef}
+          tabIndex={-1}
           className="text-3xl font-bold text-center text-[var(--text)]"
           style={{ color: "#F4EBD6", fontFamily: "Fredoka" }}
         >
@@ -71,8 +83,21 @@ export default function Contact() {
             Une question, une suggestion ou un problème ? On est à l'écoute !
           </p>
         </div>
-
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={handleSubmit(onSubmit)}
+          aria-busy={isSubmitting || undefined}
+          noValidate
+        >
+          <ErrorSummary
+            errors={errors}
+            fields={[
+              { name: "name", id: "name", label: "Nom" },
+              { name: "email", id: "email", label: "Email" },
+              { name: "subject", id: "subject", label: "Objet" },
+              { name: "message", id: "message", label: "Message" },
+            ]}
+          />
           <FocusRing>
             <Controller
               name="name"
@@ -81,6 +106,10 @@ export default function Contact() {
                 <Input
                   {...field}
                   id="name"
+                  label="Nom"
+                  placeholder="Nom"
+                  required
+                  autoComplete="name"
                   error={errors.name?.message}
                   className="h-12"
                 />
@@ -94,8 +123,11 @@ export default function Contact() {
                 <Input
                   {...field}
                   id="email"
+                  label="Email"
                   placeholder="Email"
                   type="email"
+                  required
+                  autoComplete="email"
                   error={errors.email?.message}
                   className="h-12"
                 />
@@ -109,7 +141,10 @@ export default function Contact() {
                 <Input
                   {...field}
                   id="subject"
+                  label="Objet"
                   placeholder="Objet du message"
+                  required
+                  autoComplete="off"
                   error={errors.subject?.message}
                   className="h-12"
                 />
@@ -121,6 +156,12 @@ export default function Contact() {
               control={control}
               render={({ field }) => (
                 <div>
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium mb-1"
+                  >
+                    Message
+                  </label>
                   <textarea
                     id="message"
                     {...field}
@@ -131,9 +172,16 @@ export default function Contact() {
                     aria-describedby={
                       errors.message ? "message-error" : undefined
                     }
+                    required
+                    autoComplete="off"
                   />
                   {errors.message && (
-                    <p id="message-error" className="text-xs mt-1 error-text">
+                    <p
+                      id="message-error"
+                      className="text-xs mt-1 error-text"
+                      role="alert"
+                      aria-live="assertive"
+                    >
                       {errors.message.message}
                     </p>
                   )}
@@ -154,11 +202,15 @@ export default function Contact() {
         </form>
 
         {serverMsg && (
-          <p className="mt-1 text-center text-sm" role="status">
+          <p
+            className="mt-1 text-center text-sm"
+            role="status"
+            aria-live="polite"
+          >
             {serverMsg}
           </p>
         )}
       </div>
-    </div>
+    </section>
   );
 }

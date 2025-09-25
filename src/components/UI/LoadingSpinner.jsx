@@ -1,8 +1,8 @@
 /*
-  Reusable loading spinner component
+  Composant de spinner de chargement réutilisable
 */
 
-const LoadingSpinner = ({ size = "medium", message = "Loading..." }) => {
+const LoadingSpinner = ({ size = "medium", message = "Chargement..." }) => {
   const sizeClasses = {
     small: "h-6 w-6",
     medium: "h-12 w-12",
@@ -14,7 +14,7 @@ const LoadingSpinner = ({ size = "medium", message = "Loading..." }) => {
       <div
         className={`animate-spin rounded-full border-b-2 border-blue-500 ${sizeClasses[size]}`}
         role="status"
-        aria-label="Loading"
+        aria-label="Chargement"
       />
       {message && (
         <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">

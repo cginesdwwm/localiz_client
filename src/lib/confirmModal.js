@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import ConfirmModal from "../components/Common/ConfirmModal";
 
 // Simple queue to avoid multiple overlapping modals.
+// File d'attente simple pour éviter plusieurs modales qui se chevauchent.
 const queue = [];
 let isProcessing = false;
 
@@ -12,6 +13,7 @@ function processQueue() {
   const { message, opts, resolve } = queue.shift();
 
   // create container
+  // créer le conteneur
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = ReactDOM.createRoot(container);
@@ -29,6 +31,7 @@ function processQueue() {
     }
     isProcessing = false;
     // next in queue
+    // élément suivant dans la file
     setTimeout(processQueue, 0);
   };
 
@@ -57,8 +60,8 @@ function processQueue() {
 }
 
 /**
- * Show a ConfirmModal and return a Promise that resolves to true (confirm) or false (cancel).
- * Usage: const ok = await confirmModal('Supprimer cet item?')
+ * Affiche une ConfirmModal et renvoie une Promise qui se résout à true (confirmer) ou false (annuler).
+ * Exemple : const ok = await confirmModal('Supprimer cet item ?')
  */
 export default function confirmModal(message, opts = {}) {
   if (typeof window === "undefined") return Promise.resolve(false);

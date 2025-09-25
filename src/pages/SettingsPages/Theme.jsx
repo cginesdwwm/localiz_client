@@ -34,7 +34,7 @@ export default function Theme() {
   };
 
   return (
-    <main className="p-4 mx-auto max-w-xl mt-10" role="main">
+    <div className="p-4 mx-auto max-w-xl mt-10">
       <BackLink to="/settings" fixed />
 
       <div className="p-12">
@@ -87,6 +87,6 @@ export default function Theme() {
           })}
         </fieldset>
       </div>
-    </main>
+    </div>
   );
 }

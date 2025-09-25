@@ -1,3 +1,8 @@
+/*
+  Tableau de bord Admin
+  - Récupère statistiques et santé API
+  - Affiche cartes/charts (Recharts) et liens vers sous-sections
+*/
 import { useEffect, useMemo, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
@@ -212,7 +217,7 @@ export default function AdminDashboard() {
             className="title text-3xl font-bold"
             style={{ fontFamily: "Fredoka" }}
           >
-            Administration
+            Tableau de bord
           </h1>
           <div className="flex gap-2">
             <NavLink to="/">

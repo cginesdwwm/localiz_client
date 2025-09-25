@@ -27,7 +27,7 @@ function Icon({ id, open }) {
   );
 }
 
-// Item générique
+// Item générique (un panneau de l'accordéon)
 function AccordionItem({ id, open, handleOpen, title, content }) {
   return (
     <Accordion
@@ -45,7 +45,7 @@ function AccordionItem({ id, open, handleOpen, title, content }) {
   );
 }
 
-// Conteneur principal
+// Conteneur principal de l'accordéon
 export function DefaultAccordion({ items }) {
   const [open, setOpen] = React.useState(0);
   const handleOpen = (value) => setOpen(open === value ? 0 : value);
@@ -69,7 +69,7 @@ export function DefaultAccordion({ items }) {
   );
 }
 
-// pour l'utiliser :
+// Exemple d'utilisation :
 // {
 //   /* <DefaultAccordion
 //               items={[

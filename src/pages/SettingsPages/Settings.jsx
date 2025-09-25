@@ -58,7 +58,7 @@ export default function Settings() {
   }
 
   return (
-    <main className="p-4 max-w-lg mx-auto" role="main">
+    <div className="p-4 max-w-lg mx-auto">
       <BackLink to="/profile/me/manage-account" fixed />
 
       <h1
@@ -116,6 +116,6 @@ export default function Settings() {
         confirmLabel="Déconnecter"
         confirmClassName="px-3 py-1 bg-red-500 text-white rounded"
       />
-    </main>
+    </div>
   );
 }

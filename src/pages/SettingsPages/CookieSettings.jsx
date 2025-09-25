@@ -90,7 +90,7 @@ export default function CookieSettings() {
   useFocusHeading(headingRef);
 
   return (
-    <main className="p-10 mx-auto" role="main">
+    <div className="p-10 mx-auto">
       <BackLink to="/settings" fixed />
 
       <div className="p-12">
@@ -265,6 +265,6 @@ export default function CookieSettings() {
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }

@@ -1,41 +1,41 @@
 /*
-  Main stylesheet - theme variables + base rules
+  Feuille de styles principale — variables de thème + règles de base
 
-  Organization:
+  Organisation :
   1) Imports
-  2) Theme variables (:root + .theme-light)
-  3) Global resets & layout
-  4) Typography
-  5) Form controls & focus
-  6) Components (buttons, cards, checkbox, header/footer)
-  7) Pages / splash helpers
-  8) Theme-specific utility overrides
+  2) Variables de thème (:root + .theme-light)
+  3) Réinitialisations globales & layout
+  4) Typographie
+  5) Champs de formulaire & focus
+  6) Composants (boutons, cartes, checkbox, header/footer)
+  7) Pages / helpers d'écran d'accueil
+  8) Overrides utilitaires spécifiques au thème
 
-  Theme toggle instructions:
-  - To enable the light theme, add the class `theme-light` to the document root
-    (e.g. <html class="theme-light"> or <body class="theme-light">).
+  Basculer le thème :
+  - Pour activer le thème clair, ajoutez la classe `theme-light` à la racine du document
+    (ex. <html class="theme-light"> ou <body class="theme-light">).
 
-  Primary variables you can tune:
-  - --bg                 : page background
-  - --text               : main text color
-  - --input-bg           : input background color
-  - --input-text         : input text color
-  - --btn-cta-bg         : primary CTA background
-  - --btn-text-contrast  : button text color
-  - --focus-outline      : focus ring color (used by `.focus-ring`)
-  - --focus-outline-width: focus outline width
-  - --focus-shadow-color : focus shadow color
-  - --focus-shadow-blur  : focus shadow blur radius
+  Variables principales ajustables :
+  - --bg                 : arrière-plan de page
+  - --text               : couleur de texte principale
+  - --input-bg           : fond des champs
+  - --input-text         : texte des champs
+  - --btn-cta-bg         : fond des boutons d'action principale
+  - --btn-text-contrast  : couleur du texte des boutons
+  - --focus-outline      : couleur de l'anneau de focus (utilisé par `.focus-ring`)
+  - --focus-outline-width: épaisseur de l'outline de focus
+  - --focus-shadow-color : couleur de l'ombre de focus
+  - --focus-shadow-blur  : flou de l'ombre de focus
 */
 
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Mulish:wght@400;600;700&family=Quicksand:wght@400;600;700&display=swap");
 @import "tailwindcss";
 
 /* ======================================================================
-   THEME VARIABLES
-   - Default values live in :root
-   - Light theme overrides applied when `.theme-light` is set on <html> or <body>
-   ====================================================================== */
+  VARIABLES DE THÈME
+  - Valeurs par défaut dans :root
+  - Overrides du thème clair appliqués quand `.theme-light` est présent sur <html> ou <body>
+  ====================================================================== */
 
 :root {
   /* Base UI */
@@ -83,7 +83,7 @@
   --chart-color-4: #a78bfa;
 }
 
-/* Light theme overrides */
+/* Overrides du thème clair */
 .theme-light {
   --bg: #f4ebd6;
   --text: #000000;
@@ -116,23 +116,23 @@
 }
 
 /* ======================================================================
-   GLOBAL RESET, LAYOUT & HELPERS
-   ====================================================================== */
+  RÉINITIALISATION GLOBALE, LAYOUT & HELPERS
+  ====================================================================== */
 
-/* Smooth transitions for theme changes */
+/* Transitions douces lors des changements de thème */
 * {
   transition: background-color 200ms ease, color 200ms ease,
     border-color 200ms ease;
 }
 
-/* Box-sizing reset to avoid subpixel overflow and consistent layout */
+/* Réinitialisation du box-sizing pour éviter les débordements et garder un layout cohérent */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* Global layout */
+/* Layout global */
 html,
 body,
 #root {
@@ -143,14 +143,14 @@ body {
   margin: 0;
   background-color: var(--bg);
   color: var(--text);
-  /* Default body font for regular text */
+  /* Police par défaut pour le texte courant */
   font-family: "Mulish", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
     Roboto, "Helvetica Neue", Arial;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Helper: center content vertically/horizontally without causing scroll */
+/* Helper : centrer verticalement/horizontalement sans provoquer de scroll */
 .center-screen {
   min-height: 100vh;
   display: flex;
@@ -158,7 +158,7 @@ body {
   justify-content: center;
 }
 
-/* Small helpers used by components */
+/* Petits helpers utilisés par les composants */
 .modal-card {
   background-color: var(--card-bg);
   opacity: 1;
@@ -170,10 +170,10 @@ body {
 }
 
 /* ======================================================================
-   TYPOGRAPHY
-   ====================================================================== */
+  TYPOGRAPHIE
+  ====================================================================== */
 
-/* Titles across the app use Fredoka and are bold */
+/* Les titres dans l'application utilisent Fredoka et sont en gras */
 h1,
 h2,
 h3,
@@ -187,12 +187,12 @@ h6,
   color: inherit;
 }
 
-/* Semantic strong but visually normal */
+/* strong sémantique mais visuellement normal */
 .strong-normal {
   font-weight: 400;
 }
 
-/* Quicksand helper */
+/* Helper Quicksand */
 .font-quicksand {
   font-family: "Quicksand", sans-serif;
 }
@@ -221,7 +221,7 @@ h6,
   transform: translateX(-1px);
 }
 
-/* UI text and labels */
+/* Texte UI et labels */
 .ui-text,
 label,
 .form-label,
@@ -230,7 +230,7 @@ label,
   font-weight: 400;
 }
 
-/* Regular paragraph/body text */
+/* Texte de paragraphe/corps régulier */
 p,
 .text,
 .body-text {
@@ -238,7 +238,7 @@ p,
   font-weight: 400;
 }
 
-/* Elements should inherit the global color unless overridden */
+/* Les éléments héritent de la couleur globale sauf override explicite */
 a,
 p,
 span,
@@ -250,10 +250,10 @@ b {
 }
 
 /* ======================================================================
-   FORMS, INPUTS & FOCUS
-   ====================================================================== */
+  FORMULAIRES, CHAMPS & FOCUS
+  ====================================================================== */
 
-/* Input base styles */
+/* Styles de base des champs */
 input[type="text"],
 input[type="tel"],
 input[type="date"],
@@ -274,17 +274,17 @@ select {
   appearance: none;
 }
 
-/* Placeholder styling */
+/* Style des placeholders */
 input::placeholder,
 textarea::placeholder {
   color: var(--input-placeholder);
   font-family: "Mulish", sans-serif;
 }
 
-/* Scoped reusable focus ring (wrap inputs with .focus-ring) */
-/* Avoid showing outlines universally on any focused element; rely on :focus-visible below */
-/* This prevents headings programmatically focused from getting a visible ring. */
-/* Removed global :focus outline to stop unwanted highlight on h1/h2... */
+/* Anneau de focus réutilisable et ciblé (envelopper avec .focus-ring) */
+/* Évite d'afficher des outlines partout ; on s'appuie sur :focus-visible plus bas */
+/* Empêche les titres focusés par script d'avoir un anneau visible. */
+/* Outline global supprimé pour éviter les surlignages non désirés sur h1/h2... */
 .focus-ring input:focus,
 .focus-ring select:focus,
 .focus-ring textarea:focus {
@@ -294,7 +294,7 @@ textarea::placeholder {
   box-shadow: 0 0 var(--focus-shadow-blur) var(--focus-shadow-color);
 }
 
-/* Checkbox visuals moved to `components/Common/Checkbox.css` */
+/* Style des checkbox déplacé dans `components/Common/Checkbox.css` */
 
 .error-text,
 .form-error,
@@ -302,9 +302,9 @@ textarea::placeholder {
   color: #ffc107;
 }
 
-/* Input helpers moved to components/Common/Input.css */
+/* Aides d'inputs déplacées dans components/Common/Input.css */
 
-/* Site header styling */
+/* Style du header du site */
 .site-header {
   background-color: var(--bg);
   color: var(--text);
@@ -339,8 +339,8 @@ textarea::placeholder {
 }
 
 /* ======================================================================
-   SPLASH / PAGE-SPECIFIC HELPERS
-   ====================================================================== */
+  SPLASH / HELPERS SPÉCIFIQUES DE PAGES
+  ====================================================================== */
 .front-heading {
   color: var(--splash-text);
   transition: opacity 600ms ease, transform 600ms ease, color 200ms ease;
@@ -380,9 +380,9 @@ textarea::placeholder {
 }
 
 /* ======================================================================
-   THEME-SPECIFIC UTILITY OVERRIDES
-   (Targets Tailwind-like utility classes used across the app)
-   ====================================================================== */
+  OVERRIDES D'UTILITAIRES SPÉCIFIQUES AU THÈME
+  (Cible des classes type Tailwind utilisées dans l'app)
+  ====================================================================== */
 .theme-light .border-white {
   border-color: rgba(0, 0, 0, 1) !important;
 }
@@ -403,15 +403,15 @@ textarea::placeholder {
 }
 
 /* ======================================================================
-   ACCESSIBILITY HELPERS (focus-visible + skip links)
-   ====================================================================== */
-/* Prefer focus-visible so mouse users don't see outlines */
+  AIDES D'ACCESSIBILITÉ (focus-visible + liens d'évitement)
+  ====================================================================== */
+/* Préfère focus-visible pour éviter les outlines pour les utilisateurs à la souris */
 :focus-visible {
   outline: var(--focus-outline-width) solid var(--focus-outline);
   outline-offset: 2px;
 }
 
-/* Make headings programmatically focusable without visible outline */
+/* Rend les titres focalisables par script sans outline visible */
 h1:focus,
 h2:focus,
 h3:focus,
@@ -421,7 +421,7 @@ h6:focus {
   outline: none;
 }
 
-/* Visually hide content but make it available to SRs; show when focused */
+/* Cache visuellement le contenu mais le laisse accessible aux lecteurs d'écran ; affiche au focus */
 .sr-only {
   position: absolute !important;
   width: 1px !important;

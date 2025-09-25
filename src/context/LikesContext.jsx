@@ -1,3 +1,12 @@
+/**
+ * LikesContext
+ *
+ * Contexte simple pour gérer des identifiants "likés" côté client.
+ * Fournit :
+ * - likedIds: tableau des IDs aimés
+ * - toggleLike(id): ajoute/retire un ID
+ * - likedCount: nombre total d'éléments aimés
+ */
 import { createContext, useState } from "react";
 
 const LikesContext = createContext({});

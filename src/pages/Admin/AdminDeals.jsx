@@ -1,3 +1,7 @@
+/*
+  Administration > Bons plans
+  - Modération: liste, recherche, pagination, suppression
+*/
 import { useEffect, useMemo, useState } from "react";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import Button from "../../components/Common/Button";

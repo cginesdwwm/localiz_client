@@ -1,8 +1,13 @@
-// The file exports a provider component and a helper hook (`useAuth`).
-// React Fast Refresh can warn in some dev setups when non-component values
-// are exported from a file; disable that single rule here with a comment.
+// Ce fichier exporte un composant Provider et un hook utilitaire (`useAuth`).
+// React Fast Refresh peut alerter dans certains environnements quand des valeurs non-composants
+// sont exportées depuis un fichier ; on désactive cette seule règle ici via un commentaire.
 /* eslint-disable react-refresh/only-export-components */
-// Keep hooks linting active and include explicit dependencies for effects.
+// On garde l'analyse des hooks active et on inclut des dépendances explicites pour les effets.
+/**
+ * Fournit l'état d'authentification à l'application : utilisateur connecté, connexion/déconnexion,
+ * mise à jour du profil et hydratation depuis le serveur si besoin. Persiste également l'utilisateur
+ * dans localStorage et applique le thème utilisateur via le hook useTheme.
+ */
 import { useContext, useState, useEffect } from "react";
 import { createContext } from "react";
 import { useLoaderData } from "react-router-dom";
@@ -31,7 +36,7 @@ export function AuthProvider({ children }) {
     initialUser || stored || null
   );
 
-  // central theme hook (manages root class + localStorage)
+  // Hook de thème central (gère la classe sur la racine + localStorage)
   const [, setTheme] = useTheme();
 
   const login = async (values) => {
@@ -59,7 +64,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Helper to let external code (e.g. OAuth) set the user state directly
+  // Permet à un code externe (ex: OAuth) de définir directement l'utilisateur
   const setUser = (user) => {
     setUserConnected(user || null);
     try {
@@ -97,13 +102,13 @@ export function AuthProvider({ children }) {
     return updated;
   };
 
-  // Try to refresh from API on mount if we don't have a user yet
-  // Hydrate user from server if not present. We include dependencies so
-  // the effect re-runs if the relevant inputs change (safe and explicit).
+  // Essaie de rafraîchir depuis l'API au montage si aucun utilisateur n'est présent
+  // Hydrate l'utilisateur depuis le serveur si absent. On inclut des dépendances pour
+  // relancer l'effet si des entrées pertinentes changent (sûr et explicite).
   useEffect(() => {
     let mounted = true;
     async function refresh() {
-      // Debug logs to help diagnose reload logout issues
+      // Journaux de débogage pour aider à diagnostiquer des déconnexions au rechargement
 
       if (!userConnected) {
         try {

@@ -3,18 +3,18 @@ import { useEffect } from "react";
 /**
  * useDocumentTitle
  *
- * Lightweight hook to set `document.title` from within a page/component.
- * - App-wide, `App.jsx` already syncs the title from the first page heading
- *   after navigation to support the route-change live announcer.
- * - Use this hook when a page needs a title that differs from its heading,
- *   or to set the title earlier than `App.jsx`'s post-navigation sync.
- * - Avoid double-setting: prefer one source of truth (either this hook or the
- *   heading-driven sync in `App.jsx`) for a given route.
+ * Hook léger pour définir `document.title` depuis une page/un composant.
+ * - À l'échelle de l'app, `App.jsx` synchronise déjà le titre depuis le premier
+ *   titre de page après la navigation pour l'annonceur de changement de route.
+ * - Utiliser ce hook si une page a besoin d'un titre différent de son heading,
+ *   ou pour définir le titre plus tôt que la synchro post-navigation de `App.jsx`.
+ * - Éviter les doublons : privilégier une seule source de vérité (ce hook ou la
+ *   synchro pilotée par le heading dans `App.jsx`) pour une route donnée.
  *
- * Params:
- * - title: base title text to set
- * - options.suffix: string appended to the title (default " | Localiz")
- * - options.replace: force set even if identical (default false)
+ * Paramètres :
+ * - title: texte de base du titre à définir
+ * - options.suffix: chaîne ajoutée au titre (par défaut " | Localiz")
+ * - options.replace: forcer la mise à jour même si identique (par défaut false)
  */
 
 export default function useDocumentTitle(title, options = {}) {

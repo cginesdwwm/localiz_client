@@ -1,3 +1,4 @@
+// Étiquettes proposées pour les bons plans / événements (deals)
 export const DEAL_TAGS = [
   "Promo",
   "Évènement",

@@ -1,5 +1,4 @@
 /*
-  constants/index.js
   - Définit des constantes réutilisables dans l'application.
   - Ici `variants` contient des classes CSS utilitaires (Tailwind) pour
     styliser des composants (ex: Button).
@@ -18,9 +17,9 @@ export const sizes = {
   lg: "px-5 py-3 text-lg",
 };
 
-// Storage keys
+// Clés de stockage
 export const STORAGE_KEY = "localiz_theme";
-// Auth / storage keys
+// Authentification / clés de stockage
 export const AUTH_TOKEN = "token";
 export const AUTH_USER = "user";
 
@@ -29,7 +28,7 @@ export const REGISTER_EXPIRES = "register_expiresAt";
 export const REGISTER_TOAST_KEY = "register_message_handled";
 export const LOGIN_MESSAGE_KEY = "login_message_handled";
 
-// Greeting prefixes to use for authenticated users (randomized daily)
+// Préfixes de salutation pour les utilisateurs connectés (aléatoire quotidien)
 export const DAILY_GREETINGS = [
   "Bonjour, [Prénom] !",
   "Salut [Prénom] !",
@@ -46,8 +45,7 @@ export const DAILY_GREETINGS = [
   "Quel plaisir de te revoir, [Prénom] !",
 ];
 
-// Messages shown on the homepage under the header/logo.
-// Replace these with your own list of messages if you already have one.
+// Messages affichés sur la page d'accueil sous l'en-tête / le logo.
 export const WELCOME_MESSAGES = [
   "Prêt·e à découvrir les bons plans du jour près de chez toi ?",
   "Une nouvelle journée, de nouvelles trouvailles… Va jeter un œil !",

@@ -6,8 +6,8 @@ export default function Header() {
   const { isAuthenticated, logout, user } = useAuth();
   useLocation();
 
-  // Header visibility is controlled by the App-level whitelist (showHeaderFor).
-  // Avoid per-component route hiding here to keep the behavior centralized.
+  // La visibilité du Header est pilotée au niveau de l'application (showHeaderFor).
+  // Évite de masquer/afficher par composant pour garder un comportement centralisé.
 
   return (
     <header className="w-full h-16 site-header">
@@ -29,7 +29,7 @@ export default function Header() {
           />
         </NavLink>
 
-        {/* Main navigation */}
+        {/* Navigation principale */}
         <nav
           className="flex items-center space-x-8"
           role="navigation"

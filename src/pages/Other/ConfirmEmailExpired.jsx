@@ -1,3 +1,12 @@
+/**
+ * CONFIRMATION EMAIL - LIEN EXPIRÉ
+ *
+ * Rôle: Indique que le lien de confirmation est expiré et oriente vers une
+ * nouvelle tentative d’inscription.
+ *
+ * Accessibilité: Focus sur le H1; actions groupées et étiquetées; titre de
+ * page mis à jour.
+ */
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/Common/Button";
@@ -13,7 +22,7 @@ export default function ConfirmEmailExpired() {
   const handleRetry = () => navigate("/register");
 
   return (
-    <main className="p-6 max-w-xl mx-auto text-center" role="main">
+    <div className="p-6 max-w-xl mx-auto text-center">
       <h1
         className="front-heading text-3xl mb-4 font-bold"
         style={{ fontFamily: "Fredoka" }}
@@ -32,6 +41,6 @@ export default function ConfirmEmailExpired() {
           Réessayer
         </Button>
       </div>
-    </main>
+    </div>
   );
 }

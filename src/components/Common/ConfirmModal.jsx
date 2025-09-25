@@ -15,7 +15,7 @@ export default function ConfirmModal({
   const descId = "confirm-modal-desc";
 
   useEffect(() => {
-    // Focus the least destructive action by default when opening
+    // Met le focus par défaut sur l'action la moins destructive à l'ouverture
     if (open && cancelRef.current) {
       cancelRef.current.focus();
     }

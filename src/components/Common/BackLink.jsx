@@ -1,3 +1,12 @@
+/**
+ * Lien de retour accessible. Peut être rendu "fixe" (positionné en haut à gauche)
+ * via un portail directement dans le body pour rester visible lors du scroll.
+ *
+ * Props:
+ * - to: destination (route) ou -1 pour reculer dans l'historique
+ * - className: classes CSS supplémentaires
+ * - fixed: quand true, affiche le bouton en position fixe sur la page
+ */
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { NavLink } from "react-router-dom";
@@ -23,8 +32,9 @@ export default function BackLink({ to, className = "", fixed = false }) {
   useEffect(() => {
     if (!fixed) return;
     const node = document.createElement("div");
-    // Use explicit inline styles so the container doesn't stretch across the
-    // viewport (some environments can make a block fixed element full-width).
+    // Utilise des styles inline explicites pour éviter que le conteneur ne s'étende
+    // sur toute la largeur de la fenêtre (certains environnements peuvent rendre
+    // un élément fixe en bloc sur toute la largeur).
     node.style.position = "fixed";
     node.style.top = "1.5rem"; /* tailwind 'top-6' */
     node.style.left = "1.5rem"; /* tailwind 'left-6' */

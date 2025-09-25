@@ -84,7 +84,7 @@ export default function AdminLayout({ children }) {
         </nav>
       </aside>
 
-      <main className="flex-1 p-6">{children ?? <Outlet />}</main>
+      <div className="flex-1 p-6">{children ?? <Outlet />}</div>
     </div>
   );
 }

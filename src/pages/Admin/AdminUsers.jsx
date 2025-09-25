@@ -1,3 +1,8 @@
+/*
+  Administration > Utilisateurs
+  - Liste, recherche, pagination
+  - Suppression et bascule de rôle (user/admin) avec modales de confirmation
+*/
 import { useEffect, useMemo, useState } from "react";
 import LoadingSpinner from "../../components/UI/LoadingSpinner";
 import Button from "../../components/Common/Button";

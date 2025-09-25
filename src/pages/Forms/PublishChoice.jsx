@@ -3,8 +3,8 @@ import BackLink from "../../components/Common/BackLink";
 
 export default function PublishChoice() {
   return (
-    <main className="max-w-3xl mx-auto px-4 py-12" role="main">
-      <BackLink to="/" fixed />
+    <div className="max-w-3xl mx-auto px-4 py-12">
+      <BackLink to="/homepage" fixed />
       <h1
         className="text-3xl font-ui mb-4 font-bold"
         style={{ fontFamily: "Fredoka" }}
@@ -49,6 +49,6 @@ export default function PublishChoice() {
           </li>
         </ul>
       </nav>
-    </main>
+    </div>
   );
 }

@@ -1,4 +1,11 @@
 // PAGE D'ACCUEIL
+/**
+ * Rôle: Affiche un accueil personnalisé (salutation + message du jour) et le
+ * logo. Le message est stabilisé par jour et par utilisateur via localStorage.
+ *
+ * Accessibilité: Rendue dans le <main id="main-content"> global (App.jsx).
+ * Utilise un H1 clair et un rôle de statut pour annoncer le message.
+ */
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
@@ -10,15 +17,15 @@ const SUPABASE_FAVICON =
 export default function Homepage() {
   const { user, isAuthenticated } = useAuth() || {};
 
-  // compute display name: prefer firstName if user chose to show it, otherwise username
+  // Calcul du nom à afficher : privilégie le prénom si l'utilisateur a choisi de l'afficher,
+  // sinon le nom d'utilisateur
   const displayName = (() => {
     if (!user) return null;
     if (user?.showFirstName && (user?.firstName || user?.prenom)) {
       return user.firstName || user.prenom || null;
     }
-    return user.username || user?.email || null;
   })();
-  // Pick a random message on first render
+  // Sélectionne un message aléatoire au premier rendu (puis stable pour la journée)
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -46,13 +53,13 @@ export default function Homepage() {
       localStorage.setItem(storageKey, String(idx));
       setMessage(WELCOME_MESSAGES[idx]);
     } catch {
-      // localStorage might be unavailable (privacy mode). Fallback to random per render.
+      // localStorage peut être indisponible (mode navigation privée) -> repli aléatoire par rendu
       const idx = Math.floor(Math.random() * WELCOME_MESSAGES.length);
       setMessage(WELCOME_MESSAGES[idx]);
     }
   }, [isAuthenticated, user]);
 
-  // Pick a daily greeting template for authenticated users
+  // Sélectionne un template de salutation quotidienne pour les utilisateurs authentifiés
   const [greetingTpl, setGreetingTpl] = useState(
     DAILY_GREETINGS?.[0] || "[Prénom]"
   );
@@ -98,7 +105,7 @@ export default function Homepage() {
       </h1>
       <img
         src={SUPABASE_FAVICON}
-        alt="Localiz logo"
+        alt="Logo de Localiz"
         className="w-24 h-24 p-0 m-0 block mx-auto"
       />
       {isAuthenticated && (

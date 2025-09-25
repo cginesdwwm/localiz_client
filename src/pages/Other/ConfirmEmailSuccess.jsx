@@ -1,3 +1,12 @@
+/**
+ * CONFIRMATION EMAIL - SUCCÈS
+ *
+ * Rôle: Informe l’utilisateur que la confirmation a réussi et redirige
+ * automatiquement (accueil si connecté, login sinon) avec lien de secours.
+ *
+ * Accessibilité: Focus sur le H1, libellé du lien contextualisé, message
+ * d’état en aria-live.
+ */
 import { useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -28,7 +37,7 @@ export default function ConfirmEmailSuccess() {
   const destination = isAuthenticated ? "/homepage" : "/login?message=success";
 
   return (
-    <main className="p-6 max-w-xl mx-auto text-center" role="main">
+    <div className="p-6 max-w-xl mx-auto text-center">
       <h1
         className="front-heading text-3xl mb-4 font-bold"
         style={{ fontFamily: "Fredoka" }}
@@ -54,6 +63,6 @@ export default function ConfirmEmailSuccess() {
         </Link>
         .
       </p>
-    </main>
+    </div>
   );
 }

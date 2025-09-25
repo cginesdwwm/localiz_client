@@ -1,4 +1,13 @@
-// PAGE INFORMATIONS LEGALES
+/**
+ * PAGE INFORMATIONS LEGALES
+ *
+ * Rôle: Regroupe Mentions légales, CGU, Politique de confidentialité,
+ * Droits des utilisateurs et Politique des cookies.
+ *
+ * Accessibilité: Page rendue dans <main id="main-content">. Skip links,
+ * aria-labelledby sur sections, focus déplacé vers l’ancre ciblée, titres
+ * harmonisés (Mulish/underline pour h3).
+ */
 
 import { useEffect, useRef } from "react";
 import { useLocation, Link } from "react-router-dom";
@@ -20,12 +29,65 @@ export default function LegalInfo() {
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
+        // move focus for better a11y
+        const prevTabIndex = el.getAttribute("tabindex");
+        if (prevTabIndex === null) el.setAttribute("tabindex", "-1");
+        el.focus({ preventScroll: true });
+        // cleanup: restore previous tabindex if it wasn't set
+        if (prevTabIndex === null) {
+          el.addEventListener(
+            "blur",
+            () => {
+              el.removeAttribute("tabindex");
+            },
+            { once: true }
+          );
+        }
       }
     }, 60);
     return () => clearTimeout(t);
   }, [hash, pathname]);
   return (
-    <main className="p-10 mx-auto" role="main">
+    <div className="p-10 mx-auto">
+      {/* Skip links for keyboard users */}
+      <nav aria-label="Liens d'évitement">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-black focus:rounded focus:shadow focus:px-3 focus:py-2"
+        >
+          Aller au contenu
+        </a>
+        <a
+          href="#mentions-section"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-black focus:rounded focus:shadow focus:px-3 focus:py-2"
+        >
+          Aller aux mentions légales
+        </a>
+        <a
+          href="#cgu"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-black focus:rounded focus:shadow focus:px-3 focus:py-2"
+        >
+          Aller aux CGU
+        </a>
+        <a
+          href="#privacy"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-black focus:rounded focus:shadow focus:px-3 focus:py-2"
+        >
+          Aller à la politique de confidentialité
+        </a>
+        <a
+          href="#rights"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-black focus:rounded focus:shadow focus:px-3 focus:py-2"
+        >
+          Aller aux droits des utilisateurs
+        </a>
+        <a
+          href="#cookies"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-white focus:text-black focus:rounded focus:shadow focus:px-3 focus:py-2"
+        >
+          Aller à la politique cookies
+        </a>
+      </nav>
       <BackLink to="/settings" fixed />
 
       <div className="p-12">
@@ -37,25 +99,58 @@ export default function LegalInfo() {
           Informations légales
         </h1>
 
-        <section className="mt-4 text-left" tabIndex={-1} id="mentions-section">
+        <section
+          className="mt-4 text-left"
+          tabIndex={-1}
+          id="mentions-section"
+          aria-labelledby="mentions"
+        >
           {/* === Mentions légales === */}
           <h2
             id="mentions"
-            className="text-2xl font-semibold font-quicksand uppercase mb-3 underline"
+            className="text-2xl font-semibold font-quicksand uppercase mb-2 underline"
           >
             Mentions légales
           </h2>
-          <div className="space-y-2">
+          <p className="text-sm text-gray-500 mb-2">En vigueur au 25/09/2025</p>
+          <p className="mb-2">
+            Conformément aux dispositions de la loi n°2004-575 du 21 juin 2004
+            pour la Confiance en l'économie numérique, il est porté à la
+            connaissance des utilisateurs et visiteurs, ci-après l' "
+            <b>Utilisateur</b>", du site{" "}
+            <a
+              href="https://localizdwwm.netlify.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              https://localizdwwm.netlify.app
+            </a>{" "}
+            , ci-après le "<b>Site</b>", les présentes mentions légales.
+          </p>
+          <p className="mb-2">
+            La connexion et la navigation sur le Site par l'Utilisateur implique
+            l'acceptation intégrale et sans réserve des présentes mentions
+            légales.{" "}
+          </p>
+          <p className="mb-6">Ces dernières sont accessibles sur cette page.</p>
+          <div>
             {/* -- Éditeur de l'application -- */}
-            <p className="m-0 !font-bold">Éditeur de l'application</p>
-            <p className="m-0">Localiz est éditée par :</p>
-            <p className="m-0">Nom de l'entreprise / association : Localiz</p>
-            <p className="m-0">Statut juridique : Association loi 1901</p>
-            <address className="m-0 not-italic">
-              Siège social : 6 Rue Sadi Carnot, 62400 Béthune
-            </address>
+            <h3
+              className="text-lg font-semibold m-0 underline"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
+              Éditeur de l'application
+            </h3>
             <p className="m-0">
-              Téléphone :{" "}
+              L'édition du Site est assurée par la société Localiz, Association
+              loi 1901 au capital de 5000 euros, immatriculée au Registre du
+              Commerce et des Sociétés de Béthune sous le numéro 012345678 dont
+              le siège social est situé au 6 Rue Sadi Carnot, 62400 Béthune,
+            </p>
+            <br />
+            <p className="m-0">
+              <b>{">"} Numéro de téléphone : </b>
               <a
                 href="tel:0612345678"
                 className="underline"
@@ -65,7 +160,7 @@ export default function LegalInfo() {
               </a>
             </p>
             <address className="m-0 not-italic">
-              Email de contact :{" "}
+              <b>{">"} Email de contact : </b>
               <a
                 href="mailto:contact@localiz.fr"
                 className="underline"
@@ -74,50 +169,134 @@ export default function LegalInfo() {
                 contact@localiz.fr
               </a>
             </address>
+            <p>
+              <b>{">"} N° de TVA intracommunautaire : </b> 0123456789
+            </p>
             <p className="m-0">
-              Directrice de la publication : Mme Chloé GINES
+              <b>{">"} Directrice de la publication : </b> GINES Chloé
+            </p>
+            <br />
+            <p>
+              ci-après l'"<b>Editeur</b>".
             </p>
 
             {/* -- Hébergement -- */}
-            <p className="mt-6 m-0 !font-bold">Hébergement</p>
-            <p className="m-0">L'application est hébergée par :</p>
-            <p className="m-0">Nom de l'hébergeur : Netlify</p>
-            <address className="m-0 not-italic">
-              Adresse de l'hébergeur : 44 Montgomery Street, Suite 300, San
-              Francisco, CA 94104, États-Unis
-            </address>
-            <p className="m-0">
-              Téléphone :{" "}
-              <a
-                href="tel:+18448997312"
-                className="underline"
-                aria-label="Appeler le service d'hébergement au plus un huit quatre quatre huit neuf neuf sept trois un deux"
-              >
-                +1 844-899-7312
-              </a>
+            <h3
+              className="mt-6 text-lg font-semibold m-0 underline"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
+              Hébergeur
+            </h3>
+            <p>
+              L'hébergeur du Site est la société Netlify, dont le siège social
+              est situé au 512 2nd Street, Suite 200, CA 94104, San Francisco.
             </p>
-            <address className="m-0 not-italic">
-              Email de contact:{" "}
-              <a
-                href="mailto:support@netlify.com"
+
+            <h3
+              className="mt-6 text-lg font-semibold m-0 underline"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
+              Accès au site
+            </h3>
+            <p>
+              Le Site est normalement accessible, à tout moment, à
+              l'Utilisateur. Toutefois, l'Editeur pourra, à tout moment,
+              suspendre, limiter ou interrompre le Site afin de procéder,
+              notamment, à des mises à jour ou des modifications de son contenu.
+              L'Editeur ne pourra en aucun cas être tenu responsable des
+              conséquences éventuelles de cette indisponibilité sur les
+              activités de l'Utilisateur.
+            </p>
+
+            <h3
+              className="mt-6 text-lg font-semibold m-0 underline"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
+              Collecte des données
+            </h3>
+            <p>
+              Le Site assure à l'Utilisateur une collecte et un traitement des
+              données personnelles dans le respect de la vie privée conformément
+              à la loi n°78-17 du 6 janvier 1978 relative à l'informatique, aux
+              fichiers et aux libertés et dans le respect de la réglementation
+              applicable en matière de traitement des données à caractère
+              personnel conformément au règlement (UE) 2016/679 du Parlement
+              européen et du Conseil du 27 avril 2016 (ci-après, ensemble, la "
+              <b>
+                Règlementation applicable en matière de protection des Données à
+                caractère personnel
+              </b>
+              ").
+            </p>
+            <br />
+            <p>
+              En vertu de la Règlementation applicable en matière de protection
+              des Données à caractère personnel, l'Utilisateur dispose d'un
+              droit d'accès, de rectification, de suppression et d'opposition de
+              ses données personnelles. L'Utilisateur peut exercer ce droit :
+            </p>
+            <ul
+              className="mt-2 mb-2 list-disc list-inside"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
+              <li>par mail à l'adresse email contact@localiz.fr ;</li>
+              <li>par voie postale au 6 Rue Sadi Carnot, 62400 Béthune ;</li>
+              <li>depuis le formulaire de contact ;</li>
+              <li>depuis son espace personnel ;</li>
+            </ul>
+            <p>
+              Toute utilisation, reproduction, diffusion, commercialisation,
+              modification de toute ou partie du Site, sans autorisation
+              expresse de l'Editeur est prohibée et pourra entraîner des actions
+              et poursuites judiciaires telles que prévues par la réglementation
+              en vigueur.
+            </p>
+            <br />
+            <p>
+              Pour plus d'informations, se reporter aux CGU du site ci-dessous.
+            </p>
+            <p>
+              Pour plus d'informations en matière de protection des données à
+              caractère personnel, se reporter à la Politique de confidentialité
+              ci-dessous.
+            </p>
+            <p>
+              Pour plus d'informations en matière de cookies, se reporter à la
+              Charte en matière de cookies du site à l'adresse{" "}
+              <Link
+                to="/settings/cookies"
                 className="underline"
-                aria-label="Envoyer un email au support Netlify"
+                aria-label="Ouvrir les paramètres des cookies"
               >
-                support@netlify.com
-              </a>
-            </address>
+                https://localizdwwm.netlify.app/settings/cookies
+              </Link>
+              .
+            </p>
           </div>
         </section>
 
-        <section id="cgu" className="mt-12 text-left" tabIndex={-1}>
+        <section
+          id="cgu"
+          className="mt-12 text-left"
+          tabIndex={-1}
+          aria-labelledby="cgu-heading"
+        >
           {/* === Conditions générales d'utilisation (CGU) === */}
-          <h2 className="text-2xl font-semibold font-quicksand uppercase mb-3 underline">
+          <h2
+            id="cgu-heading"
+            className="text-2xl font-semibold font-quicksand uppercase mb-3 underline"
+          >
             Conditions générales d'utilisation (CGU)
           </h2>
           <div>
             {/* -- Objet -- */}
             <div>
-              <p className="!font-bold m-0">Objet</p>
+              <h3
+                className="text-lg font-semibold m-0 underline"
+                style={{ fontFamily: "Mulish, sans-serif" }}
+              >
+                Objet
+              </h3>
               <p className="m-0">
                 Les présentes conditions ont pour but de définir les modalités
                 d'utilisation de l'application Localiz.
@@ -126,7 +305,12 @@ export default function LegalInfo() {
 
             <div>
               {/* -- Services proposés -- */}
-              <p className="!font-bold mt-6">Services proposés</p>
+              <h3
+                className="text-lg font-semibold mt-6 underline"
+                style={{ fontFamily: "Mulish, sans-serif" }}
+              >
+                Services proposés
+              </h3>
               <p className="m-0">
                 Localiz te permet de te connecter avec d'autres personnes autour
                 :
@@ -140,7 +324,12 @@ export default function LegalInfo() {
 
             <div>
               {/* -- Inscription -- */}
-              <p className="!font-bold mt-6">Inscription</p>
+              <h3
+                className="text-lg font-semibold mt-6 underline"
+                style={{ fontFamily: "Mulish, sans-serif" }}
+              >
+                Inscription
+              </h3>
               <p className="m-0">
                 L'accès aux fonctionnalités de publication nécessite la création
                 d'un compte utilisateur. Les utilisateurs doivent fournir des
@@ -150,7 +339,12 @@ export default function LegalInfo() {
 
             <div>
               {/* -- Âge minimum requis -- */}
-              <p className="!font-bold mt-6">Âge minimum requis</p>
+              <h3
+                className="text-lg font-semibold mt-6 underline"
+                style={{ fontFamily: "Mulish, sans-serif" }}
+              >
+                Âge minimum requis
+              </h3>
               <p className="m-0">
                 Pour t'inscrire sur Localiz, tu dois avoir{" "}
                 <b>au moins 16 ans</b>. L'application n'est pas accessible aux
@@ -163,7 +357,12 @@ export default function LegalInfo() {
 
             <div>
               {/* -- Suppression de compte -- */}
-              <p className="!font-bold mt-6">Suppression de compte</p>
+              <h3
+                className="text-lg font-semibold mt-6 underline"
+                style={{ fontFamily: "Mulish, sans-serif" }}
+              >
+                Suppression de compte
+              </h3>
               <p className="m-0">
                 L'utilisateur peut supprimer son compte à tout moment via les
                 paramètres de l'application.
@@ -172,7 +371,12 @@ export default function LegalInfo() {
 
             <div>
               {/* -- Responsabilité de l'utilisateur -- */}
-              <p className="!font-bold mt-6">Responsabilité de l'utilisateur</p>
+              <h3
+                className="text-lg font-semibold mt-6 underline"
+                style={{ fontFamily: "Mulish, sans-serif" }}
+              >
+                Responsabilité de l'utilisateur
+              </h3>
               <p className="m-0">
                 Les utilisateurs s'engagent à ne pas publier de contenus
                 illicites, haineux, violents ou portant atteinte aux droits
@@ -182,9 +386,12 @@ export default function LegalInfo() {
 
             <div>
               {/* -- Sécurité lors des échanges physiques -- */}
-              <p className="!font-bold mt-6">
+              <h3
+                className="text-lg font-semibold mt-6 underline"
+                style={{ fontFamily: "Mulish, sans-serif" }}
+              >
                 Sécurité lors des échanges physiques
-              </p>
+              </h3>
               <p className="m-0">
                 Même si Localiz ne collecte pas de données sensibles sur les
                 rencontres entre membres, nous rappelons que les échanges
@@ -214,9 +421,17 @@ export default function LegalInfo() {
           </div>
         </section>
 
-        <section id="privacy" className="mt-12 text-left" tabIndex={-1}>
+        <section
+          id="privacy"
+          className="mt-12 text-left"
+          tabIndex={-1}
+          aria-labelledby="privacy-heading"
+        >
           {/* === Politique de confidentialité === */}
-          <h2 className="text-2xl font-semibold font-quicksand uppercase mb-3 underline">
+          <h2
+            id="privacy-heading"
+            className="text-2xl font-semibold font-quicksand uppercase mb-3 underline"
+          >
             Politique de confidentialité
           </h2>
           <div>
@@ -226,7 +441,12 @@ export default function LegalInfo() {
               manière transparente, éthique et conforme au Règlement Général sur
               la Protection des Données (RGPD).
             </p>
-            <p className="!font-bold mt-6 m-0 underline">Données collectées</p>
+            <h3
+              className="!font-bold mt-6 m-0 underline text-lg"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
+              Données collectées
+            </h3>
             <p className="m-0">
               Quand tu utilises l'application, voici les données que nous
               pouvons collecter :
@@ -250,9 +470,12 @@ export default function LegalInfo() {
               </li>
             </ul>
             {/* -- Finalités d'utilisation -- */}
-            <p className="!font-bold mt-6 m-0 underline">
+            <h3
+              className="!font-bold mt-6 m-0 underline text-lg"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
               Finalités d'utilisation
-            </p>
+            </h3>
             <p className="m-0">Tes données sont utilisées pour :</p>
             <ul className="list-disc ml-5 mt-1">
               <li>créer ton compte et gérer tes publications,</li>
@@ -265,9 +488,12 @@ export default function LegalInfo() {
               <li>améliorer le fonctionnement de l'application.</li>
             </ul>
             {/* -- Base légale du traitement -- */}
-            <p className="!font-bold mt-6 m-0 underline">
+            <h3
+              className="!font-bold mt-6 m-0 underline text-lg"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
               Base légale du traitement
-            </p>
+            </h3>
             <p className="m-0">Le traitement de tes données est basé sur :</p>
             <ul className="list-disc ml-5 mt-1">
               <li>
@@ -280,9 +506,12 @@ export default function LegalInfo() {
               </li>
             </ul>
             {/* -- Base légale du traitement -- */}
-            <p className="!font-bold mt-6 m-0 underline">
-              Pourquoi demandons-nous le nom et prénom ?
-            </p>
+            <h3
+              className="!font-bold mt-6 m-0 underline text-lg"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
+              Pourquoi demandons-nous le nom et le prénom ?
+            </h3>
             <p className="m-0">
               Lors de ton inscription, Localiz te demande ton nom et ton prénom
               pour plusieurs raisons légitimes :
@@ -309,9 +538,12 @@ export default function LegalInfo() {
               Tu peux choisir d'afficher ou non ton prénom dans ton profil.
             </p>
             {/* -- Données des mineurs et consentement numérique -- */}
-            <p className="!font-bold mt-6 m-0 underline">
+            <h3
+              className="!font-bold mt-6 m-0 underline text-lg"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
               Données des mineurs et consentement numérique
-            </p>
+            </h3>
             <p className="m-0">
               En France, le{" "}
               <b>seuil légal de consentement numérique est fixé à 15 ans</b>{" "}
@@ -350,9 +582,12 @@ export default function LegalInfo() {
               dans ton profil.
             </p>
             {/* -- Durée de conservation des données -- */}
-            <p className="!font-bold mt-6 m-0 underline">
+            <h3
+              className="!font-bold mt-6 m-0 underline text-lg"
+              style={{ fontFamily: "Mulish, sans-serif" }}
+            >
               Durée de conservation des données
-            </p>
+            </h3>
             <p className="m-0">
               Les données d'un compte sont conservées{" "}
               <b>tant qu'il est actif</b>.
@@ -370,9 +605,17 @@ export default function LegalInfo() {
           </div>
         </section>
 
-        <section id="rights" className="mt-12 text-left" tabIndex={-1}>
+        <section
+          id="rights"
+          className="mt-12 text-left"
+          tabIndex={-1}
+          aria-labelledby="rights-heading"
+        >
           {/* === Droits des utilisateurs === */}
-          <h2 className="text-2xl font-semibold font-quicksand uppercase mb-3 underline">
+          <h2
+            id="rights-heading"
+            className="text-2xl font-semibold font-quicksand uppercase mb-3 underline"
+          >
             Droits des utilisateurs
           </h2>
           <div>
@@ -412,9 +655,17 @@ export default function LegalInfo() {
           </div>
         </section>
 
-        <section id="cookies" className="mt-12 mb-8 text-left" tabIndex={-1}>
+        <section
+          id="cookies"
+          className="mt-12 mb-8 text-left"
+          tabIndex={-1}
+          aria-labelledby="cookies-heading"
+        >
           {/* === Politique relative aux cookies === */}
-          <h2 className="text-2xl font-semibold font-quicksand uppercase mb-3 underline">
+          <h2
+            id="cookies-heading"
+            className="text-2xl font-semibold font-quicksand uppercase mb-3 underline"
+          >
             Politique relative aux cookies
           </h2>
           <div>
@@ -439,6 +690,6 @@ export default function LegalInfo() {
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }

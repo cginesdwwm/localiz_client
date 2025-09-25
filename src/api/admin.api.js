@@ -1,4 +1,4 @@
-// client/src/api/admin.api.js
+// API d'administration: endpoints de gestion des utilisateurs, deals, listings et catégories.
 
 import { BASE_URL } from "../utils/url";
 
@@ -9,6 +9,7 @@ export async function getUsersList({
   dir = "",
   limit = 20,
 } = {}) {
+  // Construire les paramètres de requête pour la pagination/tri/filtre
   const params = new URLSearchParams();
   params.set("page", String(page));
   params.set("limit", String(limit));
@@ -31,6 +32,7 @@ export async function getUsersList({
 }
 
 export async function toggleUserRole(userId, newRole) {
+  // Bascule le rôle d'un utilisateur (ex: user <-> admin)
   const response = await fetch(`${BASE_URL}/admin/users/${userId}/role`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -47,6 +49,7 @@ export async function toggleUserRole(userId, newRole) {
 }
 
 export async function deleteUser(userId) {
+  // Supprime définitivement un utilisateur
   const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
     method: "DELETE",
     credentials: "include",
@@ -61,6 +64,7 @@ export async function deleteUser(userId) {
 }
 
 export async function getAdminStats() {
+  // Récupère des statistiques d'administration (compteurs, tendances, etc.)
   const response = await fetch(`${BASE_URL}/admin/stats`, {
     credentials: "include",
   });
@@ -79,7 +83,10 @@ export async function getAdminHealth() {
   });
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(err.message || "Admin health check failed");
+    // Vérification d'état de l'admin échouée
+    throw new Error(
+      err.message || "La vérification d'état de l'admin a échoué"
+    );
   }
   return response.json();
 }
@@ -90,7 +97,10 @@ export async function getAdminOverview() {
   });
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to load admin overview");
+    // Échec du chargement de la vue d'ensemble admin
+    throw new Error(
+      err.message || "Échec du chargement de la vue d'ensemble admin"
+    );
   }
   return response.json();
 }
@@ -101,7 +111,10 @@ export async function getAdminRecent() {
   });
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to load recent activity");
+    // Échec du chargement des activités récentes
+    throw new Error(
+      err.message || "Échec du chargement des activités récentes"
+    );
   }
   return response.json();
 }

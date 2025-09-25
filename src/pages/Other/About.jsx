@@ -1,4 +1,12 @@
-// PAGE A PROPOS DE LOCALIZ
+/**
+ * PAGE A PROPOS DE LOCALIZ
+ *
+ * Rôle: Présente le projet Localiz, ses valeurs et fonctionnalités. Inclut un
+ * lien de retour et une mise en avant du logo.
+ *
+ * Accessibilité: Page intégrée au <main id="main-content"> global. Gestion du
+ * focus sur le H1 via useFocusHeading; textes alternatifs pour les images.
+ */
 import { useRef } from "react";
 import BackLink from "../../components/Common/BackLink";
 import faviconLocal from "../../assets/images/favicon.webp";
@@ -13,7 +21,7 @@ export default function About() {
   useDocumentTitle("À propos");
   useFocusHeading(headingRef);
   return (
-    <main role="main">
+    <div>
       <div className="mb-4">
         <BackLink to="/settings" fixed />
       </div>
@@ -248,6 +256,6 @@ export default function About() {
           </section>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

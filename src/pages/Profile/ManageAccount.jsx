@@ -728,7 +728,7 @@ export default function ManageAccount() {
   }
 
   return (
-    <main className="p-6 relative max-w-3xl mx-auto" role="main">
+    <div className="p-6 relative max-w-3xl mx-auto">
       <div className="mb-6">
         <BackLink to="/profile/me" fixed />
       </div>
@@ -1132,6 +1132,6 @@ export default function ManageAccount() {
           </div>
         </section>
       </div>
-    </main>
+    </div>
   );
 }

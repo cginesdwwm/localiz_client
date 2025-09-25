@@ -1,3 +1,12 @@
+/**
+ * SUPPRESSION DE COMPTE - SUCCÈS
+ *
+ * Rôle: Confirme l’enregistrement de la demande et propose des actions pour
+ * se reconnecter ou s’inscrire.
+ *
+ * Accessibilité: Focus sur le H1; groupe d’actions avec aria-label; titres et
+ * textes clairs.
+ */
 import { useRef } from "react";
 import BackLink from "../../components/Common/BackLink";
 import Button from "../../components/Common/Button";
@@ -12,7 +21,7 @@ export default function DeleteAccountSuccess() {
   useFocusHeading(headingRef);
 
   return (
-    <main className="p-4 text-center" role="main">
+    <div className="p-4 text-center">
       <div className="mb-2">
         <BackLink to="/" fixed />
       </div>
@@ -44,6 +53,6 @@ export default function DeleteAccountSuccess() {
           S'inscrire
         </Button>
       </div>
-    </main>
+    </div>
   );
 }

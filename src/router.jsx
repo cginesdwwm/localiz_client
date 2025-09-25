@@ -3,8 +3,7 @@
   - Définit les routes de l'application à l'aide de createBrowserRouter.
   - Chaque route a un `path` (URL) et un `element` (composant React à afficher).
   - Important pour débutant : les chemins de route sont sensibles à la casse par
-    défaut dans react-router v6+ (donc `/blog` != `/Blog`).
-    Pour que l'URL `/Blog` fonctionne aussi, on ajoute un alias avec le même composant.
+    défaut dans react-router v6+.
 */
 
 import { createBrowserRouter } from "react-router-dom";
@@ -129,7 +128,14 @@ export const router = createBrowserRouter([
 
       // --- Deals ---
       { path: "/deals", element: <Deals /> },
-      { path: "/deals/create", element: <AddDealForm /> },
+      {
+        path: "/deals/create",
+        element: (
+          <UserConnected>
+            <AddDealForm />
+          </UserConnected>
+        ),
+      },
       {
         path: "/deals/:id",
         element: <DealDetails />,
@@ -143,7 +149,14 @@ export const router = createBrowserRouter([
 
       // --- Listings (Troc & Don) ---
       { path: "/listings", element: <SwapAndDonate /> },
-      { path: "/listings/create", element: <AddListingForm /> },
+      {
+        path: "/listings/create",
+        element: (
+          <UserConnected>
+            <AddListingForm />
+          </UserConnected>
+        ),
+      },
       {
         path: "/listings/:id",
         element: <ListingDetails />,
@@ -177,7 +190,14 @@ export const router = createBrowserRouter([
 
       // --- Search ---
       { path: "/search", element: <Search /> },
-      { path: "/publish", element: <PublishChoice /> },
+      {
+        path: "/publish",
+        element: (
+          <UserConnected>
+            <PublishChoice />
+          </UserConnected>
+        ),
+      },
       { path: "/search/deals", element: <SearchDeals /> },
       { path: "/search/donations", element: <SearchDonations /> },
       { path: "/search/swaps", element: <SearchSwaps /> },

@@ -1,4 +1,13 @@
-// PAGE SUPPRIMER MON COMPTE
+/**
+ * SUPPRIMER MON COMPTE
+ *
+ * Rôle: Collecte la raison, confirme via modale, et déclenche la demande de
+ * suppression côté API. Déconnecte l’utilisateur puis redirige vers la page
+ * de succès.
+ *
+ * Accessibilité: Focus sur le H1; labels/legends explicites; checkbox
+ * d’accord incontournable; bouton désactivé tant que non confirmé.
+ */
 
 import { useRef, useState } from "react";
 import BackLink from "../../components/Common/BackLink";
@@ -81,7 +90,7 @@ export default function DeleteAccount() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto p-4" role="main">
+    <div className="max-w-2xl mx-auto p-4">
       <div className="mb-4">
         <BackLink to="/profile/me/manage-account" fixed />
       </div>
@@ -186,6 +195,6 @@ export default function DeleteAccount() {
         confirmLabel={loading ? "Suppression..." : "Confirmer la suppression"}
         confirmClassName="btn btn-danger"
       />
-    </main>
+    </div>
   );
 }

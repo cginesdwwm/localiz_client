@@ -1,4 +1,4 @@
-// Allowed tags for listings (annonces)
+// Étiquettes autorisées pour les annonces
 export const LISTING_TAGS = [
   "Objets et équipements",
   "Culture et loisirs",

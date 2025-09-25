@@ -3,11 +3,11 @@ import { useEffect } from "react";
 /**
  * useFocusHeading
  *
- * Moves focus to the referenced heading on mount/when deps change.
- * Ensures the element is programmatically focusable without altering tab order.
+ * Déplace le focus vers le titre référencé au montage / quand les deps changent.
+ * Garantit que l'élément est focusable par script sans modifier l'ordre de tabulation.
  *
- * @param {React.RefObject<HTMLElement>} ref - ref to heading element
- * @param {{ delay?: number }} options - optional delay before focusing
+ * @param {React.RefObject<HTMLElement>} ref - ref vers l'élément de titre
+ * @param {{ delay?: number }} options - délai optionnel avant de donner le focus
  */
 
 export default function useFocusHeading(ref, options = {}) {
@@ -21,7 +21,7 @@ export default function useFocusHeading(ref, options = {}) {
 
     const t = setTimeout(() => {
       if (typeof node.focus === "function") {
-        // Avoid scrolling the page on programmatic focus
+        // Évite de faire défiler la page lors d'un focus programmatique
         try {
           node.focus({ preventScroll });
         } catch {

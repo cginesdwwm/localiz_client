@@ -1,3 +1,8 @@
+/*
+  Administration > Messages de contact
+  - Onglets: actifs, archivés, tous
+  - Pagination; actions: archiver/restaurer avec mise à jour optimiste
+*/
 import { useEffect, useState } from "react";
 import Button from "../../components/Common/Button";
 

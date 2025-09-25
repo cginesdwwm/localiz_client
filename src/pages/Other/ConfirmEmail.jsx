@@ -1,3 +1,12 @@
+/**
+ * CONFIRMATION D'EMAIL
+ *
+ * Rôle: Récupère le token dans l’URL, appelle l’API de confirmation et
+ * redirige vers la page appropriée (succès, expiré ou erreur).
+ *
+ * Accessibilité: Indique l’état via aria-live (polite) et aria-busy pendant
+ * le chargement. Aucune structure de page (main) ici: rendu dans le main global.
+ */
 import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../utils/url";
@@ -53,11 +62,11 @@ const ConfirmEmail = () => {
 
   if (loading)
     return (
-      <main className="p-6" role="main">
+      <div className="p-6">
         <div role="status" aria-live="polite" aria-busy="true">
           Confirmation en cours…
         </div>
-      </main>
+      </div>
     );
   return null;
 };

@@ -1,3 +1,13 @@
+/**
+ * Détails d’une annonce (ListingDetails)
+ *
+ * Rôle: Récupère et affiche le détail d’une annonce (don/troc) via l’id d’URL.
+ * Inclut BackLink, image principale, galerie, métadonnées (catégorie, lieu,
+ * type, état) et description.
+ *
+ * Accessibilité: Rendu dans le <main id="main-content"> global. Les images
+ * utilisent des alt descriptifs. Le lien de retour facilite la navigation.
+ */
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchListing } from "../../api/listings.api";

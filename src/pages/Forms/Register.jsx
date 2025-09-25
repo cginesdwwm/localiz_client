@@ -180,7 +180,7 @@ export default function Register() {
     mode: "onChange",
   });
 
-  // State for postal code -> towns suggestions
+  // États pour le code postal -> suggestions de villes
   const [towns, setTowns] = useState([]);
   const [postalQuery, setPostalQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -191,13 +191,13 @@ export default function Register() {
   const suggestionsRef = useRef(null);
   const activeOptionRef = useRef(null);
 
-  // Avatar states
+  // États pour l'avatar
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState("");
   const [avatarUploading, setAvatarUploading] = useState(false);
   const avatarInputRef = useRef(null);
 
-  // Ensure the active option stays visible when navigating with the keyboard
+  // Assure que l'option active reste visible lors de la navigation au clavier
   useEffect(() => {
     if (!showSuggestions) return;
     const el = activeOptionRef.current;
@@ -206,7 +206,7 @@ export default function Register() {
     }
   }, [activeIndex, showSuggestions]);
 
-  // Fetch towns when postalQuery is 5 digits (debounced)
+  // Récupère les villes quand postalQuery comporte 5 chiffres (avec délai)
   useEffect(() => {
     if (!postalQuery || postalQuery.length !== 5) {
       setTowns([]);
@@ -247,7 +247,7 @@ export default function Register() {
     };
   }, [postalQuery]);
 
-  // Close suggestions when clicking outside
+  // Ferme les suggestions lors d'un clic en dehors
   useEffect(() => {
     function onDocClick(e) {
       if (
@@ -261,7 +261,7 @@ export default function Register() {
     return () => document.removeEventListener("click", onDocClick);
   }, []);
 
-  // cleanup preview URL when file changes
+  // Nettoyage de l'URL de prévisualisation quand le fichier change
   useEffect(() => {
     if (!avatarFile) return;
     const url = URL.createObjectURL(avatarFile);
@@ -274,7 +274,7 @@ export default function Register() {
     try {
       const payload = { ...values };
 
-      // If user selected a local avatar file, upload it first to Supabase
+      // Si l'utilisateur a sélectionné un fichier avatar local, l'uploader d'abord vers Supabase
       if (avatarFile) {
         try {
           setAvatarUploading(true);

@@ -1,4 +1,4 @@
-// Simple wrapper that adds the reusable focus-ring scope class
+// Simple conteneur qui applique la classe de style focus-ring réutilisable
 import "./Input.css";
 
 export default function FocusRing({ children, className = "" }) {

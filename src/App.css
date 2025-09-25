@@ -1,6 +1,5 @@
-/* Reset root wrapper padding so the app uses full viewport space.
-   Layout centering should be handled by page-level containers when needed.
-*/
+/* Réinitialise les marges/paddings du conteneur racine pour utiliser toute la hauteur/largeur.
+  Le centrage du layout doit être géré au niveau des pages si nécessaire. */
 #root {
   max-width: none;
   margin: 0;

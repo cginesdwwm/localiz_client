@@ -1,3 +1,15 @@
+/**
+ * Formulaire de publication d’une annonce (AddListingForm)
+ *
+ * Rôle: Création d’une annonce de don/troc avec images, titre, catégorie,
+ * état, localisation (code postal + ville avec suggestions) et description.
+ * Valide via yup et mappe les erreurs serveur aux champs pertinents.
+ *
+ * Accessibilité:
+ * - Labels explicites, messages d’erreur role="alert".
+ * - Combobox/listbox pour la ville avec gestion ARIA du focus et des options.
+ * - Zone de drop d’images accessible clavier (Enter/Espace).
+ */
 import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";

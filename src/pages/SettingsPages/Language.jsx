@@ -37,7 +37,7 @@ export default function Language() {
   useFocusHeading(headingRef);
 
   return (
-    <main className="p-4 mx-auto max-w-xl mt-10" role="main">
+    <div className="p-4 mx-auto max-w-xl mt-10">
       <BackLink to="/settings" fixed />
 
       <h1
@@ -88,6 +88,6 @@ export default function Language() {
           );
         })}
       </fieldset>
-    </main>
+    </div>
   );
 }

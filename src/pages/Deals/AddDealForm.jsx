@@ -1,3 +1,16 @@
+/**
+ * Formulaire de publication d’un bon plan (AddDealForm)
+ *
+ * Rôle: Permet de créer un bon plan avec image(s), titre, catégorie,
+ * adresse (avec suggestions), dates, conditions d’accès, site web et description.
+ * Valide les champs côté client (yup) et mappe les erreurs serveur au bon
+ * champ du formulaire.
+ *
+ * Accessibilité:
+ * - Contrôles dotés de labels explicites, messages d’erreur role="alert".
+ * - Listes de suggestions (listbox/combobox) gèrent le focus et l’état ARIA.
+ * - Zone de drop d’images accessible au clavier (Enter/Espace).
+ */
 import { useEffect, useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";

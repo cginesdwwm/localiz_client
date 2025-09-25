@@ -1,4 +1,12 @@
-// PAGE D'ERREUR
+/**
+ * PAGE D'ERREUR
+ *
+ * Rôle: Affiche un message d’erreur convivial à partir des infos router
+ * (code, statusText). Propose des actions de retour.
+ *
+ * Accessibilité: Focus H1 à l’arrivée, rôle alert pour le message principal,
+ * libellés de boutons explicites.
+ */
 
 import { useRef } from "react";
 import { useRouteError, useNavigate } from "react-router-dom";
@@ -44,10 +52,7 @@ export default function ErrorPage() {
   useFocusHeading(headingRef);
 
   return (
-    <main
-      className="min-h-screen flex items-center justify-center p-6 bg-transparent"
-      role="main"
-    >
+    <div className="min-h-screen flex items-center justify-center p-6 bg-transparent">
       <div className="w-full max-w-2xl bg-white/5 border border-gray-200 rounded-xl p-8 shadow-sm text-center">
         <p
           className="text-6xl font-extrabold text-gray-800 mb-2"
@@ -77,6 +82,6 @@ export default function ErrorPage() {
           </Button>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

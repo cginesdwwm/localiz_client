@@ -19,7 +19,7 @@ export async function uploadAvatar(file) {
   }
 
   const publicRes = supabase.storage.from("avatars").getPublicUrl(filePath);
-  // supabase-js v2 may return { data: { publicUrl } } while older versions use { publicURL }
+  // supabase-js v2 peut renvoyer { data: { publicUrl } } tandis que d'autres versions utilisent { publicURL }
   let publicURL = null;
   try {
     if (publicRes && typeof publicRes === "object") {

@@ -1,3 +1,7 @@
+/*
+  Administration > Catégories (listings/deals)
+  - CRUD simple + réordonnancement
+*/
 import { useEffect, useMemo, useState } from "react";
 import {
   getCategories,

@@ -1,3 +1,5 @@
+// Protège une route pour les utilisateurs connectés uniquement.
+// Si non authentifié, redirige vers /login.
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 

@@ -1,17 +1,20 @@
 import { BASE_URL } from "../utils/url";
 
+// Liste tous les bons plans (deals)
 export async function fetchDeals() {
   const res = await fetch(`${BASE_URL}/deals`);
   if (!res.ok) throw new Error("Erreur lors de la récupération des deals");
   return res.json();
 }
 
+// Récupère un deal spécifique par son identifiant
 export async function fetchDeal(id) {
   const res = await fetch(`${BASE_URL}/deals/${id}`);
   if (!res.ok) throw new Error("Deal introuvable");
   return res.json();
 }
 
+// Crée un nouveau deal
 export async function createDeal(payload) {
   const res = await fetch(`${BASE_URL}/deals`, {
     method: "POST",
@@ -24,7 +27,7 @@ export async function createDeal(payload) {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    // Return a rejected object so caller can inspect validation errors
+    // Retourne une erreur contenant le payload afin que l'appelant inspecte les erreurs de validation
     const error = new Error(err.message || "Erreur création deal");
     error.payload = err;
     throw error;
@@ -33,6 +36,7 @@ export async function createDeal(payload) {
   return res.json();
 }
 
+// Met à jour un deal existant
 export async function updateDeal(id, payload) {
   const res = await fetch(`${BASE_URL}/deals/${id}`, {
     method: "PATCH",
@@ -44,6 +48,7 @@ export async function updateDeal(id, payload) {
   return res.json();
 }
 
+// Supprime un deal
 export async function deleteDeal(id) {
   const res = await fetch(`${BASE_URL}/deals/${id}`, {
     method: "DELETE",

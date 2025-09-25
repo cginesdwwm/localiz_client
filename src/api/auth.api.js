@@ -11,9 +11,11 @@ import { BASE_URL } from "../utils/url";
 const buildUrl = (path) =>
   `${BASE_URL}${path.startsWith("/") ? path : "/" + path}`;
 
+// Construit l'URL complète de l'endpoint côté API à partir d'un chemin relatif.
+
 export async function signUp(values) {
   try {
-    // backend exposes POST /user/register
+    // Le backend expose POST /user/register
     const response = await fetch(buildUrl("/user/register"), {
       method: "POST",
       body: JSON.stringify(values),
@@ -71,6 +73,7 @@ export async function signout() {
       credentials: "include",
     });
     try {
+      // Nettoyage d'un éventuel état d'inscription stocké côté client
       sessionStorage.removeItem("register_expiresAt");
     } catch {
       void 0;

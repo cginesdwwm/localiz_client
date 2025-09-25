@@ -1,3 +1,17 @@
+/**
+ * Détails d’un bon plan (DealDetails)
+ *
+ * Rôle: Récupère et affiche le détail d’un bon plan via son id d’URL.
+ * Inclut un lien de retour (BackLink), l’image principale, la galerie,
+ * les métadonnées (catégorie, lieu, dates, conditions d’accès) et la
+ * description.
+ *
+ * Accessibilité:
+ * - Pas de balise <main> locale; rendu dans le <main id="main-content"> global.
+ * - BackLink place un point d’ancrage clair pour revenir à la liste.
+ * - Les images ont des attributs alt; la galerie secondaire utilise des alt
+ *   descriptifs succincts.
+ */
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchDeal } from "../../api/deals.api";

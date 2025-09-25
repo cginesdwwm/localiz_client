@@ -1,8 +1,7 @@
 /*
-  - Composant principal qui définit la mise en page générale (header + contenu + toaster).
-  - Outlet (react-router) est une zone où les composants enfants s'affichent
-    en fonction de la route courante (définie dans `router.jsx`).
-  - Toaster affiche les notifications (ex: succès, erreurs) si la librairie est utilisée.
+  Composant principal : mise en page générale (header + contenu + toaster)
+  - Outlet (react-router) : zone où s'affichent les composants selon la route courante (voir `router.jsx`).
+  - Toaster : notifications (succès, erreurs) si la librairie est utilisée.
 */
 
 import { useEffect, useRef, useState } from "react";
@@ -11,7 +10,6 @@ import "./App.css"; // Styles locaux de l'application
 import Header from "./components/Header/Header"; // Le header (nav)
 import Footer from "./components/Footer/Footer";
 import { Toaster } from "react-hot-toast"; // Notifications toast
-import { BlogProvider } from "./context/BlogContext";
 
 function App() {
   const location = useLocation();
@@ -19,11 +17,11 @@ function App() {
   const [routeMsg, setRouteMsg] = useState("");
   const suppressNextAnnounceRef = useRef(false);
 
-  // Announce route changes in a polite live region using title or page heading
+  // Annonce des changements de route dans une zone live polie (titre ou heading de page)
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
-        // If focus is already on a heading, skip announcing to prevent duplication
+        // Si le focus est déjà sur un titre, on n'annonce pas (évite les doublons)
         const ae = document.activeElement;
         const isHeadingFocused =
           !!ae &&
@@ -59,8 +57,8 @@ function App() {
         const text = heading?.textContent?.trim();
         if (text) {
           document.title = `${text} | Localiz`;
-          // Since we programmatically manage focus to headings in many pages,
-          // avoid double announcing right after setting the title
+          // Comme on gère souvent le focus programmatique sur les titres,
+          // on évite l'annonce immédiate juste après avoir défini le titre
           suppressNextAnnounceRef.current = true;
         }
       } catch {
@@ -70,8 +68,8 @@ function App() {
     return () => clearTimeout(t);
   }, [pathname]);
 
-  // Show the header only for a small set of primary pages (whitelist).
-  // This avoids accidentally hiding the header on many pages when new routes are added.
+  // N'afficher le header que sur un petit ensemble de pages principales (liste blanche)
+  // afin d'éviter des masquages accidentels lors de l'ajout de nouvelles routes.
   const showHeaderFor = [
     "/homepage",
     "/profile/me",
@@ -85,7 +83,7 @@ function App() {
     showHeaderFor.includes(pathname) ||
     showHeaderFor.some((p) => pathname.startsWith(p + "/"));
 
-  // Explicitly hide header on pages that require full focus (no chrome)
+  // Cacher explicitement le header sur certaines pages (plein écran, sans chrome)
   if (
     pathname === "/profile/me/manage-account" ||
     pathname === "/deals/create" ||
@@ -97,11 +95,9 @@ function App() {
         <a href="#main-content" className="sr-only">
           Aller au contenu principal
         </a>
-        <BlogProvider>
-          <main id="main-content" className="flex-1" role="main">
-            <Outlet />
-          </main>
-        </BlogProvider>
+        <main id="main-content" className="flex-1" role="main">
+          <Outlet />
+        </main>
         <Toaster position="top-center" toastOptions={{ duration: 6000 }} />
         <div className="sr-only" role="status" aria-live="polite">
           {routeMsg}
@@ -115,13 +111,11 @@ function App() {
       <a href="#main-content" className="sr-only">
         Aller au contenu principal
       </a>
-      <BlogProvider>
-        {shouldShowHeader && <Header />}
-        <main id="main-content" className="flex-1" role="main">
-          <Outlet />
-        </main>
-        {shouldShowHeader && <Footer />}
-      </BlogProvider>
+      {shouldShowHeader && <Header />}
+      <main id="main-content" className="flex-1" role="main">
+        <Outlet />
+      </main>
+      {shouldShowHeader && <Footer />}
       <Toaster position="top-center" toastOptions={{ duration: 6000 }} />
       <div className="sr-only" role="status" aria-live="polite">
         {routeMsg}

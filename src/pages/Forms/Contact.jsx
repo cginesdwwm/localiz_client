@@ -5,9 +5,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import FocusRing from "../../components/Common/FocusRing";
-import ErrorSummary from "../../components/Common/ErrorSummary";
 import { notify } from "../../utils/notify";
+import { BASE_URL } from "../../utils/url";
 import BackLink from "../../components/Common/BackLink";
+import { useAuth } from "../../context/AuthContext";
 
 const schema = yup.object({
   name: yup.string().required("Le nom est requis"),
@@ -20,23 +21,62 @@ const schema = yup.object({
 });
 
 export default function Contact() {
-  const [serverMsg, setServerMsg] = useState("");
+  // const [serverMsg, setServerMsg] = useState("");
   const headingRef = useRef(null);
+  const { isAuthenticated, user } = useAuth();
   const {
     handleSubmit,
     control,
     reset,
-    formState: { errors, isSubmitting },
-  } = useForm({ resolver: yupResolver(schema), mode: "onBlur" });
+    watch,
+    setValue,
+    formState: {
+      errors,
+      isSubmitting,
+      submitCount,
+      dirtyFields,
+      touchedFields,
+    },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onChange",
+    reValidateMode: "onChange",
+  });
+
+  const messageValue = watch("message") || "";
+  const nameValue = watch("name") || "";
+  const emailValue = watch("email") || "";
+  const subjectValue = watch("subject") || "";
+  const showEmailSummary = !!errors.email && submitCount > 0;
+
+  // Auto-fill name from authenticated user's username (without overriding user input)
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      user?.username &&
+      !dirtyFields?.name &&
+      !touchedFields?.name &&
+      !nameValue
+    ) {
+      setValue("name", user.username, { shouldDirty: false });
+    }
+  }, [
+    isAuthenticated,
+    user?.username,
+    setValue,
+    dirtyFields?.name,
+    touchedFields?.name,
+    nameValue,
+  ]);
 
   useEffect(() => {
     headingRef.current?.focus();
   }, []);
 
   async function onSubmit(values) {
-    setServerMsg("");
+    // setServerMsg("");
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch(`${BASE_URL}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
@@ -47,14 +87,17 @@ export default function Contact() {
           payload?.message || "Erreur lors de l'envoi du message"
         );
       }
-      const successMsg = "Message envoyé — nous vous répondrons bientôt.";
-      setServerMsg(successMsg);
-      notify.success(successMsg);
-      // reset form fields
-      reset();
+      // On success: show toast only (no inline success text) and clear fields
+      notify.success("Message envoyé — nous vous répondrons bientôt.");
+      // reset form fields (prefill name with username if user is logged in)
+      reset({
+        name: isAuthenticated && user?.username ? user.username : "",
+        email: "",
+        subject: "",
+        message: "",
+      });
     } catch (err) {
       const m = err.message || "Impossible d'envoyer le message";
-      setServerMsg(m);
       notify.error(m);
     }
   }
@@ -62,10 +105,10 @@ export default function Contact() {
   return (
     <section
       aria-labelledby="contact-title"
-      className="h-screen center-screen bg-[var(--bg)] px-4"
+      className="min-h-screen bg-[var(--bg)] px-4 py-8"
     >
-      <div className="w-full max-w-md">
-        <BackLink to="/" fixed />
+      <div className="w-full max-w-md mx-auto">
+        <BackLink to="/homepage" fixed />
         <h1
           id="contact-title"
           ref={headingRef}
@@ -89,15 +132,6 @@ export default function Contact() {
           aria-busy={isSubmitting || undefined}
           noValidate
         >
-          <ErrorSummary
-            errors={errors}
-            fields={[
-              { name: "name", id: "name", label: "Nom" },
-              { name: "email", id: "email", label: "Email" },
-              { name: "subject", id: "subject", label: "Objet" },
-              { name: "message", id: "message", label: "Message" },
-            ]}
-          />
           <FocusRing>
             <Controller
               name="name"
@@ -106,11 +140,10 @@ export default function Contact() {
                 <Input
                   {...field}
                   id="name"
-                  label="Nom"
-                  placeholder="Nom"
+                  label="Nom ou Pseudo Localiz"
+                  placeholder="Nom ou pseudo"
                   required
                   autoComplete="name"
-                  error={errors.name?.message}
                   className="h-12"
                 />
               )}
@@ -120,17 +153,18 @@ export default function Contact() {
               name="email"
               control={control}
               render={({ field }) => (
-                <Input
-                  {...field}
-                  id="email"
-                  label="Email"
-                  placeholder="Email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  error={errors.email?.message}
-                  className="h-12"
-                />
+                <div>
+                  <Input
+                    {...field}
+                    id="email"
+                    label="Email"
+                    placeholder="Email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    className="h-12"
+                  />
+                </div>
               )}
             />
 
@@ -145,7 +179,6 @@ export default function Contact() {
                   placeholder="Objet du message"
                   required
                   autoComplete="off"
-                  error={errors.subject?.message}
                   className="h-12"
                 />
               )}
@@ -160,7 +193,7 @@ export default function Contact() {
                     htmlFor="message"
                     className="block text-sm font-medium mb-1"
                   >
-                    Message
+                    Message *
                   </label>
                   <textarea
                     id="message"
@@ -168,23 +201,24 @@ export default function Contact() {
                     placeholder="Message"
                     rows={6}
                     className="w-full border px-3 py-2 text-sm input-surface placeholder-muted placeholder:text-[15px] resize-vertical"
-                    aria-invalid={errors.message ? "true" : "false"}
-                    aria-describedby={
-                      errors.message ? "message-error" : undefined
-                    }
+                    aria-describedby="message-hint"
                     required
                     autoComplete="off"
                   />
-                  {errors.message && (
+                  <div className="mt-1 flex items-center justify-between">
                     <p
-                      id="message-error"
-                      className="text-xs mt-1 error-text"
-                      role="alert"
-                      aria-live="assertive"
+                      id="message-hint"
+                      className="text-sm text-[var(--muted)]"
                     >
-                      {errors.message.message}
+                      Minimum 20 caractères
                     </p>
-                  )}
+                    <p
+                      className="text-sm text-[var(--muted)]"
+                      aria-live="polite"
+                    >
+                      {messageValue.length} / 20
+                    </p>
+                  </div>
                 </div>
               )}
             />
@@ -194,22 +228,18 @@ export default function Contact() {
               type="submit"
               variant="cta"
               className="h-12 font-semibold text-base"
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting ||
+                !nameValue.trim() ||
+                !emailValue.trim() ||
+                !subjectValue.trim() ||
+                messageValue.trim().length < 20
+              }
             >
               Envoyer
             </Button>
           </div>
         </form>
-
-        {serverMsg && (
-          <p
-            className="mt-1 text-center text-sm"
-            role="status"
-            aria-live="polite"
-          >
-            {serverMsg}
-          </p>
-        )}
       </div>
     </section>
   );

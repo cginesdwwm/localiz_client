@@ -11,7 +11,7 @@ import { useEffect } from "react";
  */
 
 export default function useFocusHeading(ref, options = {}) {
-  const { delay = 0 } = options;
+  const { delay = 0, preventScroll = true } = options;
   useEffect(() => {
     const node = ref?.current;
     if (!node) return;
@@ -21,7 +21,12 @@ export default function useFocusHeading(ref, options = {}) {
 
     const t = setTimeout(() => {
       if (typeof node.focus === "function") {
-        node.focus();
+        // Avoid scrolling the page on programmatic focus
+        try {
+          node.focus({ preventScroll });
+        } catch {
+          node.focus();
+        }
       }
     }, delay);
 
@@ -29,5 +34,5 @@ export default function useFocusHeading(ref, options = {}) {
       clearTimeout(t);
       if (!hadTabIndex) node.removeAttribute("tabindex");
     };
-  }, [ref, delay]);
+  }, [ref, delay, preventScroll]);
 }

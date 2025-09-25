@@ -239,7 +239,7 @@ export default function AddListingForm() {
           {/* Type: Don ou Troc */}
           <div className="mb-6">
             <label htmlFor="type" className="block text-base font-medium mb-1">
-              Type <span className="text-red-500">*</span>
+              Type *
             </label>
             <select
               id="type"
@@ -263,7 +263,7 @@ export default function AddListingForm() {
           {/* Catégorie */}
           <div className="mb-6">
             <label htmlFor="tag" className="block text-base font-medium mb-2">
-              Catégorie <span className="text-red-500">*</span>
+              Catégorie *
             </label>
             <select
               id="tag"
@@ -292,7 +292,7 @@ export default function AddListingForm() {
               htmlFor="condition"
               className="block text-base font-medium mb-2"
             >
-              État <span className="text-red-500">*</span>
+              État *
             </label>
             <select
               id="condition"
@@ -685,7 +685,7 @@ export default function AddListingForm() {
               htmlFor="description"
               className="block text-base font-medium mb-1"
             >
-              Description <span className="text-red-500">*</span>
+              Description *
             </label>
             <Controller
               name="description"

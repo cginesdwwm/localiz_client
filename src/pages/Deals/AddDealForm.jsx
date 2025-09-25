@@ -330,7 +330,7 @@ export default function AddDealForm() {
           {/* Tag / Catégorie */}
           <div className="mb-6">
             <label htmlFor="tag" className="block text-base font-medium mb-2">
-              Catégorie <span className="text-red-500">*</span>
+              Catégorie *
             </label>
             <select
               id="tag"
@@ -933,7 +933,7 @@ export default function AddDealForm() {
               htmlFor="accessConditionsType"
               className="block text-base font-medium mb-1"
             >
-              Conditions d'accès <span className="text-red-500">*</span>
+              Conditions d'accès *
             </label>
             <select
               id="accessConditionsType"
@@ -1031,7 +1031,7 @@ export default function AddDealForm() {
               htmlFor="description"
               className="block text-base font-medium mb-1"
             >
-              Description <span className="text-red-500">*</span>
+              Description *
             </label>
             <Controller
               name="description"

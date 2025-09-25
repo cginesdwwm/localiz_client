@@ -282,10 +282,9 @@ textarea::placeholder {
 }
 
 /* Scoped reusable focus ring (wrap inputs with .focus-ring) */
-:focus {
-  outline: 3px solid rgba(255, 255, 255, 0.12);
-  outline-offset: 2px;
-}
+/* Avoid showing outlines universally on any focused element; rely on :focus-visible below */
+/* This prevents headings programmatically focused from getting a visible ring. */
+/* Removed global :focus outline to stop unwanted highlight on h1/h2... */
 .focus-ring input:focus,
 .focus-ring select:focus,
 .focus-ring textarea:focus {
@@ -410,6 +409,16 @@ textarea::placeholder {
 :focus-visible {
   outline: var(--focus-outline-width) solid var(--focus-outline);
   outline-offset: 2px;
+}
+
+/* Make headings programmatically focusable without visible outline */
+h1:focus,
+h2:focus,
+h3:focus,
+h4:focus,
+h5:focus,
+h6:focus {
+  outline: none;
 }
 
 /* Visually hide content but make it available to SRs; show when focused */

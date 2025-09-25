@@ -68,7 +68,7 @@ export default function ErrorSummary({
                 }
               }}
             >
-              {f.label}: {errors[f.name]?.message || "Champ invalide"}
+              {errors[f.name]?.message || "Champ invalide"}
             </button>
           </li>
         ))}
